@@ -520,7 +520,7 @@ pnpm run test:cov
 
 ## 📱 Screenshots
 
-_Add screenshots of your app here_
+<work in progress>
 
 ---
 
