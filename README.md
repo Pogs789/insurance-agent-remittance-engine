@@ -485,12 +485,6 @@ Authorization: Bearer <your_jwt_token>
 - `POST /premiums` - Record premium payment
 - `POST /premiums/calculate` - Calculate premium amount
 
-#### Claims
-- `GET /claims` - Get all claims
-- `GET /claims/:id` - Get claim by ID
-- `POST /claims` - Submit new claim
-- `PUT /claims/:id/status` - Update claim status
-
 ---
 
 ## 🧪 Testing
@@ -529,9 +523,9 @@ pnpm run test:cov
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/<your feature>`)
+3. Commit your changes (`git commit -m 'What changes do you made.'`)
+4. Push to the branch (`git push origin feature/<your feature>`)
 5. Open a Pull Request
 
 ---
