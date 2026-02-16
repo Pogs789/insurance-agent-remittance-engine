@@ -2,6 +2,14 @@
 
 A Mobile Application that automates insurance remittances, makes planholder monitoring easy, and streamlines insurance agent workflows.
 
+## 🚧 Project Status
+
+This project is currently under active development.
+Documentation may not reflect the latest implementation yet.
+Major updates to architecture and features are ongoing.
+
+Last updated: February 2026
+
 ## 📋 Table of Contents
 - [Problem Statement](#problem-statement)
 - [Features of the Application](#features-of-the-application)
