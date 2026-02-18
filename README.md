@@ -154,20 +154,17 @@ lib/
 │   │   ├── agent_model.dart        # Agent data model
 │   │   ├── client_model.dart       # Client/Planholder data model
 │   │   ├── premium_model.dart      # Premium payment data model
-│   │   └── claim_model.dart        # Insurance claim data model
 │   ├── repositories/               # Repository implementations
 │   │   ├── policy_repository_impl.dart
 │   │   ├── agent_repository_impl.dart
 │   │   ├── client_repository_impl. dart
 │   │   ├── premium_repository_impl.dart
-│   │   └── claim_repository_impl.dart
 │   └── datasources/                # Data sources (remote & local)
 │       ├── remote/                 # API data sources
 │       │   ├── policy_remote_datasource.dart
 │       │   ├── agent_remote_datasource.dart
 │       │   ├── client_remote_datasource.dart
 │       │   ├── premium_remote_datasource.dart
-│       │   └── claim_remote_datasource.dart
 │       └── local/                  # Local storage data sources
 │           ├── policy_local_datasource.dart
 │           ├── agent_local_datasource.dart
@@ -179,13 +176,11 @@ lib/
 │   │   ├── agent.dart              # Agent entity
 │   │   ├── client.dart             # Client/Planholder entity
 │   │   ├── premium.dart            # Premium entity
-│   │   └── claim.dart              # Claim entity
 │   ├── repositories/               # Repository interfaces (contracts)
 │   │   ├── policy_repository.dart
 │   │   ├── agent_repository.dart
 │   │   ├── client_repository.dart
 │   │   ├── premium_repository.dart
-│   │   └── claim_repository.dart
 │   └── usecases/                   # Business use cases (single responsibility)
 │       ├── policy/
 │       │   ├── get_policies. dart
@@ -207,10 +202,6 @@ lib/
 │       │   ├── get_premium_schedule.dart
 │       │   ├── calculate_premium.dart
 │       │   └── record_payment.dart
-│       └── claim/
-│           ├── get_claims.dart
-│           ├── submit_claim.dart
-│           └── update_claim_status.dart
 │
 └── presentation/                   # Presentation layer - UI
     ├── pages/                      # Screen pages
@@ -232,10 +223,6 @@ lib/
     │   │   ├── premium_list_page. dart
     │   │   ├── premium_payment_page.dart
     │   │   └── premium_schedule_page.dart
-    │   └── claim/
-    │       ├── claim_list_page. dart
-    │       ├── claim_detail_page.dart
-    │       └── claim_form_page.dart
     ├── widgets/                    # Reusable UI components
     │   ├── common/
     │   │   ├── custom_button.dart
@@ -458,7 +445,7 @@ pnpm run start:dev
 ### Base URL
 ```
 Development: http://localhost:3000/api
-Production: https://life-insurance-demo.vercel.app/api
+Production: <in progress>
 ```
 
 ### Authentication
