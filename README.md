@@ -1,4 +1,4 @@
-# Life Insurance Monitoring Mobile Application
+# Insurance Agent's Remittance Engine
 
 A Mobile Application that automates insurance remittances, makes planholder monitoring easy, and streamlines insurance agent workflows.
 
@@ -42,14 +42,9 @@ This application provides an automated monitoring system that:
 
 ### For Insurance Agents
 - **User Authentication** - Secure Sign Up, Login, and Logout
-- **Dashboard Overview** - Quick glance at all active policies
-- **View Insurance Plans** - Detailed view of all managed insurance plans
 - **Insurance Remittance Tracking** - Automated tracking of payment schedules
-- **Monitor Planholder Payments** - Real-time payment status updates
 - **Notifications** - Automated alerts for upcoming and missed payments
 - **User Profile Management** - Manage agent profile and preferences
-- **Client Management** - Add, update, and track client information
-- **Claims Processing** - Submit and track insurance claims
 
 ### For Admin/Insurance Providers
 - **Admin Dashboard** - Comprehensive overview of all agents and policies
