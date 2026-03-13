@@ -5,11 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="713527d8-2682-4768-9e80-a6a694a08424" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/modules/auth/auth.controller.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/modules/auth/auth.controller.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/modules/auth/auth.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/modules/auth/auth.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/modules/auth/auth.service.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/prisma/prisma.module.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/prisma/prisma.service.spec.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../backend/src/prisma/prisma.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/prisma.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/prisma.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/life_insurance_monitoring_mobile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/life_insurance_monitoring_mobile.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/presentation/pages/client/client_list_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/presentation/pages/client/client_list_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/life_insurance_monitoring_mobile_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/android/life_insurance_monitoring_mobile_android.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../../pnpm-lock.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +35,7 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_C:/Users/loric/OneDrive/Documents/My Coding Projects/Full Stack Development/insurance-agent-remittance-engine/apps/life_insurance_monitoring_mobile" value="3Akype1n4rMSWeszHZF9ncHq1Z8" />
       <entry key="_C:/Users/loric/OneDrive/Documents/My Coding Projects/Full Stack Development/life-insurance-monitoring-app/apps/life_insurance_monitoring_mobile" value="38bq609QQZI4R9vLSIzHQXXOG44" />
     </persistenceIdMap>
   </component>
@@ -40,6 +55,7 @@
     &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
@@ -50,7 +66,7 @@
     &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/loric/OneDrive/Documents/Quanby/PROJECTS&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/loric/OneDrive/Documents/My Coding Projects/Full Stack Development/insurance-agent-remittance-engine/apps/life_insurance_monitoring_mobile&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;DotEnv.SettingsForm&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
