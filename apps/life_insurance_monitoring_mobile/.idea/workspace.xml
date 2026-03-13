@@ -33,12 +33,6 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="CopilotPersistence">
-    <persistenceIdMap>
-      <entry key="_C:/Users/loric/OneDrive/Documents/My Coding Projects/Full Stack Development/insurance-agent-remittance-engine/apps/life_insurance_monitoring_mobile" value="3Akype1n4rMSWeszHZF9ncHq1Z8" />
-      <entry key="_C:/Users/loric/OneDrive/Documents/My Coding Projects/Full Stack Development/life-insurance-monitoring-app/apps/life_insurance_monitoring_mobile" value="38bq609QQZI4R9vLSIzHQXXOG44" />
-    </persistenceIdMap>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
