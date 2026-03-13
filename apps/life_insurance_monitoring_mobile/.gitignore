@@ -1,2 +1,5 @@
 # IDE - IntelliJ / Android Studio
-.idea/caches/
+.idea/
+
+# Dart/Flutter tooling generated files
+.dart_tool/
