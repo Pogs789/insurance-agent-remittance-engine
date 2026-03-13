@@ -7,15 +7,15 @@
     "packages/*"
   ],
   "scripts": {
-    "dev: backend": "pnpm --filter backend start: dev",
+    "dev:backend": "pnpm --filter backend start:dev",
     "dev:mobile": "cd apps/life_insurance_monitoring_mobile && flutter run",
     "build": "pnpm --filter shared build && pnpm --filter backend build",
-    "build:mobile": "cd apps/mobile && flutter build",
+    "build:mobile": "cd apps/life_insurance_monitoring_mobile && flutter build",
     "test": "pnpm --filter backend test",
-    "test:mobile": "cd apps/mobile && flutter test",
-    "lint: backend": "pnpm --filter backend lint",
-    "lint:mobile": "cd apps/mobile && flutter analyze",
-    "format": "prettier --write \"apps/backend/**/*.{ts,json}\" && cd apps/mobile && dart format .",
+    "test:mobile": "cd apps/life_insurance_monitoring_mobile && flutter test",
+    "lint:backend": "pnpm --filter backend lint",
+    "lint:mobile": "cd apps/life_insurance_monitoring_mobile && flutter analyze",
+    "format": "prettier --write \"apps/backend/**/*.{ts,json}\" && cd apps/life_insurance_monitoring_mobile && dart format .",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -23,7 +23,7 @@
       "prettier --write",
       "eslint --fix"
     ],
-    "apps/mobile/**/*. dart": [
+    "apps/life_insurance_monitoring_mobile/**/*.dart": [
       "dart format"
     ],
     "packages/shared/**/*.{ts,json}": [
