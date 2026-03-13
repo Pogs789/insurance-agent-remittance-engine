@@ -1,16 +1,13 @@
-import { Injectable, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { PrismaClient } from '@prisma/client';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 
-@Injectable()
-class PrismaService extends PrismaClient {}
-
 @Module({
-  imports: [JwtModule.register({}), PassportModule],
-  providers: [AuthService, PrismaService],
+  imports: [JwtModule.register({}), PassportModule, PrismaModule],
+  providers: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}
