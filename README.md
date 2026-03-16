@@ -1,6 +1,14 @@
-# Life Insurance Monitoring Mobile Application
+# Insurance Agent's Remittance Engine
 
 A Mobile Application that automates insurance remittances, makes planholder monitoring easy, and streamlines insurance agent workflows.
+
+## 🚧 Project Status
+
+This project is currently under active development.
+Documentation may not reflect the latest implementation yet.
+Major updates to architecture and features are ongoing.
+
+Last updated: February 2026
 
 ## 📋 Table of Contents
 - [Problem Statement](#problem-statement)
@@ -34,14 +42,9 @@ This application provides an automated monitoring system that:
 
 ### For Insurance Agents
 - **User Authentication** - Secure Sign Up, Login, and Logout
-- **Dashboard Overview** - Quick glance at all active policies
-- **View Insurance Plans** - Detailed view of all managed insurance plans
 - **Insurance Remittance Tracking** - Automated tracking of payment schedules
-- **Monitor Planholder Payments** - Real-time payment status updates
 - **Notifications** - Automated alerts for upcoming and missed payments
 - **User Profile Management** - Manage agent profile and preferences
-- **Client Management** - Add, update, and track client information
-- **Claims Processing** - Submit and track insurance claims
 
 ### For Admin/Insurance Providers
 - **Admin Dashboard** - Comprehensive overview of all agents and policies
@@ -146,20 +149,17 @@ lib/
 │   │   ├── agent_model.dart        # Agent data model
 │   │   ├── client_model.dart       # Client/Planholder data model
 │   │   ├── premium_model.dart      # Premium payment data model
-│   │   └── claim_model.dart        # Insurance claim data model
 │   ├── repositories/               # Repository implementations
 │   │   ├── policy_repository_impl.dart
 │   │   ├── agent_repository_impl.dart
 │   │   ├── client_repository_impl. dart
 │   │   ├── premium_repository_impl.dart
-│   │   └── claim_repository_impl.dart
 │   └── datasources/                # Data sources (remote & local)
 │       ├── remote/                 # API data sources
 │       │   ├── policy_remote_datasource.dart
 │       │   ├── agent_remote_datasource.dart
 │       │   ├── client_remote_datasource.dart
 │       │   ├── premium_remote_datasource.dart
-│       │   └── claim_remote_datasource.dart
 │       └── local/                  # Local storage data sources
 │           ├── policy_local_datasource.dart
 │           ├── agent_local_datasource.dart
@@ -171,13 +171,11 @@ lib/
 │   │   ├── agent.dart              # Agent entity
 │   │   ├── client.dart             # Client/Planholder entity
 │   │   ├── premium.dart            # Premium entity
-│   │   └── claim.dart              # Claim entity
 │   ├── repositories/               # Repository interfaces (contracts)
 │   │   ├── policy_repository.dart
 │   │   ├── agent_repository.dart
 │   │   ├── client_repository.dart
 │   │   ├── premium_repository.dart
-│   │   └── claim_repository.dart
 │   └── usecases/                   # Business use cases (single responsibility)
 │       ├── policy/
 │       │   ├── get_policies. dart
@@ -199,10 +197,6 @@ lib/
 │       │   ├── get_premium_schedule.dart
 │       │   ├── calculate_premium.dart
 │       │   └── record_payment.dart
-│       └── claim/
-│           ├── get_claims.dart
-│           ├── submit_claim.dart
-│           └── update_claim_status.dart
 │
 └── presentation/                   # Presentation layer - UI
     ├── pages/                      # Screen pages
@@ -224,10 +218,6 @@ lib/
     │   │   ├── premium_list_page. dart
     │   │   ├── premium_payment_page.dart
     │   │   └── premium_schedule_page.dart
-    │   └── claim/
-    │       ├── claim_list_page. dart
-    │       ├── claim_detail_page.dart
-    │       └── claim_form_page.dart
     ├── widgets/                    # Reusable UI components
     │   ├── common/
     │   │   ├── custom_button.dart
@@ -450,7 +440,7 @@ pnpm run start:dev
 ### Base URL
 ```
 Development: http://localhost:3000/api
-Production: https://life-insurance-demo.vercel.app/api
+Production: <in progress>
 ```
 
 ### Authentication
@@ -485,12 +475,6 @@ Authorization: Bearer <your_jwt_token>
 - `POST /premiums` - Record premium payment
 - `POST /premiums/calculate` - Calculate premium amount
 
-#### Claims
-- `GET /claims` - Get all claims
-- `GET /claims/:id` - Get claim by ID
-- `POST /claims` - Submit new claim
-- `PUT /claims/:id/status` - Update claim status
-
 ---
 
 ## 🧪 Testing
@@ -520,7 +504,7 @@ pnpm run test:cov
 
 ## 📱 Screenshots
 
-_Add screenshots of your app here_
+<work in progress>
 
 ---
 
@@ -529,9 +513,9 @@ _Add screenshots of your app here_
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch (`git checkout -b feature/<your feature>`)
+3. Commit your changes (`git commit -m 'What changes do you made.'`)
+4. Push to the branch (`git push origin feature/<your feature>`)
 5. Open a Pull Request
 
 ---
