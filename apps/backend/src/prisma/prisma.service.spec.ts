@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-jest.mock('../../generated/prisma', () => ({
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
+
+jest.mock('@prisma/client', () => ({
   PrismaClient: class {
     $connect = jest.fn();
     $disconnect = jest.fn();
