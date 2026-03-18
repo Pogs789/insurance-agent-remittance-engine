@@ -52,7 +52,7 @@ export class AuthService {
     let matchedTokenId: string | null = null;
 
     for (const rt of activeTokens) {
-      if (await bcrypt.compare(rt.tokenHash, refreshToken)) {
+      if (await bcrypt.compare(refreshToken, rt.tokenHash)) {
         matchedTokenId = rt.id;
         break;
       }
@@ -95,7 +95,7 @@ export class AuthService {
     });
 
     for (const rt of tokens) {
-      if (await bcrypt.compare(rt.tokenHash, refreshToken)) {
+      if (await bcrypt.compare(refreshToken, rt.tokenHash)) {
         await this.prisma.refreshToken.update({
           where: { id: rt.id },
           data: { revokedAt: new Date() },
