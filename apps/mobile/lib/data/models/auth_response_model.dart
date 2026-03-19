@@ -15,9 +15,20 @@ class AuthSessionModel {
     'refreshToken': refreshToken
   };
 
+  /// Parses a login response where [userId] is nested under `user.id`.
   factory AuthSessionModel.fromJson(Map<String, dynamic> json){
+    final user = json['user'] as Map<String, dynamic>?;
     return AuthSessionModel(
-      userId: (json['userId'] ?? '').toString(),
+      userId: (user?['id'] ?? '').toString(),
+      accessToken: (json['accessToken'] ?? '').toString(),
+      refreshToken: (json['refreshToken'] ?? '').toString(),
+    );
+  }
+
+  /// Parses a token-refresh response that returns only new tokens (no user object).
+  factory AuthSessionModel.fromJsonTokensOnly(Map<String, dynamic> json, String userId) {
+    return AuthSessionModel(
+      userId: userId,
       accessToken: (json['accessToken'] ?? '').toString(),
       refreshToken: (json['refreshToken'] ?? '').toString(),
     );
