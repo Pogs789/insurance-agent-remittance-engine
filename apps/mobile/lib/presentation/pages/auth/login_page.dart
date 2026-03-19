@@ -30,11 +30,12 @@ class _LoginPageState extends State<LoginPage> {
     // Later, this will be replaced by: ref.read(authProvider).login(...)
 
     if (_formKey.currentState!.validate()) {
-      // Simulate a delay to show the loading state (optional UX touch)
+      // TODO: Implement login logic for the app, where the UI must handle ALL possible edge cases for user input but for now, focus on what works.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Simulating Login...')),
       );
 
+      // TODO: Wrap this logic inside a successful login response.
       Future.delayed(const Duration(seconds: 1), () {
         Future.delayed(const Duration(seconds: 1), () {
           // Removes the back button so user can't go back to Login
