@@ -23,7 +23,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> saveSession(AuthSessionModel session) async {
-    final sessionJson = jsonEncode(session.toJson);
+    final sessionJson = jsonEncode(session.toJson());
 
     await _secureStorage.write(key: StorageConstants.sessionKey, value: sessionJson);
     await _secureStorage.write(key: StorageConstants.accessTokenKey, value: session.accessToken);

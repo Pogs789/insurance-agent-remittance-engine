@@ -30,7 +30,8 @@ class _LoginPageState extends State<LoginPage> {
     // Later, this will be replaced by: ref.read(authProvider).login(...)
 
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement login logic for the app, where the UI must handle ALL possible edge cases for user input but for now, focus on what works.
+      // TODO: Replace with ref.read(authProvider).login(email, password).
+      // Handle: invalid credentials, network errors, and empty-field validation.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Simulating Login...')),
       );

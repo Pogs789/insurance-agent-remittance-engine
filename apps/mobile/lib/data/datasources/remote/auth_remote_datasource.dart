@@ -4,13 +4,13 @@ import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.da
 
 abstract class AuthRemoteDataSource {
   Future<AuthSessionModel> login(String email, String password);
-  Future<void> logout();
-  Future<AuthSessionModel> refreshToken(String refreshToken);
+  Future<void> logout(String userId, String refreshToken);
+  Future<AuthSessionModel> refreshToken(String userId, String refreshToken);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({
-    required this.httpClient,
+    required this.dio,
   });
 
   final Dio dio;
@@ -24,8 +24,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
 
       return AuthSessionModel.fromJson(response.data);
-    }catch(e, stackTrace) {
-      throw Exception('Login Failed: $e. Stack Trace: $stackTrace'); //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
+    } catch (e, stackTrace) {
+      //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
+      Error.throwWithStackTrace(Exception('Login Failed: $e'), stackTrace);
     }
   }
 
@@ -34,13 +35,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       await dio.post(ApiEndpoints.logoutApi, data: {
         'userId': userId,
-        'refreshToken': refreshToken
+        'refreshToken': refreshToken,
       });
-    }catch(e, stackTrace) {
-      throw Exception('Logout Failed: $e. Stack Trace: $stackTrace'); //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
+    } catch (e, stackTrace) {
+      //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
+      Error.throwWithStackTrace(Exception('Logout Failed: $e'), stackTrace);
     }
   }
 
   @override
-  Future<AuthSessionModel> refreshToken
+  Future<AuthSessionModel> refreshToken(String userId, String refreshToken) async {
+    try {
+      final response = await dio.post(ApiEndpoints.refreshApi, data: {
+        'userId': userId,
+        'refreshToken': refreshToken,
+      });
+
+      return AuthSessionModel.fromJsonTokensOnly(response.data, userId);
+    } catch (e, stackTrace) {
+      //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
+      Error.throwWithStackTrace(Exception('Token Refresh Failed: $e'), stackTrace);
+    }
+  }
 }
