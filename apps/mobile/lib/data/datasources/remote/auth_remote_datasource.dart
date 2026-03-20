@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
 
@@ -26,7 +27,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return AuthSessionModel.fromJson(response.data);
     } catch (e, stackTrace) {
       //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
-      Error.throwWithStackTrace(Exception('Login Failed: $e'), stackTrace);
+      Error.throwWithStackTrace(mapToAppException(e, stackTrace), stackTrace);
     }
   }
 
@@ -39,7 +40,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
     } catch (e, stackTrace) {
       //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
-      Error.throwWithStackTrace(Exception('Logout Failed: $e'), stackTrace);
+      Error.throwWithStackTrace(mapToAppException(e, stackTrace), stackTrace);
     }
   }
 
@@ -54,7 +55,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return AuthSessionModel.fromJsonTokensOnly(response.data, userId);
     } catch (e, stackTrace) {
       //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
-      Error.throwWithStackTrace(Exception('Token Refresh Failed: $e'), stackTrace);
+      Error.throwWithStackTrace(mapToAppException(e, stackTrace), stackTrace);
     }
   }
 }
