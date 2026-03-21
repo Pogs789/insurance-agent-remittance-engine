@@ -245,14 +245,8 @@ src/
 │   │   │   ├── login. dto.ts
 │   │   │   ├── register.dto.ts
 │   │   │   └── refresh-token.dto.ts
-│   │   ├── entities/
-│   │   │   └── user.entity.ts
-│   │   ├── strategies/
-│   │   │   ├── jwt.strategy.ts
-│   │   │   └── local.strategy.ts
 │   │   ├── auth.controller.ts      # Routes:  POST /auth/login, /auth/register
 │   │   ├── auth.service.ts         # Business logic for authentication
-│   │   ├── auth.repository.ts      # Database operations for users
 │   │   └── auth.module.ts
 │   │
 │   ├── monthly_remittance/                   # Insurance policies module
@@ -260,28 +254,25 @@ src/
 │   │   │   ├── create-monthly_remittance.dto.ts
 │   │   │   ├── update-monthly_remittance.dto.ts
 │   │   │   └── query-monthly_remittance.dto.ts
-│   │   ├── entities/
-│   │   │   └── monthly_remittance.entity.ts    # Database schema for policies
 │   │   ├── monthly_remittance.controller.ts  # Routes: GET/POST/PUT/DELETE /policies
 │   │   ├── monthly_remittance.service.ts     # Business logic for policies
-│   │   ├── monthly_remittance.repository.ts  # Database operations
 │   │   └── monthly_remittance. module.ts
 │   │
 │   ├── agents/                     # Insurance agents module
 │   │   ├── dto/
 │   │   │   ├── create-agent.dto.ts
 │   │   │   └── update-agent.dto.ts
-│   │   ├── entities/
-│   │   │   └── agent.entity.ts
 │   │   ├── agents.controller.ts
 │   │   ├── agents.service.ts
-│   │   ├── agents.repository. ts
 │   │   └── agents.module.ts
 │   └── notifications/              # Push notifications module
 │       ├── dto/
 │       │   └── send-notification.dto.ts
 │       ├── notifications.service.ts
 │       └── notifications.module.ts
+│── prisma/
+│   └── prisma.module.ts
+│   └── prisma.service.ts
 │
 ├── app.module.ts                   # Root application module
 └── main.ts                         # Application entry point
