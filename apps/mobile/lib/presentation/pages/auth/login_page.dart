@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../dashboard/dashboard_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
