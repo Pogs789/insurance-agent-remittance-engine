@@ -29,8 +29,8 @@ final class ServerException extends AppException {
   );
 }
 
-final class TimeoutException extends AppException {
-  const TimeoutException(
+final class RequestTimeoutException extends AppException {
+  const RequestTimeoutException(
     super.message, {
       super.statusCode,
       super.cause
@@ -65,7 +65,7 @@ final class UnknownException extends AppException {
   );
 }
 
-AppException mapToAppException(Object error, [StackTrace? stackTrace]) {
+AppException mapToAppException(Object error) {
   if (error is AppException) return error;
 
   if(error is DioException) {
@@ -75,7 +75,7 @@ AppException mapToAppException(Object error, [StackTrace? stackTrace]) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return TimeoutException(
+        return RequestTimeoutException(
           'Request timed out. Please Try again in a few minutes.',
           statusCode: statusCode,
           cause: error,

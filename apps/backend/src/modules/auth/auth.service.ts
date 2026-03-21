@@ -56,37 +56,37 @@ export class AuthService {
         matchedTokenId = rt.id;
         break;
       }
-
-      if (!matchedTokenId)
-        throw new UnauthorizedException(
-          'This refresh token is invalid. Please login again.',
-        );
-
-      const user = await this.prisma.user.findUnique({ where: { id: userId } });
-      if (!user)
-        throw new UnauthorizedException(
-          'Sorry. This user does not exist. Please login again.',
-        );
-
-      const tokens = await this.issueTokens(user.id, user.email, user.role);
-
-      await this.prisma.$transaction([
-        this.prisma.refreshToken.update({
-          where: { id: matchedTokenId },
-          data: { revokedAt: new Date() },
-        }),
-        this.prisma.refreshToken.create({
-          data: {
-            id: randomUUID(),
-            userId,
-            tokenHash: await bcrypt.hash(tokens.refreshToken, 12),
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          },
-        }),
-      ]);
-
-      return tokens;
     }
+
+    if (!matchedTokenId)
+      throw new UnauthorizedException(
+        'This refresh token is invalid. Please login again.',
+      );
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user)
+      throw new UnauthorizedException(
+        'Sorry. This user does not exist. Please login again.',
+      );
+
+    const tokens = await this.issueTokens(user.id, user.email, user.role);
+
+    await this.prisma.$transaction([
+      this.prisma.refreshToken.update({
+        where: { id: matchedTokenId },
+        data: { revokedAt: new Date() },
+      }),
+      this.prisma.refreshToken.create({
+        data: {
+          id: randomUUID(),
+          userId,
+          tokenHash: await bcrypt.hash(tokens.refreshToken, 12),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      }),
+    ]);
+
+    return tokens;
   }
 
   async logout(userId: string, refreshToken: string) {
