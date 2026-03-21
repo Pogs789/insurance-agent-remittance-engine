@@ -270,8 +270,8 @@ src/
 │       │   └── send-notification.dto.ts
 │       ├── notifications.service.ts
 │       └── notifications.module.ts
-│── prisma/
-│   └── prisma.module.ts
+├── prisma/
+│   ├── prisma.module.ts
 │   └── prisma.service.ts
 │
 ├── app.module.ts                   # Root application module

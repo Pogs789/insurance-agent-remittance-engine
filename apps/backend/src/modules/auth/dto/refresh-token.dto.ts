@@ -1,8 +1,8 @@
-import { IsString, MinLength } from 'class-validator';
-import { UUID } from 'crypto';
+import { IsString, MinLength, IsUUID } from 'class-validator';
 
 export class RefreshTokenDto {
-  userId!: UUID;
+  @IsUUID()
+  userId!: string;
   @IsString()
   @MinLength(64)
   refreshToken!: string;

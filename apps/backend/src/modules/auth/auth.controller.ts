@@ -21,7 +21,7 @@ export class AuthController {
     return this.authService.logout(logOutDto.userId, logOutDto.refreshToken);
   }
 
-  // PATCH auth/refresh-token
+  // POST auth/refresh-token
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
