@@ -42,14 +42,12 @@ This application provides an automated monitoring system that:
 
 ### For Insurance Agents
 - **User Authentication** - Secure Sign Up, Login, and Logout
-- **Insurance Remittance Tracking** - Automated tracking of payment schedules
-- **Notifications** - Automated alerts for upcoming and missed payments
+- **Automated Calculation of Insurance Remittance** - Automated tracking of payment schedules
 - **User Profile Management** - Manage agent profile and preferences
 
 ### For Admin/Insurance Providers
 - **Admin Dashboard** - Comprehensive overview of all agents and policies
 - **Agent Performance Tracking** - Monitor agent activities and success rates
-- **Policy Management** - Create, update, and manage insurance policies
 - **Reports & Analytics** - Generate insights on payments and policy performance
 
 ---
@@ -68,7 +66,7 @@ This application provides an automated monitoring system that:
 - **NestJS** - Progressive Node.js framework
 - **TypeScript** - Strongly-typed programming language
 - **PostgreSQL** - Relational database
-- **TypeORM** - Object-Relational Mapping
+- **PrismaORM** - Object-Relational Mapping
 - **JWT** - JSON Web Tokens for authentication
 - **Passport** - Authentication middleware
 
@@ -145,58 +143,37 @@ lib/
 │
 ├── data/                           # Data layer - handles data operations
 │   ├── models/                     # Data models (API response/request)
-│   │   ├── policy_model.dart       # Policy data model with JSON serialization
+│   │   ├── monthly_remittance_model.dart       # Monthly remittance data model with JSON serialization
 │   │   ├── agent_model.dart        # Agent data model
-│   │   ├── client_model.dart       # Client/Planholder data model
-│   │   ├── premium_model.dart      # Premium payment data model
 │   ├── repositories/               # Repository implementations
-│   │   ├── policy_repository_impl.dart
+│   │   ├── monthly_remittance_impl.dart
 │   │   ├── agent_repository_impl.dart
-│   │   ├── client_repository_impl. dart
-│   │   ├── premium_repository_impl.dart
 │   └── datasources/                # Data sources (remote & local)
 │       ├── remote/                 # API data sources
-│       │   ├── policy_remote_datasource.dart
+│       │   ├── monthly_remittance_remote_datasource.dart
 │       │   ├── agent_remote_datasource.dart
-│       │   ├── client_remote_datasource.dart
-│       │   ├── premium_remote_datasource.dart
 │       └── local/                  # Local storage data sources
-│           ├── policy_local_datasource.dart
+│           ├── monthly_remittance_local_datasource.dart
 │           ├── agent_local_datasource.dart
 │           └── app_database. dart   # Local database setup (Hive/SQLite)
 │
 ├── domain/                         # Domain layer - business logic
 │   ├── entities/                   # Pure business objects
-│   │   ├── policy.dart             # Policy entity
+│   │   ├── monthly_remittance.dart             # Monthly Remittance entity
 │   │   ├── agent.dart              # Agent entity
-│   │   ├── client.dart             # Client/Planholder entity
-│   │   ├── premium.dart            # Premium entity
 │   ├── repositories/               # Repository interfaces (contracts)
-│   │   ├── policy_repository.dart
+│   │   ├── monthly_remittance_repository.dart
 │   │   ├── agent_repository.dart
-│   │   ├── client_repository.dart
-│   │   ├── premium_repository.dart
 │   └── usecases/                   # Business use cases (single responsibility)
-│       ├── policy/
-│       │   ├── get_policies. dart
-│       │   ├── get_policy_details.dart
-│       │   ├── create_policy.dart
-│       │   ├── update_policy. dart
-│       │   └── delete_policy.dart
+│       ├── monthly_remittance/
+│       │   ├── get_monthly_remittances.dart
+│       │   ├── get_monthly_remittance_details.dart
+│       │   ├── create_monthly_remittance.dart
+│       │   ├── update_monthly_remittance.dart
 │       ├── agent/
 │       │   ├── get_agents.dart
 │       │   ├── get_agent_details.dart
 │       │   └── update_agent_profile.dart
-│       ├── client/
-│       │   ├── get_clients.dart
-│       │   ├── get_client_details.dart
-│       │   ├── create_client.dart
-│       │   └── update_client.dart
-│       ├── premium/
-│       │   ├── get_premiums.dart
-│       │   ├── get_premium_schedule.dart
-│       │   ├── calculate_premium.dart
-│       │   └── record_payment.dart
 │
 └── presentation/                   # Presentation layer - UI
     ├── pages/                      # Screen pages
@@ -207,39 +184,21 @@ lib/
     │   │   └── register_page.dart
     │   ├── dashboard/
     │   │   └── dashboard_page.dart
-    │   ├── policy/
-    │   │   ├── policy_list_page.dart
-    │   │   ├── policy_detail_page.dart
-    │   ├── client/
-    │   │   ├── client_list_page.dart
-    │   │   ├── client_detail_page.dart
-    │   │   └── client_form_page.dart
-    │   ├── premium/
-    │   │   ├── premium_list_page. dart
-    │   │   ├── premium_payment_page.dart
-    │   │   └── premium_schedule_page.dart
+    │   ├── monthly_remittance/
+    │   │   ├── monthly_remittance_list_page.dart
+    │   │   ├── monthly_remittance_detail_page.dart
     ├── widgets/                    # Reusable UI components
     │   ├── common/
     │   │   ├── custom_button.dart
     │   │   ├── custom_text_field.dart
     │   │   ├── loading_indicator.dart
     │   │   └── error_widget.dart
-    │   ├── policy/
-    │   │   └── policy_card.dart
-    │   ├── client/
-    │   │   └── client_card.dart
-    │   └── premium/
-    │       └── premium_card.dart
+    │   ├── monthly_remittance/
+    │   │   └── monthly_remittance_card.dart
     └── providers/                  # State management (Provider pattern)
-        ├── policy/
-        │   ├── policy_provider.dart
-        │   └── policy_state.dart
-        ├── client/
-        │   ├── client_provider.dart
-        │   └── client_state.dart
-        ├── premium/
-        │   ├── premium_provider.dart
-        │   └── premium_state.dart
+        ├── monthly_remittance/
+        │   ├── monthly_remittance_provider.dart
+        │   └── monthly_remittance_state.dart
         └── auth/
             ├── auth_provider.dart
             └── auth_state.dart
@@ -280,16 +239,6 @@ src/
 │   └── constants/                  # Application constants
 │       └── app.constants.ts
 │
-├── config/                         # Configuration files
-│   ├── database.config.ts          # PostgreSQL connection config
-│   ├── jwt. config.ts               # JWT authentication config
-│   └── app.config.ts               # General app configuration
-│
-├── database/                       # Database management
-│   ├── migrations/                 # Database migrations
-│   ├── seeds/                      # Database seeders (test data)
-│   └── database.module.ts          # Database module configuration
-│
 ├── modules/                        # Feature modules
 │   ├── auth/                       # Authentication module
 │   │   ├── dto/
@@ -306,17 +255,17 @@ src/
 │   │   ├── auth.repository.ts      # Database operations for users
 │   │   └── auth.module.ts
 │   │
-│   ├── policies/                   # Insurance policies module
+│   ├── monthly_remittance/                   # Insurance policies module
 │   │   ├── dto/
-│   │   │   ├── create-policy.dto.ts
-│   │   │   ├── update-policy.dto.ts
-│   │   │   └── query-policy.dto.ts
+│   │   │   ├── create-monthly_remittance.dto.ts
+│   │   │   ├── update-monthly_remittance.dto.ts
+│   │   │   └── query-monthly_remittance.dto.ts
 │   │   ├── entities/
-│   │   │   └── policy.entity.ts    # Database schema for policies
-│   │   ├── policies.controller.ts  # Routes: GET/POST/PUT/DELETE /policies
-│   │   ├── policies.service.ts     # Business logic for policies
-│   │   ├── policies.repository.ts  # Database operations
-│   │   └── policies. module.ts
+│   │   │   └── monthly_remittance.entity.ts    # Database schema for policies
+│   │   ├── monthly_remittance.controller.ts  # Routes: GET/POST/PUT/DELETE /policies
+│   │   ├── monthly_remittance.service.ts     # Business logic for policies
+│   │   ├── monthly_remittance.repository.ts  # Database operations
+│   │   └── monthly_remittance. module.ts
 │   │
 │   ├── agents/                     # Insurance agents module
 │   │   ├── dto/
@@ -328,42 +277,6 @@ src/
 │   │   ├── agents.service.ts
 │   │   ├── agents.repository. ts
 │   │   └── agents.module.ts
-│   │
-│   ├── clients/                    # Planholders/Clients module
-│   │   ├── dto/
-│   │   │   ├── create-client.dto.ts
-│   │   │   └── update-client.dto.ts
-│   │   ├── entities/
-│   │   │   └── client.entity.ts
-│   │   ├── clients.controller.ts
-│   │   ├── clients.service.ts
-│   │   ├── clients.repository.ts
-│   │   └── clients.module.ts
-│   │
-│   ├── premiums/                   # Premium payments module
-│   │   ├── dto/
-│   │   │   ├── create-premium.dto.ts
-│   │   │   ├── calculate-premium.dto.ts
-│   │   │   └── record-payment.dto.ts
-│   │   ├── entities/
-│   │   │   └── premium.entity.ts
-│   │   ├── premiums.controller.ts
-│   │   ├── premiums.service.ts
-│   │   ├── premiums.repository.ts
-│   │   └── premiums.module.ts
-│   │
-│   ├── claims/                     # Insurance claims module
-│   │   ├── dto/
-│   │   │   ├── create-claim.dto.ts
-│   │   │   ├── update-claim. dto.ts
-│   │   │   └── query-claim. dto.ts
-│   │   ├── entities/
-│   │   │   └── claim. entity.ts
-│   │   ├── claims.controller.ts
-│   │   ├── claims.service.ts
-│   │   ├── claims.repository.ts
-│   │   └── claims.module.ts
-│   │
 │   └── notifications/              # Push notifications module
 │       ├── dto/
 │       │   └── send-notification.dto.ts
