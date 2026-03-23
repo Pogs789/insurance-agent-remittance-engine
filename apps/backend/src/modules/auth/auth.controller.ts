@@ -2,6 +2,7 @@ import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, LogOutDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { UserRegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +30,11 @@ export class AuthController {
       refreshTokenDto.userId,
       refreshTokenDto.refreshToken,
     );
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  register(@Body() registerDto: UserRegisterDto) {
+    return null;
   }
 }

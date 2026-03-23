@@ -10,8 +10,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  async agentRegister(
+    agentName: string,
+    insuranceCompany: string,
+    birthDate: Date,
+    branchAddress: string,
+    commissionRate: number,
+    email: string,
+    password: string,
+  ) {
+    //TODO: Implement User Registration with email verification.
+  }
+
   async signIn(email: string, pass: string): Promise<any> {
-    //TODO: Use PrismaClient to retrieve username and password from postgreSQL.
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user)
