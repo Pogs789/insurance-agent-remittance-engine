@@ -1,6 +1,6 @@
 # Insurance Agent's Remittance Engine
 
-A Mobile Application that automates insurance remittances, makes planholder monitoring easy, and streamlines insurance agent workflows.
+This is a simple tool for insurance agents which automatically calculates the monthly collection needed to be remitted to the insurance company.
 
 ## 🚧 Project Status
 
