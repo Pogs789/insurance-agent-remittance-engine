@@ -8,7 +8,7 @@ This project is currently under active development.
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
-Last updated: February 2026
+Last updated: March 2026
 
 ## 📋 Table of Contents
 - [Problem Statement](#problem-statement)
