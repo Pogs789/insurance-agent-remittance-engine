@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,25 +7,56 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  passwordHash  String
-  role          String    @default("user")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  refreshTokens RefreshToken[]
+  id                         String                     @id @default(uuid())
+  lastName                   String
+  firstName                  String
+  middleName                 String
+  birthDate                  DateTime
+  insuranceCompany           String
+  email                      String                     @unique
+  passwordHash               String                     @unique
+  role                       Role                       @default(AGENT)
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
+  monthlyRemittanceHistories MonthlyRemittanceHistory[]
+  refreshTokens              RefreshToken[]
 }
 
 model RefreshToken {
-  id String @id @default(uuid())
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  tokenHash String
-  expiresAt DateTime
-  revokedAt DateTime?
+  id           String    @id @default(uuid())
+  userId       String
+  tokenHash    String
+  expiresAt    DateTime
+  revokedAt    DateTime?
   replacedById String?
-  createdAt DateTime @default(now())
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
+}
+
+model MonthlyRemittanceHistory {
+  id               String           @id @default(uuid())
+  userId           String
+  amountRemitted   Float
+  commissionRate   Float
+  planholderData   Json
+  isRemitted       Boolean          @default(false)
+  remittanceStatus RemittanceStatus @default(PENDING)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime?        @updatedAt
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  AGENT
+  ADMIN
+}
+
+enum RemittanceStatus {
+  PENDING
+  REMITTED
+  VALIDATING
+  CLEARED
+  REJECTED
 }

@@ -10,4 +10,7 @@ class ApiEndpoints {
   static const String loginApi = '$_url/auth/login';
   static const String logoutApi = '$_url/auth/logout';
   static const String refreshApi = '$_url/auth/refresh';
+
+  static const String calculateMonthlyRemittance = '$_url/monthly-remittance/create';
+
 }
