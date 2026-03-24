@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
 
 class RemittancePage extends StatefulWidget {
   const RemittancePage({super.key});
@@ -128,12 +129,16 @@ class _RemittancePageState extends State<RemittancePage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // TODO: Open "Add Remittance" Modal
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RemittanceFormPage())
+          );
         },
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
-        icon: const Icon(Icons.upload_file),
-        label: const Text("Upload Proof"),
+        icon: const Icon(Icons.calculate_rounded),
+        label: const Text("Calculate New Remittance"),
       ),
     );
   }
