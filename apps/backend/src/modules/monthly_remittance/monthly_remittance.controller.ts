@@ -1,5 +1,7 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
 import { MonthlyRemittanceService } from './monthly_remittance.service';
+import { CreateMonthlyRemittanceDto } from './dto/create-monthly_remittance.dto';
+import type { UUID } from 'crypto';
 
 @Controller('monthly-remittance')
 export class MonthlyRemittanceController {
@@ -8,12 +10,18 @@ export class MonthlyRemittanceController {
   @HttpCode(HttpStatus.OK)
   @Post('create')
   createNewInsuranceRemittanceRecord(
-    @Body() createMonthlyRemittance: Record<string, any>,
+    @Body() createMonthlyRemittance: CreateMonthlyRemittanceDto,
   ) {
-    //FIXME: Create and Update DTO to accurately match whatevers the input from the mobile app.
     return this.monthlyRemittanceService.calculateRemittanceAmount(
       createMonthlyRemittance.planholderData,
       createMonthlyRemittance.userId,
     );
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('update')
+  updateInsuranceRemittanceRecord(
+    @Query() userId: UUID,
+    @Body() updateMonthlyRemittanceDto: CreateMonthlyRemittanceDto,
+  ) {}
 }

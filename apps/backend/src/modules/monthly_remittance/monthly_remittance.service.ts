@@ -29,5 +29,7 @@ export class MonthlyRemittanceService {
   /**
    * Calculate the total remittance needed based on the percentage set by the insurance company to an agent.
    */
-  async calculateRemittanceAmount(planholders: JSON, userId: string) {}
+  async calculateRemittanceAmount(planholders: JSON, userId: string) {
+    
+  }
 }
