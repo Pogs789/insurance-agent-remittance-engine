@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_model.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
+import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_request_model.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
 
 abstract class MonthlyRemittanceRemoteDataSource {
-  Future<MonthlyRemittanceModel> getAllCalculatedRemittanceHistory(String userId);
-  Future<double> calculateRemittanceAmount(MonthlyRemittanceModel monthlyRemittance, String userId);
+  Future<MonthlyRemittanceRequestModel> getAllCalculatedRemittanceHistory(String userId);
+  Future<double> calculateRemittanceAmount(MonthlyRemittanceRequestModel monthlyRemittance, String userId);
 }
 
 class MonthlyRemittanceRemoteDataSourceImpl implements MonthlyRemittanceRemoteDataSource {
@@ -14,13 +16,15 @@ class MonthlyRemittanceRemoteDataSourceImpl implements MonthlyRemittanceRemoteDa
   final Dio dio;
 
   @override
-  Future<double> calculateRemittanceAmount(MonthlyRemittanceModel monthlyRemittance, String userId) {
+  Future<double> calculateRemittanceAmount(MonthlyRemittanceRequestModel monthlyRemittance, String userId) async{
     // TODO: implement calculateRemittanceAmount
+    await dio.post(ApiEndpoints.calculateMonthlyRemittance, data: {
+    });
     throw UnimplementedError();
   }
 
   @override
-  Future<MonthlyRemittanceModel> getAllCalculatedRemittanceHistory(String userId) {
+  Future<MonthlyRemittanceRequestModel> getAllCalculatedRemittanceHistory(String userId) async{
     // TODO: implement getAllCalculatedRemittanceHistory
     throw UnimplementedError();
   }

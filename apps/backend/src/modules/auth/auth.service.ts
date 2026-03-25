@@ -11,7 +11,9 @@ export class AuthService {
   ) {}
 
   async agentRegister(
-    agentName: string,
+    firstName: string,
+    middleName: string,
+    lastName: string,
     insuranceCompany: string,
     birthDate: Date,
     branchAddress: string,
@@ -20,6 +22,19 @@ export class AuthService {
     password: string,
   ) {
     //TODO: Implement User Registration with email verification.
+    return await this.prisma.user.create({
+      data: {
+        firstName: firstName,
+        middleName: middleName,
+        lastName: lastName,
+        insuranceCompany: insuranceCompany,
+        branchAddress: branchAddress,
+        birthDate: birthDate,
+        commissionRate: commissionRate,
+        email: email,
+        passwordHash: password,
+      },
+    });
   }
 
   async signIn(email: string, pass: string): Promise<any> {

@@ -1,13 +1,15 @@
 import 'dart:convert';
 
-import 'package:life_insurance_monitoring_mobile/data/models/planholder_data_model.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dart';
 
-class MonthlyRemittanceModel {
+import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
+
+class MonthlyRemittanceRequestModel {
   final double commissionRate;
   final double amountRemitted; // calculated by backend
   final List<PlanholderData> planholderData;
 
-  MonthlyRemittanceModel({
+  MonthlyRemittanceRequestModel({
     required this.commissionRate,
     this.amountRemitted = 0.0,
     required this.planholderData,
@@ -21,13 +23,21 @@ class MonthlyRemittanceModel {
     };
   }
 
-  factory MonthlyRemittanceModel.fromJson(Map<String, dynamic> json) {
-    return MonthlyRemittanceModel(
+  factory MonthlyRemittanceRequestModel.fromJson(Map<String, dynamic> json) {
+    return MonthlyRemittanceRequestModel(
       commissionRate: (json['commissionRate'] as num).toDouble(),
       amountRemitted: (json['amountRemitted'] as num).toDouble(),
       planholderData: (json['planholderData'] as List)
           .map((item) => PlanholderData.fromJson(item as Map<String, dynamic>))
           .toList(),
+    );
+  }
+
+  factory MonthlyRemittanceRequestModel.fromEntity(MonthlyRemittance e) {
+    return MonthlyRemittanceRequestModel(
+      commissionRate: e.commissionRate,
+      amountRemitted: e.amountRemitted,
+      planholderData: e.planholderData
     );
   }
 

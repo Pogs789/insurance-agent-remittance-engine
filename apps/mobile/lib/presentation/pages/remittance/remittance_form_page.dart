@@ -1,5 +1,8 @@
-import 'package:life_insurance_monitoring_mobile/data/models/planholder_data_model.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dart';
+
+import '../../providers/monthly_remittance/monthly_remittance_provider.dart';
 
 class RemittanceFormPage extends StatefulWidget {
   const RemittanceFormPage({super.key});
@@ -38,14 +41,22 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
+      final provider = context.read<MonthlyRemittanceProvider>();
       _formKey.currentState!.save();
+
+      await provider.submit(
+        MonthlyRemittance(
+          commissionRate: 
+        ),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Form submitted!')),
       );
     }
   }
 
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Monthly Remittance Form'),
