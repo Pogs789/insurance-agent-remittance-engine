@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -148,6 +149,16 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
+                  ),
+                  SizedBox(height: 8),
+                  TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegistrationPage())
+                      ),
+                      child: Text(
+                        'New Agent? Register now!'
+                      ),
                   ),
                 ],
               ),

@@ -8,16 +8,17 @@ datasource db {
 
 model User {
   id                         String                     @id @default(uuid())
-  lastName                   String
-  firstName                  String
-  middleName                 String
-  birthDate                  DateTime
-  insuranceCompany           String
   email                      String                     @unique
   passwordHash               String                     @unique
-  role                       Role                       @default(AGENT)
   createdAt                  DateTime                   @default(now())
   updatedAt                  DateTime                   @updatedAt
+  role                       Role                       @default(AGENT)
+  birthDate                  DateTime
+  firstName                  String
+  insuranceCompany           String
+  lastName                   String
+  middleName                 String
+  commissionRate             Float
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   refreshTokens              RefreshToken[]
 }
@@ -39,12 +40,11 @@ model MonthlyRemittanceHistory {
   id               String           @id @default(uuid())
   userId           String
   amountRemitted   Float
-  commissionRate   Float
   planholderData   Json
-  isRemitted       Boolean          @default(false)
-  remittanceStatus RemittanceStatus @default(PENDING)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime?        @updatedAt
+  isRemitted       Boolean          @default(false)
+  remittanceStatus RemittanceStatus @default(PENDING)
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
