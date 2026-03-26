@@ -1,3 +1,4 @@
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/monthly_remittance_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_request_model.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
@@ -10,6 +11,7 @@ class MonthlyRemittanceRepositoryImpl implements MonthlyRemittanceRepository {
   @override
   Future<void> submitMonthlyRemittance(MonthlyRemittance remittance) async {
     final req = MonthlyRemittanceRequestModel.fromEntity(remittance);
+    final String userId = AuthLocalDataSourceImpl().getUserId().toString();
     await remote.calculateRemittanceAmount(req, userId);
   }
 }

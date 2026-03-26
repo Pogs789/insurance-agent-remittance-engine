@@ -14,7 +14,7 @@ export class MonthlyRemittanceController {
   constructor(private monthlyRemittanceService: MonthlyRemittanceService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post('create')
+  @Post('calculate')
   createNewInsuranceRemittanceRecord(
     @Body() createMonthlyRemittance: CreateMonthlyRemittanceDto,
   ) {
@@ -26,13 +26,13 @@ export class MonthlyRemittanceController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('get-remittance-history')
+  @Post('get-history')
   getAllRemittanceRecords(@Query('userId') userId: string) {
     return this.monthlyRemittanceService.getAllRemittanceHistory(userId);
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('update')
+  @Post('update-calculation')
   updateInsuranceRemittanceRecord(
     @Body() updateMonthlyRemittance: CreateMonthlyRemittanceDto,
   ) {

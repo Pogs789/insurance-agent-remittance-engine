@@ -12,7 +12,8 @@ export class MonthlyRemittanceService {
   async calculateRemittanceAmount(
     planholders: PlanholderDataDto[],
     userId: string,
-  ) {
+  ): Promise<number> {
+    //TODO: Revise the whole logic where the insurance agent does not need to log in in order to access this tool.
     const insuranceAgent = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -29,6 +30,7 @@ export class MonthlyRemittanceService {
     const amountRemitted =
       totalPaymentPeriodAmount * ((100 - insuranceAgent.commissionRate) * 0.01);
 
+      //TODO: Wrap this in a condition where the insurance agent can dave their data.
     const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
       planholderName: p.planholderName,
       insuranceProduct: p.insuranceProduct,
