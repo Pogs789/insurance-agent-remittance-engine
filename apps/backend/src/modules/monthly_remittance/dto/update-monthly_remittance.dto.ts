@@ -1,12 +1,13 @@
-import { IsArray, IsString, IsUUID, ValidateNested } from 'class-validator';
-import type { UUID } from 'crypto';
+import { IsArray, IsString, ValidateNested } from 'class-validator';
 import { PlanholderDataDto } from './planholder_data.dto';
 import { Type } from 'class-transformer';
 
 export class UpdateMonthlyRemittanceDto {
   @IsString()
-  @IsUUID()
-  userId!: UUID;
+  userId!: string;
+
+  @IsString()
+  id!: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { MonthlyRemittanceService } from './monthly_remittance.service';
 import { CreateMonthlyRemittanceDto } from './dto/create-monthly_remittance.dto';
+import { UpdateMonthlyRemittanceDto } from './dto/update-monthly_remittance.dto';
 
 @Controller('monthly-remittance')
 export class MonthlyRemittanceController {
@@ -32,6 +33,7 @@ export class MonthlyRemittanceController {
     );
   }
 
+  //TODO: This route must be protected.
   @HttpCode(HttpStatus.OK)
   @Post('get-history')
   getAllRemittanceRecords(@Query('userId') userId: string) {
@@ -42,13 +44,13 @@ export class MonthlyRemittanceController {
   @HttpCode(HttpStatus.OK)
   @Post('update-calculation')
   updateInsuranceRemittanceRecord(
-    @Body() updateMonthlyRemittance: CreateMonthlyRemittanceDto,
+    @Body() updateMonthlyRemittance: UpdateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData, commissionRate } = updateMonthlyRemittance;
-    return this.monthlyRemittanceService.calculateRemittanceAmount(
+    const { userId, planholderData, id } = updateMonthlyRemittance;
+    return this.monthlyRemittanceService.updateRemittanceAmount(
       planholderData,
-      commissionRate,
       userId,
+      id,
     );
   }
 }

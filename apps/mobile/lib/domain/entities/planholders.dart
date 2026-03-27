@@ -1,14 +1,14 @@
 enum PlanholderStatus {
-  active,
-  inactive,
-  pastDue
+  ACTIVE,
+  INACTIVE,
+  PASTDUE
 }
 
 enum PaymentPeriod {
-  monthly,
-  quarterly,
-  semiAnnually,
-  annually,
+  MONTHLY,
+  QUARTERLY,
+  SEMIANNUALLY,
+  ANNUALLY,
 }
 
 class PlanholderData {

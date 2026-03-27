@@ -13,21 +13,22 @@ export class MonthlyRemittanceService {
     planholders: PlanholderDataDto[],
     commissionRate: number,
     userId?: string,
-  ): Promise<number> {
+  ): Promise<any> {
+    let amountToBeRemitted: number = 0.0;
     const totalPaymentPeriodAmount = planholders.reduce(
       (sum, p) => sum + p.paymentPeriodAmount,
       0,
     );
 
-    const amountToBeRemitted =
+    amountToBeRemitted =
       totalPaymentPeriodAmount * ((100 - commissionRate) * 0.01);
 
-    if (!userId) return amountToBeRemitted;
+    if (!userId) return { amountToBeRemitted: amountToBeRemitted };
     const insuranceAgent = await this.prisma.user.findFirst({
       where: { id: userId },
     });
 
-    if (!insuranceAgent) return amountToBeRemitted;
+    if (!insuranceAgent) return { amountToBeRemitted: amountToBeRemitted };
 
     const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
       planholderName: p.planholderName,
@@ -46,7 +47,7 @@ export class MonthlyRemittanceService {
       },
     });
 
-    return amountToBeRemitted;
+    return { amountToBeRemitted: amountToBeRemitted };
   }
 
   /**

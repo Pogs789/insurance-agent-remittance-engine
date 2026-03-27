@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
+import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_request_model.dart';
+import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_response_model.dart';
 
 abstract class MonthlyRemittanceRemoteDataSource {
-  Future<MonthlyRemittanceRequestModel> getAllCalculatedRemittanceHistory(String userId);
-  Future<double> calculateRemittanceAmount(MonthlyRemittanceRequestModel monthlyRemittance, String userId);
+  Future<RemittanceCalculationRequestModel> getAllCalculatedRemittanceHistory(String userId);
+  Future<RemittanceCalculationResponseModel> calculateRemittanceAmount(RemittanceCalculationRequestModel monthlyRemittance, String? userId);
 }
 
 class MonthlyRemittanceRemoteDataSourceImpl implements MonthlyRemittanceRemoteDataSource {
@@ -15,28 +18,32 @@ class MonthlyRemittanceRemoteDataSourceImpl implements MonthlyRemittanceRemoteDa
   final Dio dio;
 
   @override
-  Future<double> calculateRemittanceAmount(MonthlyRemittanceRequestModel monthlyRemittance, String userId) async{
-    // TODO: this function must be rewritten to return either the result, or an error.
+  Future<RemittanceCalculationResponseModel> calculateRemittanceAmount(RemittanceCalculationRequestModel monthlyRemittance, String? userId) async{
+    final payload = <String, dynamic>{
+      ...monthlyRemittance.toJson(),
+      'userId': userId
+    };
     try{
-      final result = await dio.post(ApiEndpoints.calculateMonthlyRemittance, data: {
-      });
+      final result = await dio.post(
+        ApiEndpoints.calculateMonthlyRemittance,
+        data: payload,
+        options: Options(
+          contentType: Headers.jsonContentType
+        )
+      );
 
       if(result.statusCode == 200) {
-        final stringData = await result.data;
-
-        return stringData['amountRemitted'].toDouble();
-      }else{
-        return 0;
+        return RemittanceCalculationResponseModel.fromJson(result.data as Map<String, dynamic>);
       }
-    } on DioException catch (e, stackTrace) {
-      throw Exception('An Error occured while sending this request: $e. Stack Trace: \n\n $stackTrace');
-    } finally {
-      dio.close();
+
+      throw Exception('An Error Occurred While Sending the Request: \n\n Status Code: ${result.statusCode} \n\n Error Message: ${result.statusMessage}');
+    } on DioException catch (e) {
+      throw mapToAppException(e);
     }
   }
 
   @override
-  Future<MonthlyRemittanceRequestModel> getAllCalculatedRemittanceHistory(String userId) async{
+  Future<RemittanceCalculationRequestModel> getAllCalculatedRemittanceHistory(String userId) async{
     // TODO: implement getAllCalculatedRemittanceHistory
     throw UnimplementedError();
   }

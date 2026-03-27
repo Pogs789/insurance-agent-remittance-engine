@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
-import '../../../domain/entities/monthly_remittance.dart';
-import '../../../domain/usecases/monthly_remittance/sumbit_monthly_remittance_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/submit_monthly_remittance_usecase.dart';
 
 class MonthlyRemittanceProvider extends ChangeNotifier {
-  final SubmitMonthlyRemittanceUseCase submitUseCase;
-  MonthlyRemittanceProvider(this.submitUseCase);
+  MonthlyRemittanceProvider(this._submitUseCase);
+  final SubmitMonthlyRemittanceUseCase _submitUseCase;
 
   bool isLoading = false;
   String? errorMessage;
   bool isSuccess = false;
+  double amountToBeRemitted = 0.0;
 
   Future<void> submit(MonthlyRemittance remittance) async {
     isLoading = true;
@@ -17,10 +18,14 @@ class MonthlyRemittanceProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await submitUseCase(remittance);
+      debugPrint('Hi from MonthlyRemittanceProvider');
+      debugPrint('useCase runtimeType: ${_submitUseCase.runtimeType}');
+      final result = await _submitUseCase(remittance);
+      amountToBeRemitted = result.amountToBeRemitted;
       isSuccess = true;
     } catch (e) {
-      errorMessage = e.toString();
+      debugPrint(e.toString());
+      errorMessage = "An Error Occured while Processing this request. Please Try again later.";
     } finally {
       isLoading = false;
       notifyListeners();

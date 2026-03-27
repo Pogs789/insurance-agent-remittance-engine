@@ -64,7 +64,7 @@ describe('MonthlyRemittanceService', () => {
     );
 
     // 3000 * (100 - 20)% = 2400
-    expect(result).toBe(2100);
+    expect(result).toStrictEqual({ amountToBeRemitted: 2100 });
 
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
       where: { id: 'user-1' },

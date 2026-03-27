@@ -4,12 +4,12 @@ import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dar
 
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
 
-class MonthlyRemittanceRequestModel {
+class RemittanceCalculationRequestModel {
   final double commissionRate;
   final double amountRemitted; // calculated by backend
   final List<PlanholderData> planholderData;
 
-  MonthlyRemittanceRequestModel({
+  RemittanceCalculationRequestModel({
     required this.commissionRate,
     this.amountRemitted = 0.0,
     required this.planholderData,
@@ -18,13 +18,12 @@ class MonthlyRemittanceRequestModel {
   Map<String, dynamic> toJson() {
     return {
       'commissionRate': commissionRate,
-      'amountRemitted': amountRemitted,
       'planholderData': planholderData.map((p) => p.toJson()).toList(),
     };
   }
 
-  factory MonthlyRemittanceRequestModel.fromJson(Map<String, dynamic> json) {
-    return MonthlyRemittanceRequestModel(
+  factory RemittanceCalculationRequestModel.fromJson(Map<String, dynamic> json) {
+    return RemittanceCalculationRequestModel(
       commissionRate: (json['commissionRate'] as num).toDouble(),
       amountRemitted: (json['amountRemitted'] as num).toDouble(),
       planholderData: (json['planholderData'] as List)
@@ -33,8 +32,8 @@ class MonthlyRemittanceRequestModel {
     );
   }
 
-  factory MonthlyRemittanceRequestModel.fromEntity(MonthlyRemittance e) {
-    return MonthlyRemittanceRequestModel(
+  factory RemittanceCalculationRequestModel.fromEntity(MonthlyRemittance e) {
+    return RemittanceCalculationRequestModel(
       commissionRate: e.commissionRate,
       amountRemitted: e.amountRemitted,
       planholderData: e.planholderData
