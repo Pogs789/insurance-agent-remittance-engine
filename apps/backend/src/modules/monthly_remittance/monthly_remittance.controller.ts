@@ -8,38 +8,49 @@ import {
 } from '@nestjs/common';
 import { MonthlyRemittanceService } from './monthly_remittance.service';
 import { CreateMonthlyRemittanceDto } from './dto/create-monthly_remittance.dto';
+import { UpdateMonthlyRemittanceDto } from './dto/update-monthly_remittance.dto';
 
 @Controller('monthly-remittance')
 export class MonthlyRemittanceController {
   constructor(private monthlyRemittanceService: MonthlyRemittanceService) {}
 
+  /**
+   * This is a public API which any insurance agent can calculate their total remittance needed based on their commission rate set by the insurance company.
+   * @param createMonthlyRemittanceDto
+   * @returns remittanceAmount
+   */
   @HttpCode(HttpStatus.OK)
-  @Post('create')
+  @Post('calculate')
   createNewInsuranceRemittanceRecord(
-    @Body() createMonthlyRemittance: CreateMonthlyRemittanceDto,
+    @Body() createMonthlyRemittanceDto: CreateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData } = createMonthlyRemittance;
+    const { userId, planholderData, commissionRate } =
+      createMonthlyRemittanceDto;
     return this.monthlyRemittanceService.calculateRemittanceAmount(
       planholderData,
+      commissionRate,
       userId,
     );
   }
 
+  //TODO: This route must be protected.
   @HttpCode(HttpStatus.OK)
-  @Post('get-remittance-history')
+  @Post('get-history')
   getAllRemittanceRecords(@Query('userId') userId: string) {
     return this.monthlyRemittanceService.getAllRemittanceHistory(userId);
   }
 
+  //TODO: This route must be protected.
   @HttpCode(HttpStatus.OK)
-  @Post('update')
+  @Post('update-calculation')
   updateInsuranceRemittanceRecord(
-    @Body() updateMonthlyRemittance: CreateMonthlyRemittanceDto,
+    @Body() updateMonthlyRemittance: UpdateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData } = updateMonthlyRemittance;
-    return this.monthlyRemittanceService.calculateRemittanceAmount(
+    const { userId, planholderData, id } = updateMonthlyRemittance;
+    return this.monthlyRemittanceService.updateRemittanceAmount(
       planholderData,
       userId,
+      id,
     );
   }
 }

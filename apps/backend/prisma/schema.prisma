@@ -19,6 +19,7 @@ model User {
   lastName                   String
   middleName                 String
   commissionRate             Float
+  branchAddress              String
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   refreshTokens              RefreshToken[]
 }

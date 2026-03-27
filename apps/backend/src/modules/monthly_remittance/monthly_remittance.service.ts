@@ -11,23 +11,24 @@ export class MonthlyRemittanceService {
    */
   async calculateRemittanceAmount(
     planholders: PlanholderDataDto[],
-    userId: string,
-  ) {
-    const insuranceAgent = await this.prisma.user.findFirst({
-      where: { id: userId },
-    });
-
-    if (!insuranceAgent) {
-      throw new NotFoundException('Insurance Agent Not Found.');
-    }
-
+    commissionRate: number,
+    userId?: string,
+  ): Promise<any> {
+    let amountToBeRemitted: number = 0.0;
     const totalPaymentPeriodAmount = planholders.reduce(
       (sum, p) => sum + p.paymentPeriodAmount,
       0,
     );
 
-    const amountRemitted =
-      totalPaymentPeriodAmount * ((100 - insuranceAgent.commissionRate) * 0.01);
+    amountToBeRemitted =
+      totalPaymentPeriodAmount * ((100 - commissionRate) * 0.01);
+
+    if (!userId) return { amountToBeRemitted: amountToBeRemitted };
+    const insuranceAgent = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!insuranceAgent) return { amountToBeRemitted: amountToBeRemitted };
 
     const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
       planholderName: p.planholderName,
@@ -41,12 +42,12 @@ export class MonthlyRemittanceService {
     await this.prisma.monthlyRemittanceHistory.create({
       data: {
         userId: userId,
-        amountRemitted: amountRemitted,
+        amountRemitted: amountToBeRemitted,
         planholderData: planholderDataForDb,
       },
     });
 
-    return amountRemitted;
+    return { amountToBeRemitted: amountToBeRemitted };
   }
 
   /**
