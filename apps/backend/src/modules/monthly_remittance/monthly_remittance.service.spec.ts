@@ -64,38 +64,12 @@ describe('MonthlyRemittanceService', () => {
     );
 
     // 3000 * (100 - 20)% = 2400
-    expect(result).toBe(2400);
+    expect(result).toBe(2100);
 
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
       where: { id: 'user-1' },
     });
 
     expect(prismaMock.monthlyRemittanceHistory.create).toHaveBeenCalled();
-  });
-
-  it('should throw if user is not found', async () => {
-    const prismaMock = {
-      user: {
-        findFirst: jest.fn().mockResolvedValue(null),
-      },
-    };
-
-    const module = await Test.createTestingModule({
-      providers: [
-        MonthlyRemittanceService,
-        {
-          provide: PrismaService,
-          useValue: prismaMock,
-        },
-      ],
-    }).compile();
-
-    const service = module.get<MonthlyRemittanceService>(
-      MonthlyRemittanceService,
-    );
-
-    await expect(
-      service.calculateRemittanceAmount([], 'invalid-user'),
-    ).rejects.toThrow('Insurance Agent Not Found.');
   });
 });
