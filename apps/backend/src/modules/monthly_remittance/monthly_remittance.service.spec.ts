@@ -59,6 +59,7 @@ describe('MonthlyRemittanceService', () => {
 
     const result = await service.calculateRemittanceAmount(
       planholders as any,
+      30,
       'user-1',
     );
 

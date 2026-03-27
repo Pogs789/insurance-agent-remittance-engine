@@ -1,6 +1,13 @@
+import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/remote/monthly_remittance_remote_datasource.dart';
+import 'package:life_insurance_monitoring_mobile/data/repositories/monthly_remittance_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dart';
+import 'package:life_insurance_monitoring_mobile/domain/repositories/monthly_remittance_repository.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/sumbit_monthly_remittance_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:provider/provider.dart';
 import '../../providers/monthly_remittance/monthly_remittance_provider.dart';
 
@@ -12,8 +19,19 @@ class RemittanceFormPage extends StatefulWidget {
 
 class _RemittanceFormPageState extends State<RemittanceFormPage> {
   final _formKey = GlobalKey<FormState>();
-  double _amountRemitted =0.0;
+  double _amountRemitted = 0.0;
   final List<PlanholderData> _planholders = <PlanholderData>[];
+  late final SubmitMonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
+  late final MonthlyRemittanceRepository repository;
+  late final MonthlyRemittanceRemoteDataSource remote;
+
+  @override
+  void initState() {
+    super.initState();
+    remote = MonthlyRemittanceRemoteDataSourceImpl(dio: Dio());
+    repository = MonthlyRemittanceRepositoryImpl(remote);
+    submitMonthlyRemittanceUseCase = SubmitMonthlyRemittanceUseCase(repository);
+  }
 
   PlanholderData _createEmptyPlanholder() {
     return PlanholderData(
@@ -41,8 +59,9 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final provider = context.read<MonthlyRemittanceProvider>();
       _formKey.currentState!.save();
+
+      final provider = context.read<MonthlyRemittanceProvider>();
 
       await provider.submit(
         MonthlyRemittance(
@@ -58,108 +77,159 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Monthly Remittance Form'),
-      ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(
-                  child: Text(
-                    'Your Commission Rate (%):40%',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize:18,
-                    ),
-                  ),
-                ),
-                const SizedBox(height:24),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Planholders',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize:16,
+    return ChangeNotifierProvider(
+        create: (_) => MonthlyRemittanceProvider(submitMonthlyRemittanceUseCase),
+      child: Builder(
+        builder: (context) {
+          final provider = context.watch<MonthlyRemittanceProvider>();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Monthly Remittance Calculator'),
+                  Row(
+                    spacing: 10.0,
+                    children: [
+                      Text(
+                          'Want to view your remittance history? You can register to view it.',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400
+                          )
                       ),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _addRow,
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Row'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height:12),
-                if (_planholders.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        'No planholders yet. Tap Add Row to begin.',
-                        style: TextStyle(color: Colors.grey),
+                      IconButton(
+                        onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegistrationPage())
+                        ),
+                        icon: Icon(
+                            Icons.app_registration
+                        ),
                       ),
-                    ),
-                  ),
-                if (_planholders.isNotEmpty)
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _planholders.length,
-                    separatorBuilder: (_, __) => const SizedBox(height:8),
-                    itemBuilder: (context, index) {
-                      return _PlanholderRow(
-                        index: index,
-                        data: _planholders[index],
-                        onRemove: () => _removeRow(index),
-                      );
-                    },
-                  ),
-                const SizedBox(height:24),
-                const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Total Amount Remitted:',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize:16,
-                      ),
-                    ),
-                    Text(
-                      '₱ ${_amountRemitted.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize:16,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height:24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical:16),
-                    ),
-                    child: const Text('Submit Remittance'),
-                  ),
-                ),
-              ],
+
+                      IconButton(
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage())
+                          ),
+                          icon: Icon(
+                              Icons.login
+                          )
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
+            body: SafeArea(
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Center(
+                          child: Row(
+                              children: [
+                                Text(
+                                  'Your Commission Rate (%): ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:18,
+                                  ),
+                                ),
+
+                              ]
+                          )
+                      ),
+                      const SizedBox(height:24),
+                      const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Planholders',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:16,
+                            ),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: _addRow,
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add Planholder'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height:12),
+                      ///This section of code is for an insurance agent to input necessary data related to their own insurance company.
+                      if (_planholders.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              'No planholders yet. Tap \'Add Planholder\' to begin.',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      if (_planholders.isNotEmpty)
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: _planholders.length,
+                          separatorBuilder: (_, __) => const SizedBox(height:8),
+                          itemBuilder: (context, index) {
+                            return _PlanholderRow(
+                              index: index,
+                              data: _planholders[index],
+                              onRemove: () => _removeRow(index),
+                            );
+                          },
+                        ),
+                      const SizedBox(height:24),
+                      const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Total Amount to be Remitted:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:16,
+                            ),
+                          ),
+                          Text(
+                            '₱ ${_amountRemitted.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize:16,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height:24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _submitForm,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical:16),
+                          ),
+                          child: const Text('Calculate Total Remittance'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      )
     );
   }
 }
@@ -175,7 +245,8 @@ class _PlanholderRow extends StatelessWidget {
     required this.onRemove,
   });
 
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical:4),
       child: Padding(

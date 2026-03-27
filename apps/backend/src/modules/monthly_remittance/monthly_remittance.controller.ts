@@ -13,14 +13,21 @@ import { CreateMonthlyRemittanceDto } from './dto/create-monthly_remittance.dto'
 export class MonthlyRemittanceController {
   constructor(private monthlyRemittanceService: MonthlyRemittanceService) {}
 
+  /**
+   * This is a public API which any insurance agent can calculate their total remittance needed based on their commission rate set by the insurance company.
+   * @param createMonthlyRemittanceDto
+   * @returns remittanceAmount
+   */
   @HttpCode(HttpStatus.OK)
   @Post('calculate')
   createNewInsuranceRemittanceRecord(
-    @Body() createMonthlyRemittance: CreateMonthlyRemittanceDto,
+    @Body() createMonthlyRemittanceDto: CreateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData } = createMonthlyRemittance;
+    const { userId, planholderData, commissionRate } =
+      createMonthlyRemittanceDto;
     return this.monthlyRemittanceService.calculateRemittanceAmount(
       planholderData,
+      commissionRate,
       userId,
     );
   }
@@ -31,14 +38,16 @@ export class MonthlyRemittanceController {
     return this.monthlyRemittanceService.getAllRemittanceHistory(userId);
   }
 
+  //TODO: This route must be protected.
   @HttpCode(HttpStatus.OK)
   @Post('update-calculation')
   updateInsuranceRemittanceRecord(
     @Body() updateMonthlyRemittance: CreateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData } = updateMonthlyRemittance;
+    const { userId, planholderData, commissionRate } = updateMonthlyRemittance;
     return this.monthlyRemittanceService.calculateRemittanceAmount(
       planholderData,
+      commissionRate,
       userId,
     );
   }
