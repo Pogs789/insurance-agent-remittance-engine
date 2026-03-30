@@ -55,7 +55,6 @@ export class MonthlyRemittanceService {
     ]);
 
     return { amountToBeRemitted: amountToBeRemitted };
-    return { amountToBeRemitted: amountToBeRemitted };
   }
 
   /**
