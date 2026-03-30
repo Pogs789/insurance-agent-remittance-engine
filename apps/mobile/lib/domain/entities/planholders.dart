@@ -1,7 +1,31 @@
 enum PlanholderStatus {
   active,
   inactive,
-  pastDue
+  pastDue;
+
+  String get apiValue {
+    switch (this) {
+      case PlanholderStatus.active:
+        return 'Active';
+      case PlanholderStatus.inactive:
+        return 'Inactive';
+      case PlanholderStatus.pastDue:
+        return 'PastDue';
+    }
+  }
+
+  static PlanholderStatus fromApi(String value) {
+    switch (value) {
+      case 'Active':
+        return PlanholderStatus.active;
+      case 'Inactive':
+        return PlanholderStatus.inactive;
+      case 'Past Due':
+        return PlanholderStatus.pastDue;
+      default:
+        throw ArgumentError('Invalid PlanholderStatus: $value');
+    }
+  }
 }
 
 enum PaymentPeriod {
@@ -9,7 +33,39 @@ enum PaymentPeriod {
   quarterly,
   semiannually,
   annually,
-  spotOn
+  spotOn;
+
+  String get apiValue {
+    switch (this) {
+      case PaymentPeriod.monthly:
+        return 'Monthly';
+      case PaymentPeriod.quarterly:
+        return 'Quarterly';
+      case PaymentPeriod.semiannually:
+        return 'Semi-Annually';
+      case PaymentPeriod.annually:
+        return 'Annually';
+      case PaymentPeriod.spotOn:
+        return 'Spot-On';
+    }
+  }
+
+  static PaymentPeriod fromApi(String value) {
+    switch (value) {
+      case 'Monthly':
+        return PaymentPeriod.monthly;
+      case 'Quarterly':
+        return PaymentPeriod.quarterly;
+      case 'SemiAnnually':
+        return PaymentPeriod.semiannually;
+      case 'Annually':
+        return PaymentPeriod.annually;
+      case 'SpotOn':
+        return PaymentPeriod.spotOn;
+      default:
+        throw ArgumentError('Invalid PaymentPeriod: $value');
+    }
+  }
 }
 
 class PlanholderData {
@@ -34,9 +90,9 @@ class PlanholderData {
       'planholderName': planholderName,
       'insuranceProduct': insuranceProduct,
       'insuranceAmount': insuranceAmount,
-      'paymentPeriod': paymentPeriod.name.toUpperCase(),
+      'paymentPeriod': paymentPeriod.apiValue,
       'paymentPeriodAmount': paymentPeriodAmount,
-      'planholderStatus': planholderStatus.name.toUpperCase(),
+      'planholderStatus': planholderStatus.apiValue,
     };
   }
 
