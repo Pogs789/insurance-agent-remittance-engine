@@ -2,12 +2,12 @@ name: Backend CI
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [master, development]
     paths:
-      - 'apps/backend/**'
-      - 'packages/shared/**'
+      - './apps/backend/**'
+      - './packages/shared/**'
   push:
-    branches: [main, develop]
+    branches: [master, development]
 
 jobs:
   test:
