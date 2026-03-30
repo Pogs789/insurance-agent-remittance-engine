@@ -1,7 +1,7 @@
 enum PlanholderStatus {
-  active,
-  inactive,
-  pastDue
+  ACTIVE,
+  INACTIVE,
+  PASTDUE
 }
 
 enum PaymentPeriod {
