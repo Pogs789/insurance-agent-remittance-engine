@@ -37,8 +37,8 @@ class MonthlyRemittanceRemoteDataSourceImpl implements MonthlyRemittanceRemoteDa
       }
 
       throw Exception('An Error Occurred While Sending the Request: \n\n Status Code: ${result.statusCode} \n\n Error Message: ${result.statusMessage}');
-    } on DioException catch (e) {
-      throw mapToAppException(e);
+    }catch (e, stackTrace) {
+      throw Exception('An Error occurred: $e. \n\n Stack Trace: $stackTrace');
     }
   }
 

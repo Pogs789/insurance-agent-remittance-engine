@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
+import 'core/constants/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,10 +14,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'RemittanceCalculator',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      title: AppConstants.appName,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       home: const MyHomePage(title: 'RemittanceCalculator'),
     );
   }

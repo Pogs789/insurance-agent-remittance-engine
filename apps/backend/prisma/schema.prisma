@@ -25,6 +25,8 @@ model User {
   userFeedback UserFeedback[]
 }
 
+//TODO: Add here Insuranceagent model once the tool has many insurance agents using it.
+
 model RefreshToken {
   id           String    @id @default(uuid())
   userId       String

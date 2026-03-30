@@ -13,9 +13,7 @@ import { Type } from 'class-transformer';
 
 export class CreateMonthlyRemittanceDto {
   @IsOptional()
-  @IsOptional()
   @IsString()
-  userId?: string;
   userId?: string;
 
   @IsArray()

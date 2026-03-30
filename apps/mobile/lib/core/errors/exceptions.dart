@@ -65,7 +65,7 @@ final class UnknownException extends AppException {
   );
 }
 
-AppException mapToAppException(Object error) {
+AppException mapToAppException(Object error, StackTrace stackTrace) {
   if (error is AppException) return error;
 
   if(error is DioException) {
