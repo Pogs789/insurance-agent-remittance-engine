@@ -4,7 +4,7 @@ class ApiEndpoints {
   // or http://localhost:3000/api (iOS simulator / desktop).
   static const String _url = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:3000/api',
+    defaultValue: 'http://https://insurance-agent-remittance-engine-b.vercel.app/api',
   );
 
   static const String loginApi = '$_url/auth/login';
