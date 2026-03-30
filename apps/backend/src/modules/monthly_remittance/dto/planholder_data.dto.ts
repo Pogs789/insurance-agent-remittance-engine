@@ -1,4 +1,4 @@
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export enum PlanholderStatus {
   ACTIVE = 'ACTIVE',
@@ -18,12 +18,15 @@ export class PlanholderDataDto {
   @IsString()
   planholderName!: string;
 
+  @IsOptional()
   @IsString()
   insuranceProduct!: string;
 
+  @IsOptional()
   @IsNumber()
   insuranceAmount!: number;
 
+  @IsOptional()
   @IsEnum(PaymentPeriod)
   paymentPeriod!: PaymentPeriod;
 

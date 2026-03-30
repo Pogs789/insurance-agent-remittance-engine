@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/monthly_remittance_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/monthly_remittance_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
@@ -24,6 +25,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   late final SubmitMonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
   late final MonthlyRemittanceRepository repository;
   late final MonthlyRemittanceRemoteDataSource remote;
+  late final AuthLocalDataSource auth;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
     remote = MonthlyRemittanceRemoteDataSourceImpl(dio: Dio());
     repository = MonthlyRemittanceRepositoryImpl(remote);
     submitMonthlyRemittanceUseCase = SubmitMonthlyRemittanceUseCase(repository);
+    auth = AuthLocalDataSourceImpl();
   }
 
   PlanholderData _createEmptyPlanholder() {
@@ -38,9 +41,9 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
       planholderName: '',
       insuranceProduct: '',
       insuranceAmount:0.0,
-      paymentPeriod: PaymentPeriod.MONTHLY,
+      paymentPeriod: PaymentPeriod.monthly,
       paymentPeriodAmount:0.0,
-      planholderStatus: PlanholderStatus.ACTIVE,
+      planholderStatus: PlanholderStatus.active,
     );
   }
 
@@ -264,7 +267,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   }
 }
 
-class _PlanholderRow extends StatelessWidget {
+class _PlanholderRow extends StatefulWidget {
   final int index;
   final PlanholderData data;
   final VoidCallback onRemove;
@@ -274,6 +277,29 @@ class _PlanholderRow extends StatelessWidget {
     required this.data,
     required this.onRemove,
   });
+
+  @override
+  State<_PlanholderRow> createState() => _PlanholderRowState();
+}
+
+class _PlanholderRowState extends State<_PlanholderRow> {
+  late final AuthLocalDataSource auth;
+  bool _showInsuranceInput = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = AuthLocalDataSourceImpl();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final userId = await auth.isLoggedIn();
+    if(!mounted) return;
+    setState(() {
+      _showInsuranceInput = userId;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -288,51 +314,53 @@ class _PlanholderRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Planholder #${index +1}',
+                  'Planholder #${widget.index +1}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: onRemove,
+                  onPressed: widget.onRemove,
                 ),
               ],
             ),
             TextFormField(
-              initialValue: data.planholderName,
+              initialValue: widget.data.planholderName,
               decoration: const InputDecoration(
                 labelText: 'Planholder Name',
                 border: OutlineInputBorder(),
               ),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) => data.planholderName = v,
+              onChanged: (v) => widget.data.planholderName = v,
             ),
             const SizedBox(height:8),
-            TextFormField(
-              initialValue: data.insuranceProduct,
-              decoration: const InputDecoration(
-                labelText: 'Insurance Product',
-                border: OutlineInputBorder(),
+            if(_showInsuranceInput)...[
+              TextFormField(
+                initialValue: widget.data.insuranceProduct,
+                decoration: const InputDecoration(
+                  labelText: 'Insurance Product',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                onChanged: (v) => widget.data.insuranceProduct = v,
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) => data.insuranceProduct = v,
-            ),
-            const SizedBox(height:8),
-            TextFormField(
-              initialValue:
-              data.insuranceAmount >0 ? data.insuranceAmount.toString() : '',
-              decoration: const InputDecoration(
-                labelText: 'Insurance Amount (₱)',
-                border: OutlineInputBorder(),
+              const SizedBox(height:8),
+              TextFormField(
+                initialValue:
+                widget.data.insuranceAmount >0 ? widget.data.insuranceAmount.toString() : '',
+                decoration: const InputDecoration(
+                  labelText: 'Insurance Amount (₱)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                onChanged: (v) {
+                  widget.data.insuranceAmount = double.tryParse(v) ??0.0;
+                },
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) {
-                data.insuranceAmount = double.tryParse(v) ??0.0;
-              },
-            ),
-            const SizedBox(height:8),
+              const SizedBox(height:8),
+            ],
             DropdownButtonFormField<PaymentPeriod>(
-              value: data.paymentPeriod,
+              value: widget.data.paymentPeriod,
               decoration: const InputDecoration(
                 labelText: 'Payment Period',
                 border: OutlineInputBorder(),
@@ -340,30 +368,30 @@ class _PlanholderRow extends StatelessWidget {
               items: PaymentPeriod.values.map((e) {
                 return DropdownMenuItem<PaymentPeriod>(
                   value: e,
-                  child: Text(e.name),
+                  child: Text(e.name.toUpperCase()),
                 );
               }).toList(),
               onChanged: (v) {
-                data.paymentPeriod = v ?? PaymentPeriod.MONTHLY;
+                widget.data.paymentPeriod = v ?? PaymentPeriod.monthly;
               },
             ),
             const SizedBox(height:8),
             TextFormField(
-              initialValue: data.paymentPeriodAmount >0 ? data.paymentPeriodAmount.toString()
+              initialValue: widget.data.paymentPeriodAmount >0 ? widget.data.paymentPeriodAmount.toString()
                   : '',
               decoration: const InputDecoration(
-                labelText: 'Payment Period Amount (₱)',
+                labelText: 'Amount Due (₱)',
                 border: OutlineInputBorder(),
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
               onChanged: (v) {
-                data.paymentPeriodAmount = double.tryParse(v) ??0.0;
+                widget.data.paymentPeriodAmount = double.tryParse(v) ??0.0;
               },
             ),
             const SizedBox(height:8),
             DropdownButtonFormField<PlanholderStatus>(
-              value: data.planholderStatus,
+              value: widget.data.planholderStatus,
               decoration: const InputDecoration(
                 labelText: 'Planholder Status',
                 border: OutlineInputBorder(),
@@ -371,11 +399,11 @@ class _PlanholderRow extends StatelessWidget {
               items: PlanholderStatus.values.map((e) {
                 return DropdownMenuItem<PlanholderStatus>(
                   value: e,
-                  child: Text(e.name),
+                  child: Text(e.name.toUpperCase()),
                 );
               }).toList(),
               onChanged: (v) {
-                data.planholderStatus = v ?? PlanholderStatus.ACTIVE;
+                widget.data.planholderStatus = v ?? PlanholderStatus.active;
               },
             ),
           ],

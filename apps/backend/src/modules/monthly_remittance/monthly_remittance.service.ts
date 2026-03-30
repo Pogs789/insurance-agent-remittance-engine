@@ -2,10 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PlanholderDataDto } from './dto/planholder_data.dto';
 import { Prisma } from '@prisma/client';
+import { AppConstants } from '../../common/constants/app.constants';
+import { Decimal } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class MonthlyRemittanceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private appConstants: AppConstants,
+  ) {}
   /**
    * Calculate the total remittance needed based on the percentage set by the insurance company to an agent.
    */
@@ -13,15 +18,15 @@ export class MonthlyRemittanceService {
     planholders: PlanholderDataDto[],
     commissionRate: number,
     userId?: string,
-  ): Promise<any> {
-    let amountToBeRemitted: number = 0.0;
-    const totalPaymentPeriodAmount = planholders.reduce(
-      (sum, p) => sum + p.paymentPeriodAmount,
-      0,
+  ): Promise<{ amountToBeRemitted: Decimal }> {
+    const amountToBeRemitted = new Decimal(
+      planholders.reduce((sum, p) => {
+        const rate = commissionRate / 100;
+        const grossCommission = p.paymentPeriodAmount * rate;
+        const netTakeHome = grossCommission * this.appConstants.valueAddedTax;
+        return sum + (p.paymentPeriodAmount - netTakeHome);
+      }, 0),
     );
-
-    amountToBeRemitted =
-      totalPaymentPeriodAmount * ((100 - commissionRate) * 0.01);
 
     if (!userId) return { amountToBeRemitted: amountToBeRemitted };
     const insuranceAgent = await this.prisma.user.findFirst({
@@ -39,13 +44,15 @@ export class MonthlyRemittanceService {
       planholderStatus: p.planholderStatus,
     })) as Prisma.JsonArray;
 
-    await this.prisma.monthlyRemittanceHistory.create({
-      data: {
-        userId: userId,
-        amountRemitted: amountToBeRemitted,
-        planholderData: planholderDataForDb,
-      },
-    });
+    await this.prisma.$transaction([
+      this.prisma.monthlyRemittanceHistory.create({
+        data: {
+          userId: userId,
+          amountRemitted: amountToBeRemitted,
+          planholderData: planholderDataForDb,
+        },
+      }),
+    ]);
 
     return { amountToBeRemitted: amountToBeRemitted };
   }
@@ -75,11 +82,12 @@ export class MonthlyRemittanceService {
     else return remittanceDetails;
   }
 
+  //TODO: Update calculation logic.
   async updateRemittanceAmount(
     planholders: PlanholderDataDto[],
     userId: string,
     id: string,
-  ) {
+  ): Promise<{ amountToBeRemitted: Decimal }> {
     const insuranceAgent = await this.prisma.user.findFirst({
       where: { id: userId },
     });
@@ -88,13 +96,14 @@ export class MonthlyRemittanceService {
       throw new NotFoundException('Insurance Agent Not Found.');
     }
 
-    const totalPaymentPeriodAmount = planholders.reduce(
-      (sum, p) => sum + p.paymentPeriodAmount,
-      0,
+    const amountToBeRemitted = new Decimal(
+      planholders.reduce((sum, p) => {
+        const rate = insuranceAgent.commissionRate / 100;
+        const grossCommission = p.paymentPeriodAmount * rate;
+        const netTakeHome = grossCommission * this.appConstants.valueAddedTax;
+        return sum + (p.paymentPeriodAmount - netTakeHome);
+      }, 0),
     );
-
-    const amountRemitted =
-      totalPaymentPeriodAmount * ((100 - insuranceAgent.commissionRate) * 0.01);
 
     const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
       planholderName: p.planholderName,
@@ -111,11 +120,11 @@ export class MonthlyRemittanceService {
         userId: userId,
       },
       data: {
-        amountRemitted: amountRemitted,
+        amountRemitted: amountToBeRemitted,
         planholderData: planholderDataForDb,
       },
     });
 
-    return amountRemitted;
+    return { amountToBeRemitted: amountToBeRemitted };
   }
 }

@@ -12,6 +12,7 @@ abstract class AuthLocalDataSource {
   Future<bool> hasAccessToken();
   Future<bool> hasRefreshToken();
   Future<void> clearSession();
+  Future<bool> isLoggedIn();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -53,7 +54,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<String?> getRefreshToken() => _secureStorage.read(key: StorageConstants.refreshTokenKey);
 
   @override
-  Future<String?> getUserId() => _secureStorage.read(key: StorageConstants.userIdKey);
+  Future<String?> getUserId() async {
+    final userId = await _secureStorage.read(key: StorageConstants.userIdKey);
+    if(userId == null) return null;
+
+    final trimmed = userId.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
 
   @override
   Future<bool> hasAccessToken() async {
@@ -73,5 +80,12 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await _secureStorage.delete(key: StorageConstants.accessTokenKey);
     await _secureStorage.delete(key: StorageConstants.refreshTokenKey);
     await _secureStorage.delete(key: StorageConstants.userIdKey);
+  }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    final userId = await getUserId();
+    final hasToken = await hasAccessToken();
+    return userId != null && hasToken;
   }
 }

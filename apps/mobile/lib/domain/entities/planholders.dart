@@ -1,14 +1,14 @@
 enum PlanholderStatus {
-  ACTIVE,
-  INACTIVE,
-  PASTDUE
+  active,
+  inactive,
+  pastDue
 }
 
 enum PaymentPeriod {
-  MONTHLY,
-  QUARTERLY,
-  SEMIANNUALLY,
-  ANNUALLY,
+  monthly,
+  quarterly,
+  semiannually,
+  annually,
 }
 
 class PlanholderData {
@@ -21,8 +21,8 @@ class PlanholderData {
 
   PlanholderData({
     required this.planholderName,
-    required this.insuranceProduct,
-    required this.insuranceAmount,
+    this.insuranceProduct = '',
+    this.insuranceAmount = 0.0,
     required this.paymentPeriod,
     required this.paymentPeriodAmount,
     required this.planholderStatus,
@@ -33,9 +33,9 @@ class PlanholderData {
       'planholderName': planholderName,
       'insuranceProduct': insuranceProduct,
       'insuranceAmount': insuranceAmount,
-      'paymentPeriod': paymentPeriod.name,
+      'paymentPeriod': paymentPeriod.name.toUpperCase(),
       'paymentPeriodAmount': paymentPeriodAmount,
-      'planholderStatus': planholderStatus.name,
+      'planholderStatus': planholderStatus.name.toUpperCase(),
     };
   }
 
