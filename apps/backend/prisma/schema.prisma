@@ -22,7 +22,10 @@ model User {
   branchAddress              String
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   refreshTokens              RefreshToken[]
+  userFeedback UserFeedback[]
 }
+
+//TODO: Add here Insuranceagent model once the tool has many insurance agents using it.
 
 model RefreshToken {
   id           String    @id @default(uuid())
@@ -40,24 +43,23 @@ model RefreshToken {
 model MonthlyRemittanceHistory {
   id               String           @id @default(uuid())
   userId           String
-  amountRemitted   Float
+  amountRemitted   Decimal @db.Decimal(10, 2)
   planholderData   Json
   createdAt        DateTime         @default(now())
   updatedAt        DateTime?        @updatedAt
-  isRemitted       Boolean          @default(false)
-  remittanceStatus RemittanceStatus @default(PENDING)
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserFeedback {
+  id String @id @default(uuid())
+  userId String? //The feedback can be anonymized.
+  feedbackTitle String
+  feedbackDescription String
+  recommendToOtherAgents Boolean
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
   AGENT
   ADMIN
-}
-
-enum RemittanceStatus {
-  PENDING
-  REMITTED
-  VALIDATING
-  CLEARED
-  REJECTED
 }

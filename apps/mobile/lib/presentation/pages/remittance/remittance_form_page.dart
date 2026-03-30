@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/monthly_remittance_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/monthly_remittance_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
@@ -9,7 +10,10 @@ import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remitta
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:provider/provider.dart';
-import '../../providers/monthly_remittance/monthly_remittance_provider.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/providers/monthly_remittance/monthly_remittance_provider.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/monthly_remittance_form_inputs.dart';
+
+import '../../widgets/monthly_remittance/monthly_remittance_dialog.dart';
 
 class RemittanceFormPage extends StatefulWidget {
   const RemittanceFormPage({super.key});
@@ -24,6 +28,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   late final SubmitMonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
   late final MonthlyRemittanceRepository repository;
   late final MonthlyRemittanceRemoteDataSource remote;
+  late final AuthLocalDataSource auth;
 
   @override
   void initState() {
@@ -31,6 +36,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
     remote = MonthlyRemittanceRemoteDataSourceImpl(dio: Dio());
     repository = MonthlyRemittanceRepositoryImpl(remote);
     submitMonthlyRemittanceUseCase = SubmitMonthlyRemittanceUseCase(repository);
+    auth = AuthLocalDataSourceImpl();
   }
 
   PlanholderData _createEmptyPlanholder() {
@@ -38,9 +44,9 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
       planholderName: '',
       insuranceProduct: '',
       insuranceAmount:0.0,
-      paymentPeriod: PaymentPeriod.MONTHLY,
+      paymentPeriod: PaymentPeriod.monthly,
       paymentPeriodAmount:0.0,
-      planholderStatus: PlanholderStatus.ACTIVE,
+      planholderStatus: PlanholderStatus.active,
     );
   }
 
@@ -68,9 +74,6 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
           commissionRate: _commissionRate,
           planholderData: _planholders
         ),
-      );
-      ScaffoldMessenger.of(providerContext).showSnackBar(
-        const SnackBar(content: Text('Form submitted!')),
       );
     }
   }
@@ -192,7 +195,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                           itemCount: _planholders.length,
                           separatorBuilder: (_, __) => const SizedBox(height:8),
                           itemBuilder: (context, index) {
-                            return _PlanholderRow(
+                            return PlanholderRow(
                               index: index,
                               data: _planholders[index],
                               onRemove: () => _removeRow(index),
@@ -224,7 +227,30 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: provider.isLoading ? null : () => _submitForm(providerContext),
+                          onPressed: provider.isLoading ? null : () async {
+                            if(_planholders.isEmpty) {
+                              await MonthlyRemittanceDialog.show(
+                                context,
+                                title: 'Input Error',
+                                message: 'Please add first your planholder before calculating the remittance needed.',
+                                showConfirmationDialog: false,
+                                cancelLabel: 'Okay'
+                              );
+
+                              return;
+                            }
+
+                            final confirmed = await MonthlyRemittanceDialog.show(
+                              context,
+                              title: 'Confirmation',
+                              message: 'Are you sure that the planholders that you inputted were correct? Please double check your inputs before calculating the remittance needed.',
+                            );
+
+                            if(confirmed == true) {
+                              _submitForm(providerContext);
+                              return;
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical:16),
                           ),
@@ -260,127 +286,6 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
           );
         }
       )
-    );
-  }
-}
-
-class _PlanholderRow extends StatelessWidget {
-  final int index;
-  final PlanholderData data;
-  final VoidCallback onRemove;
-
-  const _PlanholderRow({
-    required this.index,
-    required this.data,
-    required this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical:4),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Planholder #${index +1}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: onRemove,
-                ),
-              ],
-            ),
-            TextFormField(
-              initialValue: data.planholderName,
-              decoration: const InputDecoration(
-                labelText: 'Planholder Name',
-                border: OutlineInputBorder(),
-              ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) => data.planholderName = v,
-            ),
-            const SizedBox(height:8),
-            TextFormField(
-              initialValue: data.insuranceProduct,
-              decoration: const InputDecoration(
-                labelText: 'Insurance Product',
-                border: OutlineInputBorder(),
-              ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) => data.insuranceProduct = v,
-            ),
-            const SizedBox(height:8),
-            TextFormField(
-              initialValue:
-              data.insuranceAmount >0 ? data.insuranceAmount.toString() : '',
-              decoration: const InputDecoration(
-                labelText: 'Insurance Amount (₱)',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) {
-                data.insuranceAmount = double.tryParse(v) ??0.0;
-              },
-            ),
-            const SizedBox(height:8),
-            DropdownButtonFormField<PaymentPeriod>(
-              value: data.paymentPeriod,
-              decoration: const InputDecoration(
-                labelText: 'Payment Period',
-                border: OutlineInputBorder(),
-              ),
-              items: PaymentPeriod.values.map((e) {
-                return DropdownMenuItem<PaymentPeriod>(
-                  value: e,
-                  child: Text(e.name),
-                );
-              }).toList(),
-              onChanged: (v) {
-                data.paymentPeriod = v ?? PaymentPeriod.MONTHLY;
-              },
-            ),
-            const SizedBox(height:8),
-            TextFormField(
-              initialValue: data.paymentPeriodAmount >0 ? data.paymentPeriodAmount.toString()
-                  : '',
-              decoration: const InputDecoration(
-                labelText: 'Payment Period Amount (₱)',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
-              onChanged: (v) {
-                data.paymentPeriodAmount = double.tryParse(v) ??0.0;
-              },
-            ),
-            const SizedBox(height:8),
-            DropdownButtonFormField<PlanholderStatus>(
-              value: data.planholderStatus,
-              decoration: const InputDecoration(
-                labelText: 'Planholder Status',
-                border: OutlineInputBorder(),
-              ),
-              items: PlanholderStatus.values.map((e) {
-                return DropdownMenuItem<PlanholderStatus>(
-                  value: e,
-                  child: Text(e.name),
-                );
-              }).toList(),
-              onChanged: (v) {
-                data.planholderStatus = v ?? PlanholderStatus.ACTIVE;
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

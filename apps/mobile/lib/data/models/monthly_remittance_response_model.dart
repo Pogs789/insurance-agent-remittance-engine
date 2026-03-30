@@ -6,6 +6,6 @@ class RemittanceCalculationResponseModel {
   });
 
   factory RemittanceCalculationResponseModel.fromJson(Map<String, dynamic> json) {
-    return RemittanceCalculationResponseModel(amountToBeRemitted: json['amountToBeRemitted']);
+    return RemittanceCalculationResponseModel(amountToBeRemitted: double.parse(json['amountToBeRemitted']));
   }
 }

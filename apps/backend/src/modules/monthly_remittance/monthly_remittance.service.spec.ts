@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MonthlyRemittanceService } from './monthly_remittance.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { AppConstants } from '../../common/constants/app.constants';
+import { Decimal } from '@prisma/client/runtime/client';
 
 describe('MonthlyRemittanceService', () => {
   let service: MonthlyRemittanceService;
@@ -11,6 +13,10 @@ describe('MonthlyRemittanceService', () => {
         MonthlyRemittanceService,
         {
           provide: PrismaService,
+          useValue: {},
+        },
+        {
+          provide: AppConstants,
           useValue: {},
         },
       ],
@@ -41,6 +47,9 @@ describe('MonthlyRemittanceService', () => {
       monthlyRemittanceHistory: {
         create: jest.fn().mockResolvedValue({}),
       },
+      $transaction: jest
+        .fn()
+        .mockImplementation((operations) => Promise.all(operations)),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +58,10 @@ describe('MonthlyRemittanceService', () => {
         {
           provide: PrismaService,
           useValue: prismaMock,
+        },
+        {
+          provide: AppConstants,
+          useValue: { valueAddedTax: 0.12 },
         },
       ],
     }).compile();
@@ -64,7 +77,7 @@ describe('MonthlyRemittanceService', () => {
     );
 
     // 3000 * (100 - 20)% = 2400
-    expect(result).toStrictEqual({ amountToBeRemitted: 2100 });
+    expect(result).toStrictEqual({ amountToBeRemitted: new Decimal(2892) });
 
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
       where: { id: 'user-1' },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
 
@@ -53,6 +54,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Using Safe Area to avoid notches
+      appBar: AppBar(
+        title: Text('Insurance Remittance Tool Login'),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -136,7 +140,22 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 50, // Standard touch target height
                     child: ElevatedButton(
-                      onPressed: _handleLogin,
+                      onPressed: () {
+                        if(AppConstants.isUnderDevelopment) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
+                              ),
+                              backgroundColor: AppConstants.colorWarning,
+                            )
+                          );
+
+                         return;
+                        }
+
+                        _handleLogin();
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,

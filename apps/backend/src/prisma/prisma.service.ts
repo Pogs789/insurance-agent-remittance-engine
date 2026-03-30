@@ -18,7 +18,7 @@ export class PrismaService
     const pool: Pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
 
-    super({ adapter });
+    super({ adapter }) as ConstructorParameters<typeof PrismaClient>[0];
   }
   async onModuleInit() {
     await this.$connect();
