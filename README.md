@@ -4,7 +4,7 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-This project is currently under active development.
+Some of its CORE FEATURES are already deployed and can be accessed by this URL: https://insurance-agent-remittance-engine-frontend.vercel.app
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
@@ -59,8 +59,8 @@ This application provides an automated monitoring system that:
 - **Dart** - Programming language
 - **Provider** - State management solution
 - **Dio** - HTTP client for API requests
-- **Firebase Cloud Messaging** - Push notifications
 - **Shared Preferences** - Local data persistence
+- **Secure Storage** - Secured Data persistence
 
 ### Backend (API Server)
 - **NestJS** - Progressive Node.js framework
