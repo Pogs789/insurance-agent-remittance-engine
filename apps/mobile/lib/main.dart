@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
 import 'core/constants/app_theme.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(
+    fileName: '.env',
+  );
   runApp(const MyApp());
 }
 

@@ -23,7 +23,8 @@ export class MonthlyRemittanceService {
       planholders.reduce((sum, p) => {
         const rate = commissionRate / 100;
         const grossCommission = p.paymentPeriodAmount * rate;
-        const netTakeHome = grossCommission * this.appConstants.valueAddedTax;
+        const netTakeHome =
+          grossCommission * (1 - this.appConstants.valueAddedTax);
         return sum + (p.paymentPeriodAmount - netTakeHome);
       }, 0),
     );
