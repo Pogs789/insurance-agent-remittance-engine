@@ -4,7 +4,10 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-This project is currently under active development.
+Some of its CORE FEATURES are already deployed and can be accessed by this URL: 
+
+https://insurance-agent-remittance-engine-frontend.vercel.app
+
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
@@ -59,8 +62,8 @@ This application provides an automated monitoring system that:
 - **Dart** - Programming language
 - **Provider** - State management solution
 - **Dio** - HTTP client for API requests
-- **Firebase Cloud Messaging** - Push notifications
 - **Shared Preferences** - Local data persistence
+- **Secure Storage** - Secured Data persistence
 
 ### Backend (API Server)
 - **NestJS** - Progressive Node.js framework
@@ -305,10 +308,10 @@ Each module follows this pattern:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Pogs789/Life-Insurance-Monitoring-App.git
+git clone https://github.com/Pogs789/insurance-agent-remittance-engine.git
 
 # Navigate to project directory
-cd life_insurance_monitoring_mobile_application
+cd apps/mobile
 
 # Install dependencies
 flutter pub get
@@ -321,7 +324,7 @@ flutter run
 
 ```bash
 # Navigate to backend directory
-cd life_insurance_monitoring
+cd apps/backend
 
 # Install dependencies
 pnpm install
@@ -334,7 +337,7 @@ cp .env.example . env
 pnpm run migration: run
 
 # Start the server
-pnpm run start:dev
+pnpm dev:backend
 ```
 
 ---
@@ -344,7 +347,7 @@ pnpm run start:dev
 ### Base URL
 ```
 Development: http://localhost:3000/api
-Production: <in progress>
+Production: https://insurance-agent-remittance-engine-b.vercel.app/api
 ```
 
 ### Authentication
@@ -361,23 +364,18 @@ Authorization: Bearer <your_jwt_token>
 - `POST /auth/refresh` - Refresh access token
 
 #### Policies
-- `GET /policies` - Get all policies
-- `GET /policies/:id` - Get policy by ID
-- `POST /policies` - Create new policy
-- `PUT /policies/:id` - Update policy
-- `DELETE /policies/:id` - Delete policy
+- `GET /agent` - Get all agents
+- `GET /agent/:id` - Get agent by ID
+- `POST /agent` - Create new agent
+- `PUT /agent/:id` - Update agent
+- `DELETE /agent/:id` - Delete agent
 
-#### Clients
-- `GET /clients` - Get all clients
-- `GET /clients/:id` - Get client by ID
-- `POST /clients` - Create new client
-- `PUT /clients/:id` - Update client
-
-#### Premiums
-- `GET /premiums` - Get all premiums
-- `GET /premiums/policy/:policyId` - Get premiums for specific policy
-- `POST /premiums` - Record premium payment
-- `POST /premiums/calculate` - Calculate premium amount
+#### Monthly Remittances
+- `GET /monthly-remittances` - Get all monthly-remittances
+- `GET /monthly-remittances/get-history/:agent-id` - Get all monthly-remittances by agent id
+- `GET /monthly-remittances/:policyId` - Get all planholders for specific policy
+- `POST /monthly-remittance/calculate` - Record premium payment
+- `POST /monthly-remittance/upgate-calculation` - Calculate premium amount
 
 ---
 
