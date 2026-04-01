@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      home: const MyHomePage(title: 'RemittanceCalculator'),
+      home: const MyHomePage(title: AppConstants.appName),
     );
   }
 }

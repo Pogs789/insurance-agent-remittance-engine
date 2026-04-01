@@ -9,7 +9,7 @@ class AppConstants {
   static const bool isUnderDevelopment = true;
 
   // ── App Identity ──────────────────────────────────────────
-  static const String appName = 'Remittance Calculator';
+  static const String appName = 'iRemitMo: The Insurance Agent\'s Remittance Calculator';
   static const String appVersion = '1.0.0';
 
   // ── Commission Defaults ───────────────────────────────────

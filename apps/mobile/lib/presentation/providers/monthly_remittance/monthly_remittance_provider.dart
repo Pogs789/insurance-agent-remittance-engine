@@ -24,8 +24,7 @@ class MonthlyRemittanceProvider extends ChangeNotifier {
       amountToBeRemitted = result.amountToBeRemitted;
       isSuccess = true;
     } catch (e) {
-      debugPrint(e.toString());
-      errorMessage = "An Error Occured while Processing this request. Please Try again later.";
+      errorMessage = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();

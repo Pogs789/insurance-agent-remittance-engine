@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 sealed class AppException implements Exception {
   final String message;
@@ -66,6 +67,10 @@ final class UnknownException extends AppException {
 }
 
 AppException mapToAppException(Object error, StackTrace stackTrace) {
+  debugPrintStack(
+    label: 'AppException',
+    stackTrace: stackTrace,
+  );
   if (error is AppException) return error;
 
   if(error is DioException) {
@@ -98,7 +103,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
         // TODO: This is the exception where it should be placed under the text.
         if(statusCode == 422) {
           return ValidationException(
-            'Validation Failed. Please check your input and try again.',
+            'Validation Failed. Please check your inputs and try again.',
             statusCode: statusCode,
             cause: error,
           );

@@ -11,8 +11,8 @@ class MonthlyRemittanceDialog extends StatelessWidget {
   final bool showConfirmationButton;
 
   // Brand colours kept in sync with AppTheme's finance palette.
-  static const Color _brandError = Color(0xFFB00020); // AppTheme._error
-  static const Color _iconBg     = Color(0xFFFFE4E6); // soft red tint
+  static const Color _brandError = AppConstants.colorError; // AppTheme._error
+  static const Color _iconBg     = AppConstants.colorErrorContainer; // soft red tint
 
   const MonthlyRemittanceDialog({
     super.key,
@@ -52,10 +52,6 @@ class MonthlyRemittanceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // We intentionally do NOT use [context] for Navigator calls because this
-    // widget is inserted into the dialog overlay – its ancestor Navigator is
-    // the one that owns the dialog route.  Using the wrong context here is
-    // what causes "Unexpected null value" at Navigator.of(context).state.
     final theme       = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

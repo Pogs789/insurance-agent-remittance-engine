@@ -11,9 +11,9 @@ import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_p
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:provider/provider.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/monthly_remittance/monthly_remittance_provider.dart';
-import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/monthly_remittance_form_inputs.dart';
 
-import '../../widgets/monthly_remittance/monthly_remittance_dialog.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/monthly_remittance_dialog.dart';
 
 class RemittanceFormPage extends StatefulWidget {
   const RemittanceFormPage({super.key});
@@ -98,7 +98,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //FIXME: fontSize must depend on the type of device a person would access.
-                  Text('Monthly Remittance Calculator'),
+                  Text('Remittance Calculator'),
                   Row(
                     spacing: 10.0,
                     children: [
@@ -168,6 +168,26 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                         ),
                       ),
                       const SizedBox(height:24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Total Amount to be Remitted:',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:16,
+                            ),
+                          ),
+                          Text(
+                            '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize:16,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height:24),
                       const Divider(),
                       Text(
                         'Planholders',
@@ -204,26 +224,6 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                         ),
                       const SizedBox(height:24),
                       const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Total Amount to be Remitted:',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:16,
-                            ),
-                          ),
-                          Text(
-                            '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize:16,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height:24),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -253,8 +253,15 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical:16),
+                            backgroundColor: Theme.of(context).primaryColorLight
                           ),
-                          child: provider.isLoading ? const CircularProgressIndicator() : const Text('Calculate Total Amount Needed to be Remitted'),
+                          child: provider.isLoading ? const CircularProgressIndicator() : const Text(
+                              'Calculate Total Amount Needed to be Remitted',
+                            style: TextStyle(
+                              color: AppConstants.colorInfo,
+                              fontSize: AppConstants.fontSizeMD
+                            ),
+                          ),
                         ),
                       ),
                       if(provider.errorMessage != null)
@@ -286,6 +293,164 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
           );
         }
       )
+    );
+  }
+}
+
+class PlanholderRow extends StatefulWidget {
+  final int index;
+  final PlanholderData data;
+  final VoidCallback onRemove;
+
+  const PlanholderRow({super.key,
+    required this.index,
+    required this.data,
+    required this.onRemove,
+  });
+
+  @override
+  State<PlanholderRow> createState() => _PlanholderRowState();
+}
+
+class _PlanholderRowState extends State<PlanholderRow> {
+  late final AuthLocalDataSource auth;
+  bool _showInsuranceInput = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = AuthLocalDataSourceImpl();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final userId = await auth.isLoggedIn();
+    if(!mounted) return;
+    setState(() {
+      _showInsuranceInput = userId;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical:4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Planholder #${widget.index +1}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: widget.onRemove,
+                ),
+              ],
+            ),
+            TextFormField(
+              initialValue: widget.data.insuranceProduct,
+              decoration: const InputDecoration(
+                labelText: 'Insurance Product',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12.0))
+                ),
+              ),
+              validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+              onChanged: (v) => widget.data.insuranceProduct = v,
+            ),
+            const SizedBox(height:8),
+            if(_showInsuranceInput)...[
+              TextFormField(
+                initialValue: widget.data.insuranceProduct,
+                decoration: const InputDecoration(
+                  labelText: 'Insurance Product',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  ),
+                ),
+                validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+                onChanged: (v) => widget.data.insuranceProduct = v,
+              ),
+              const SizedBox(height:8),
+              TextFormField(
+                initialValue:
+                widget.data.insuranceAmount >0 ? widget.data.insuranceAmount.toString() : '',
+                decoration: const InputDecoration(
+                  labelText: 'Insurance Amount (₱)',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  ),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+                onChanged: (v) {
+                  widget.data.insuranceAmount = double.tryParse(v) ??0.0;
+                },
+              ),
+              const SizedBox(height:8),
+            ],
+            DropdownButtonFormField<PaymentPeriod>(
+              value: widget.data.paymentPeriod,
+              decoration: const InputDecoration(
+                labelText: 'Payment Period',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                ),
+              ),
+              items: PaymentPeriod.values.map((e) {
+                return DropdownMenuItem<PaymentPeriod>(
+                  value: e,
+                  child: Text(e.name.toUpperCase()),
+                );
+              }).toList(),
+              onChanged: (v) {
+                widget.data.paymentPeriod = v ?? PaymentPeriod.monthly;
+              },
+            ),
+            const SizedBox(height:8),
+            TextFormField(
+              initialValue: widget.data.paymentPeriodAmount >0 ? widget.data.paymentPeriodAmount.toString()
+                  : '',
+              decoration: const InputDecoration(
+                labelText: 'Amount Due (₱)',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                ),
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+              onChanged: (v) {
+                widget.data.paymentPeriodAmount = double.tryParse(v) ??0.0;
+              },
+            ),
+            const SizedBox(height:8),
+            DropdownButtonFormField<PlanholderStatus>(
+              value: widget.data.planholderStatus,
+              decoration: const InputDecoration(
+                labelText: 'Planholder Status',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                ),
+              ),
+              items: PlanholderStatus.values.map((e) {
+                return DropdownMenuItem<PlanholderStatus>(
+                  value: e,
+                  child: Text(e.name.toUpperCase()),
+                );
+              }).toList(),
+              onChanged: (v) {
+                widget.data.planholderStatus = v ?? PlanholderStatus.active;
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
