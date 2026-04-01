@@ -305,10 +305,10 @@ Each module follows this pattern:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Pogs789/Life-Insurance-Monitoring-App.git
+git clone https://github.com/Pogs789/insurance-agent-remittance-engine.git
 
 # Navigate to project directory
-cd life_insurance_monitoring_mobile_application
+cd apps/mobile
 
 # Install dependencies
 flutter pub get
@@ -321,7 +321,7 @@ flutter run
 
 ```bash
 # Navigate to backend directory
-cd life_insurance_monitoring
+cd apps/backend
 
 # Install dependencies
 pnpm install
@@ -334,7 +334,7 @@ cp .env.example . env
 pnpm run migration: run
 
 # Start the server
-pnpm run start:dev
+pnpm dev:backend
 ```
 
 ---
