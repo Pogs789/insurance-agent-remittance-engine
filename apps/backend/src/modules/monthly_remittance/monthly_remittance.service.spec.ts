@@ -36,8 +36,9 @@ describe('MonthlyRemittanceService', () => {
     };
 
     const planholders = [
-      { paymentPeriodAmount: 1000 },
-      { paymentPeriodAmount: 2000 },
+      { paymentPeriodAmount: 5700 },
+      { paymentPeriodAmount: 300000 },
+      { paymentPeriodAmount: 20000 },
     ];
 
     const prismaMock = {
@@ -77,7 +78,7 @@ describe('MonthlyRemittanceService', () => {
     );
 
     // 3000 * (100 - 20)% = 2400
-    expect(result).toStrictEqual({ amountToBeRemitted: new Decimal(2892) });
+    expect(result).toStrictEqual({ amountToBeRemitted: new Decimal(239715.2) });
 
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
       where: { id: 'user-1' },
