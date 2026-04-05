@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/monthly_remittance_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/monthly_remittance_repository.dart';
@@ -6,14 +7,17 @@ import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remitta
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/monthly_remittance_repository.dart';
-import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/submit_monthly_remittance_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/monthly_remittance_usecase.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/remittance_badge.dart';
 import 'package:provider/provider.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/monthly_remittance/monthly_remittance_provider.dart';
 
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/monthly_remittance_dialog.dart';
+
+import '../../../core/themes/app_colors.dart';
 
 class RemittanceFormPage extends StatefulWidget {
   const RemittanceFormPage({super.key});
@@ -25,7 +29,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   final _formKey = GlobalKey<FormState>();
   final List<PlanholderData> _planholders = <PlanholderData>[];
   double _commissionRate = 0.0;
-  late final SubmitMonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
+  late final MonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
   late final MonthlyRemittanceRepository repository;
   late final MonthlyRemittanceRemoteDataSource remote;
   late final AuthLocalDataSource auth;
@@ -35,7 +39,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
     super.initState();
     remote = MonthlyRemittanceRemoteDataSourceImpl(dio: Dio());
     repository = MonthlyRemittanceRepositoryImpl(remote);
-    submitMonthlyRemittanceUseCase = SubmitMonthlyRemittanceUseCase(repository);
+    submitMonthlyRemittanceUseCase = MonthlyRemittanceUseCase(repository);
     auth = AuthLocalDataSourceImpl();
   }
 
@@ -64,25 +68,21 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   }
 
   void _submitForm(BuildContext providerContext) async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    final provider = providerContext.read<MonthlyRemittanceProvider>();
 
-      final provider = providerContext.read<MonthlyRemittanceProvider>();
-
-      await provider.submit(
-        MonthlyRemittance(
-          commissionRate: _commissionRate,
-          planholderData: _planholders
-        ),
-      );
-    }
+    await provider.submit(
+      MonthlyRemittance(
+        commissionRate: _commissionRate,
+        planholderData: _planholders
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (_) => MonthlyRemittanceProvider(
-            SubmitMonthlyRemittanceUseCase(
+            MonthlyRemittanceUseCase(
               MonthlyRemittanceRepositoryImpl(
                 MonthlyRemittanceRemoteDataSourceImpl(dio: Dio())
               )
@@ -110,19 +110,13 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                           )
                       ),
                       IconButton(
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => RegistrationPage())
-                        ),
+                        onPressed: () => Navigator.pushNamed(context, '/register'),
                         icon: Icon(
                             Icons.app_registration
                         ),
                       ),
                       IconButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => LoginPage())
-                          ),
+                          onPressed: () => Navigator.pushNamed(context, '/login'),
                           icon: Icon(
                               Icons.login
                           )
@@ -157,8 +151,31 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                 ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                                ],
                                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                                validator: (v) {
+                                  if(v == null || v.trim().isEmpty) {
+                                    return 'Please enter your commission rate set by your company.';
+                                  }
+
+                                  final rate = double.tryParse(v);
+
+                                  if (rate == null) {
+                                    return 'Please enter a valid number';
+                                  }
+
+                                  if (rate < 0) {
+                                    return 'Percentage cannot be negative';
+                                  }
+
+                                  if (rate > 100) {
+                                    return 'Percentage cannot exceed 100%';
+                                  }
+
+                                  return null;
+                                },
                                 onChanged: (v) {
                                   _commissionRate = double.tryParse(v) ?? 0.0;
                                 },
@@ -171,21 +188,27 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Total Amount to be Remitted:',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize:16,
+                              fontSize: AppConstants.fontSizeMD,
                             ),
                           ),
-                          Text(
-                            '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize:16,
-                              color: Colors.green,
-                            ),
-                          ),
+                          RemittanceBadge(
+                            text: '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
+                            fontSize: AppConstants.fontSizeLG,
+                            backgroundColor: AppColors.colorOnSuccessContainer,
+                            textColor: AppColors.colorOnSuccess,
+                          )
                         ],
+                      ),
+                      const SizedBox(height:24),
+                      Center(
+                        child: RemittanceBadge(
+                          text: 'NOTE: This is only a demo. We are upgrading this tool to make it more convenient to you. So stay tuned...',
+                          icon: Icons.info,
+                        ),
                       ),
                       const SizedBox(height:24),
                       const Divider(),
@@ -199,12 +222,12 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                       const SizedBox(height:12),
                       //This section of code is for an insurance agent to input necessary data related to their own insurance company.
                       if (_planholders.isEmpty)
-                        const Center(
+                        Center(
                           child: Padding(
                             padding: EdgeInsets.all(16),
                             child: Text(
                               'No planholders yet. Tap \'Add Planholder\' to begin.',
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(color: AppColors.textPrimary),
                             ),
                           ),
                         ),
@@ -228,27 +251,31 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: provider.isLoading ? null : () async {
-                            if(_planholders.isEmpty) {
-                              await MonthlyRemittanceDialog.show(
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+
+                              if(_planholders.isEmpty) {
+                                await MonthlyRemittanceDialog.show(
+                                    context,
+                                    title: 'Input Error',
+                                    message: 'Please add first your planholder before calculating the remittance needed.',
+                                    showConfirmationDialog: false,
+                                    cancelLabel: 'Okay'
+                                );
+
+                                return;
+                              }
+
+                              final confirmed = await MonthlyRemittanceDialog.show(
                                 context,
-                                title: 'Input Error',
-                                message: 'Please add first your planholder before calculating the remittance needed.',
-                                showConfirmationDialog: false,
-                                cancelLabel: 'Okay'
+                                title: 'Confirmation',
+                                message: 'Are you sure that the planholders that you inputted were correct? Please double check your inputs before calculating the remittance needed.',
                               );
 
-                              return;
-                            }
-
-                            final confirmed = await MonthlyRemittanceDialog.show(
-                              context,
-                              title: 'Confirmation',
-                              message: 'Are you sure that the planholders that you inputted were correct? Please double check your inputs before calculating the remittance needed.',
-                            );
-
-                            if(confirmed == true) {
-                              _submitForm(providerContext);
-                              return;
+                              if(confirmed == true) {
+                                _submitForm(providerContext);
+                                return;
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -258,7 +285,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                           child: provider.isLoading ? const CircularProgressIndicator() : const Text(
                               'Calculate Total Amount Needed to be Remitted',
                             style: TextStyle(
-                              color: AppConstants.colorInfo,
+                              color: AppColors.colorInfo,
                               fontSize: AppConstants.fontSizeMD
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 
 class MonthlyRemittanceDialog extends StatelessWidget {
   final String dialogueTitle;
@@ -11,8 +12,8 @@ class MonthlyRemittanceDialog extends StatelessWidget {
   final bool showConfirmationButton;
 
   // Brand colours kept in sync with AppTheme's finance palette.
-  static const Color _brandError = AppConstants.colorError; // AppTheme._error
-  static const Color _iconBg     = AppConstants.colorErrorContainer; // soft red tint
+  static const Color _brandError = AppColors.colorError; // AppTheme._error
+  static const Color _iconBg     = AppColors.colorErrorContainer; // soft red tint
 
   const MonthlyRemittanceDialog({
     super.key,

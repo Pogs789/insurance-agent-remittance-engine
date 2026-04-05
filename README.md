@@ -252,13 +252,13 @@ src/
 │   │   ├── auth.service.ts         # Business logic for authentication
 │   │   └── auth.module.ts
 │   │
-│   ├── monthly_remittance/                   # Insurance policies module
+│   ├── monthly_remittance/                   # Monthly Remittance module
 │   │   ├── dto/
 │   │   │   ├── create-monthly_remittance.dto.ts
 │   │   │   ├── update-monthly_remittance.dto.ts
 │   │   │   └── query-monthly_remittance.dto.ts
 │   │   ├── monthly_remittance.controller.ts  # Routes: GET/POST/PUT/DELETE /policies
-│   │   ├── monthly_remittance.service.ts     # Business logic for policies
+│   │   ├── monthly_remittance.service.ts     # Business logic for Monthly Remittance
 │   │   └── monthly_remittance. module.ts
 │   │
 │   ├── agents/                     # Insurance agents module

@@ -1,6 +1,6 @@
 import { IsDate, IsEmail, IsInt, IsString, MinLength } from 'class-validator';
 
-export class UserRegisterDto {
+export class AgentRegisterDto {
   @IsEmail()
   email!: string;
 
@@ -9,7 +9,9 @@ export class UserRegisterDto {
   password!: string;
 
   @IsString()
-  agentName!: string;
+  firstName!: string;
+  middleName!: string;
+  lastName!: string;
   insuranceCompany!: string;
   branchAddress!: string;
 

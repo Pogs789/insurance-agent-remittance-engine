@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
-import 'core/constants/app_theme.dart';
+import 'core/themes/app_theme.dart';
 
 Future main() async {
   await dotenv.load(
@@ -22,32 +24,12 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
-      home: const MyHomePage(title: AppConstants.appName),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: widget.title,
-      theme: ThemeData(
-        // This sets a professional color scheme automatically
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
-        useMaterial3: true,
-      ),
-      // This is where we connect your Login Page
-      home: const RemittanceFormPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const RemittanceFormPage(),
+        '/register': (context) => const RegistrationPage(),
+        '/login': (context) => const LoginPage()
+      }
     );
   }
 }

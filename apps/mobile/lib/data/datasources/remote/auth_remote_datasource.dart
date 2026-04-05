@@ -1,11 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
+import 'package:life_insurance_monitoring_mobile/data/models/user_registration_request_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthSessionModel> login(String email, String password);
   Future<void> logout(String userId, String refreshToken);
   Future<AuthSessionModel> refreshToken(String userId, String refreshToken);
+  Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -55,6 +58,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e, stackTrace) {
       //TODO: This is temporary. Because Dio has many responses that needed to be caught. Implement errors from constants.
       Error.throwWithStackTrace(Exception('Token Refresh Failed: $e'), stackTrace);
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser) async{
+    try{
+      final response = await dio.post(
+        ApiEndpoints.registerApi,
+        data: newUser.toJson(),
+        options: Options(
+          contentType: Headers.jsonContentType
+        )
+      );
+
+      return response.data;
+    }catch(e, stackTrace) {
+      throw mapToAppException(e, stackTrace);
     }
   }
 }

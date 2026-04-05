@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
     import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 
+import '../../../core/themes/app_colors.dart';
+
     class RegistrationPage extends StatefulWidget {
       const RegistrationPage({super.key});
 
@@ -208,7 +210,7 @@ import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.da
                             content: Text(
                               'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
                             ),
-                            backgroundColor: AppConstants.colorWarning,
+                            backgroundColor: AppColors.colorWarning,
                           )
                         );
 
