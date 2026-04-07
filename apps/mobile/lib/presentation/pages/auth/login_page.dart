@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
+import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -147,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                               content: Text(
                                   'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
                               ),
-                              backgroundColor: AppConstants.colorWarning,
+                              backgroundColor: AppColors.colorWarning,
                             )
                           );
 

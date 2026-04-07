@@ -2,7 +2,7 @@ import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, LogOutDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserRegisterDto } from './dto/register.dto';
+import { AgentRegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +12,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+    return this.authService.signIn(signInDto.email, signInDto.password) ;
   }
 
   // POST auth/logout
@@ -33,8 +33,30 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('register')
-  register(@Body() registerDto: UserRegisterDto) {
-    return null;
+  @Post('agent-register')
+  register(@Body() registerDto: AgentRegisterDto) {
+    const {
+      firstName,
+      middleName,
+      lastName,
+      insuranceCompany,
+      birthDate,
+      branchAddress,
+      commissionRate,
+      email,
+      password,
+    } = registerDto;
+
+    return this.authService.agentRegister(
+      firstName,
+      middleName,
+      lastName,
+      insuranceCompany,
+      birthDate,
+      branchAddress,
+      commissionRate,
+      email,
+      password,
+    );
   }
 }

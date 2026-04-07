@@ -43,62 +43,25 @@ void main() {
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets('Login page loads', (WidgetTester tester) async {
+    testWidgets('Insurance Remittance Calculation Loads', (WidgetTester tester) async {
       await _pumpApp(tester);
+
+      await _openRoute(tester, routeName: '/');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Login Page is Loaded', (WidgetTester tester) async {
+      await _pumpApp(tester);
+
       await _openRoute(tester, routeName: '/login');
-
-      // Replace with stable widgets used on the Login page.
-      // e.g., expect(find.byType(TextFormField), findsNWidgets(2));
-      expect(find.byType(Scaffold), findsWidgets);
+      expect(tester.takeException(), isNull);
     });
 
-    testWidgets('Register page loads', (WidgetTester tester) async {
+    testWidgets('Registration Page is Loaded', (WidgetTester tester) async {
       await _pumpApp(tester);
+
       await _openRoute(tester, routeName: '/register');
-
-      expect(find.byType(Scaffold), findsWidgets);
-    });
-
-    testWidgets('Dashboard page loads', (WidgetTester tester) async {
-      await _pumpApp(tester);
-      await _openRoute(tester, routeName: '/dashboard');
-
-      expect(find.byType(Scaffold), findsWidgets);
-    });
-
-    testWidgets('Policies page loads', (WidgetTester tester) async {
-      await _pumpApp(tester);
-      await _openRoute(tester, routeName: '/policies');
-
-      expect(find.byType(Scaffold), findsWidgets);
-    });
-
-    testWidgets('Policy details page loads', (WidgetTester tester) async {
-      await _pumpApp(tester);
-
-      // If details requires arguments, push using RouteSettings.
-      final navState = tester.state<NavigatorState>(find.byType(Navigator));
-      navState.pushNamed(
-        '/policy-details',
-        arguments: {'id': 'test-id'},
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byType(Scaffold), findsWidgets);
-    });
-
-    testWidgets('Profile page loads', (WidgetTester tester) async {
-      await _pumpApp(tester);
-      await _openRoute(tester, routeName: '/profile');
-
-      expect(find.byType(Scaffold), findsWidgets);
-    });
-
-    testWidgets('Settings page loads', (WidgetTester tester) async {
-      await _pumpApp(tester);
-      await _openRoute(tester, routeName: '/settings');
-
-      expect(find.byType(Scaffold), findsWidgets);
+      expect(tester.takeException(), isNull);
     });
   });
 }

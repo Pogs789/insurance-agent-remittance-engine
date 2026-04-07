@@ -22,7 +22,7 @@ export class AuthService {
     password: string,
   ) {
     //TODO: Implement User Registration with email verification.
-    return await this.prisma.user.create({
+    const isSuccess = await this.prisma.user.create({
       data: {
         firstName: firstName,
         middleName: middleName,
@@ -35,6 +35,10 @@ export class AuthService {
         passwordHash: password,
       },
     });
+
+    if (isSuccess !== null) return { success: true };
+
+    return { success: false };
   }
 
   async signIn(email: string, pass: string): Promise<any> {

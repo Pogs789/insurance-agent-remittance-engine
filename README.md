@@ -4,7 +4,10 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-Some of its CORE FEATURES are already deployed and can be accessed by this URL: https://insurance-agent-remittance-engine-frontend.vercel.app
+Some of its CORE FEATURES are already deployed and can be accessed by this URL: 
+
+https://insurance-agent-remittance-engine-frontend.vercel.app
+
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
@@ -249,13 +252,13 @@ src/
 │   │   ├── auth.service.ts         # Business logic for authentication
 │   │   └── auth.module.ts
 │   │
-│   ├── monthly_remittance/                   # Insurance policies module
+│   ├── monthly_remittance/                   # Monthly Remittance module
 │   │   ├── dto/
 │   │   │   ├── create-monthly_remittance.dto.ts
 │   │   │   ├── update-monthly_remittance.dto.ts
 │   │   │   └── query-monthly_remittance.dto.ts
 │   │   ├── monthly_remittance.controller.ts  # Routes: GET/POST/PUT/DELETE /policies
-│   │   ├── monthly_remittance.service.ts     # Business logic for policies
+│   │   ├── monthly_remittance.service.ts     # Business logic for Monthly Remittance
 │   │   └── monthly_remittance. module.ts
 │   │
 │   ├── agents/                     # Insurance agents module
@@ -344,7 +347,7 @@ pnpm dev:backend
 ### Base URL
 ```
 Development: http://localhost:3000/api
-Production: <in progress>
+Production: https://insurance-agent-remittance-engine-b.vercel.app/api
 ```
 
 ### Authentication
@@ -361,23 +364,18 @@ Authorization: Bearer <your_jwt_token>
 - `POST /auth/refresh` - Refresh access token
 
 #### Policies
-- `GET /policies` - Get all policies
-- `GET /policies/:id` - Get policy by ID
-- `POST /policies` - Create new policy
-- `PUT /policies/:id` - Update policy
-- `DELETE /policies/:id` - Delete policy
+- `GET /agent` - Get all agents
+- `GET /agent/:id` - Get agent by ID
+- `POST /agent` - Create new agent
+- `PUT /agent/:id` - Update agent
+- `DELETE /agent/:id` - Delete agent
 
-#### Clients
-- `GET /clients` - Get all clients
-- `GET /clients/:id` - Get client by ID
-- `POST /clients` - Create new client
-- `PUT /clients/:id` - Update client
-
-#### Premiums
-- `GET /premiums` - Get all premiums
-- `GET /premiums/policy/:policyId` - Get premiums for specific policy
-- `POST /premiums` - Record premium payment
-- `POST /premiums/calculate` - Calculate premium amount
+#### Monthly Remittances
+- `GET /monthly-remittances` - Get all monthly-remittances
+- `GET /monthly-remittances/get-history/:agent-id` - Get all monthly-remittances by agent id
+- `GET /monthly-remittances/:policyId` - Get all planholders for specific policy
+- `POST /monthly-remittance/calculate` - Record premium payment
+- `POST /monthly-remittance/upgate-calculation` - Calculate premium amount
 
 ---
 

@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
-import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/submit_monthly_remittance_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/monthly_remittance_usecase.dart';
 
 class MonthlyRemittanceProvider extends ChangeNotifier {
   MonthlyRemittanceProvider(this._submitUseCase);
-  final SubmitMonthlyRemittanceUseCase _submitUseCase;
+  final MonthlyRemittanceUseCase _submitUseCase;
 
   bool isLoading = false;
   String? errorMessage;
@@ -24,8 +24,7 @@ class MonthlyRemittanceProvider extends ChangeNotifier {
       amountToBeRemitted = result.amountToBeRemitted;
       isSuccess = true;
     } catch (e) {
-      debugPrint(e.toString());
-      errorMessage = "An Error Occured while Processing this request. Please Try again later.";
+      errorMessage = e.toString();
     } finally {
       isLoading = false;
       notifyListeners();
