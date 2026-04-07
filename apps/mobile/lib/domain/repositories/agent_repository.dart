@@ -1,5 +1,6 @@
-import 'package:life_insurance_monitoring_mobile/data/models/user_registration_request_model.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 
 abstract class AgentRepository {
-  Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser);
+  Future<Map<String, dynamic>> registerUser(UserEntity newUser);
+  Future<Map<String, dynamic>> loginUser();
 }

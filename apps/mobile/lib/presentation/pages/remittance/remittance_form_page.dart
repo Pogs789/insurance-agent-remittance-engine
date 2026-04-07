@@ -96,34 +96,26 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
             appBar: AppBar(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  //FIXME: fontSize must depend on the type of device a person would access.
-                  Text('Remittance Calculator'),
-                  Row(
-                    spacing: 10.0,
-                    children: [
-                      Text(
-                          'Want to view your remittance history? You can register to view it.',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400
-                          )
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pushNamed(context, '/register'),
-                        icon: Icon(
-                            Icons.app_registration
-                        ),
-                      ),
-                      IconButton(
-                          onPressed: () => Navigator.pushNamed(context, '/login'),
+                  children: [
+                    Text('Remittance Calculator'),
+                    Row(
+                      spacing: 10.0,
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.pushNamed(context, '/register'),
                           icon: Icon(
-                              Icons.login
-                          )
-                      )
-                    ],
-                  )
-                ],
+                              Icons.app_registration
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: () => Navigator.pushNamed(context, '/login'),
+                            icon: Icon(
+                                Icons.login
+                            )
+                        )
+                      ],
+                    )
+                  ],
               ),
             ),
             body: SafeArea(
@@ -134,6 +126,14 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        'Want to view your remittance history? You can register to view it.',
+                        style: TextStyle(
+                          fontSize: AppConstants.fontSizeSM,
+                          fontWeight: FontWeight.w400
+                        )
+                      ),
+                      const SizedBox(width: 24),
                       Center(
                         child: Row(
                           children: [

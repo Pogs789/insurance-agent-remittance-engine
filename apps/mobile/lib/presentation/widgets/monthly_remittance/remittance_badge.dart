@@ -44,14 +44,18 @@ class RemittanceBadge extends StatelessWidget {
             ),
             const SizedBox(width: 4.0),
           ],
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-              letterSpacing: 0.5,
-            ),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Text(
+              text,
+              overflow: TextOverflow.visible,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+                letterSpacing: 0.5,
+              ),
+            )
           ),
         ],
       ),
