@@ -3,11 +3,13 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
+import { MailService } from '../mail/mail.service';
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async agentRegister(
@@ -36,7 +38,14 @@ export class AuthService {
       },
     });
 
-    if (isSuccess !== null) return { success: true };
+    if (isSuccess !== null) {
+      await this.mailService.sendMail(
+        email,
+        'Welcome to the Insurance Agent Remittance Engine',
+        'welcome',
+      );
+      return { success: true };
+    }
 
     return { success: false };
   }
