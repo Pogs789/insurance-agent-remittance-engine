@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { MailService } from '../mail/mail.service';
+import { join } from 'path';
 @Injectable()
 export class AuthService {
   constructor(
@@ -29,20 +30,33 @@ export class AuthService {
         firstName: firstName,
         middleName: middleName,
         lastName: lastName,
-        insuranceCompany: insuranceCompany,
-        branchAddress: branchAddress,
         birthDate: birthDate,
-        commissionRate: commissionRate,
         email: email,
         passwordHash: password,
       },
     });
 
     if (isSuccess !== null) {
+      await this.prisma.insuranceAgent.create({
+        data: {
+          userId: isSuccess.id,
+          insuranceCompany: insuranceCompany,
+          branchAddress: branchAddress,
+          commissionRate: commissionRate,
+        },
+      });
+
+      const templatePath = join(
+        __dirname,
+        '..',
+        'views',
+        'registration-confirmation.ejs',
+      );
+
       await this.mailService.sendMail(
         email,
         'Welcome to the Insurance Agent Remittance Engine',
-        'welcome',
+        templatePath,
       );
       return { success: true };
     }
