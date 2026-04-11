@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
-import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
 import 'core/themes/app_theme.dart';
