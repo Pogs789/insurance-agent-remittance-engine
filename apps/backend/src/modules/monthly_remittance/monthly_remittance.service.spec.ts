@@ -31,11 +31,6 @@ describe('MonthlyRemittanceService', () => {
   });
 
   it('should calculate and store remittance correctly', async () => {
-    const mockUser = {
-      id: 'user-1',
-      commissionRate: 20,
-    };
-
     const planholders = [
       { paymentPeriodAmount: 5700 },
       { paymentPeriodAmount: 300000 },
@@ -43,8 +38,8 @@ describe('MonthlyRemittanceService', () => {
     ];
 
     const prismaMock = {
-      user: {
-        findFirst: jest.fn().mockResolvedValue(mockUser),
+      insuranceAgent: {
+        findFirst: jest.fn().mockResolvedValue({ id: 'user-1' }), // service uses .id from this result
       },
       monthlyRemittanceHistory: {
         create: jest.fn().mockResolvedValue({}),
@@ -80,7 +75,7 @@ describe('MonthlyRemittanceService', () => {
 
     expect(result).toStrictEqual({ amountToBeRemitted: new Decimal(239715.2) });
 
-    expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
+    expect(prismaMock.insuranceAgent.findFirst).toHaveBeenCalledWith({
       where: { id: 'user-1' },
     });
 

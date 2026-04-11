@@ -30,7 +30,7 @@ export class MonthlyRemittanceService {
     );
 
     if (!userId) return { amountToBeRemitted: amountToBeRemitted };
-    const insuranceAgent = await this.prisma.user.findFirst({
+    const insuranceAgent = await this.prisma.insuranceAgent.findFirst({
       where: { id: userId },
     });
 
@@ -48,7 +48,7 @@ export class MonthlyRemittanceService {
     await this.prisma.$transaction([
       this.prisma.monthlyRemittanceHistory.create({
         data: {
-          userId: userId,
+          agentId: insuranceAgent.id,
           amountRemitted: amountToBeRemitted,
           planholderData: planholderDataForDb,
         },
@@ -64,7 +64,7 @@ export class MonthlyRemittanceService {
    * @returns remittanceDetails | null
    */
   async getAllRemittanceHistory(userId: string) {
-    const insuranceAgent = await this.prisma.user.findFirst({
+    const insuranceAgent = await this.prisma.insuranceAgent.findFirst({
       where: { id: userId },
     });
 
@@ -75,7 +75,7 @@ export class MonthlyRemittanceService {
     const remittanceDetails =
       await this.prisma.monthlyRemittanceHistory.findMany({
         where: {
-          userId: userId,
+          agentId: insuranceAgent.id,
         },
       });
 
@@ -89,7 +89,7 @@ export class MonthlyRemittanceService {
     userId: string,
     id: string,
   ): Promise<{ amountToBeRemitted: Decimal }> {
-    const insuranceAgent = await this.prisma.user.findFirst({
+    const insuranceAgent = await this.prisma.insuranceAgent.findFirst({
       where: { id: userId },
     });
 
