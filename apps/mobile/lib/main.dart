@@ -7,9 +7,12 @@ import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/r
 import 'core/themes/app_theme.dart';
 
 Future main() async {
-  await dotenv.load(
-    fileName: '.env',
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (!kIsWeb) {
+    await dotenv.load(fileName: '.env');
+  }
+  
   runApp(const MyApp());
 }
 
