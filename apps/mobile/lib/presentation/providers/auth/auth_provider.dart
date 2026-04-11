@@ -18,9 +18,28 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try{
-      debugPrint('Hi from MonthlyRemittanceProvider');
+      debugPrint('Hi from AuthProvider');
       debugPrint('useCase runtimeType: ${_submitAgentUseCase.runtimeType}');
       final result = await _submitAgentUseCase(user);
+      isSuccess = result['success'];
+    } catch(e) {
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> login() async {
+    isLoading = false;
+    errorMessage = null;
+    isSuccess = false;
+    notifyListeners();
+
+    try{
+      debugPrint('Hi from AuthProvider');
+      debugPrint('useCase runtimeType: ${_submitAgentUseCase.runtimeType}');
+      // final result = await _submitAgentUseCase(user);
       isSuccess = true;
     } catch(e) {
       errorMessage = e.toString();

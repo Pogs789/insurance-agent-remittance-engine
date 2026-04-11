@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
+import { MailService } from '../mail/mail.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -12,13 +13,33 @@ describe('AuthService', () => {
         AuthService,
         {
           provide: PrismaService,
-          useValue: {},
+          useValue: {
+            user: {
+              create: jest.fn().mockResolvedValue({ id: 'mock-user-id' }),
+              findUnique: jest.fn(),
+            },
+            insuranceAgent: {
+              create: jest.fn().mockResolvedValue({}),
+            },
+            refreshToken: {
+              create: jest.fn(),
+              findMany: jest.fn(),
+              update: jest.fn(),
+            },
+            $transaction: jest.fn(),
+          },
         },
         {
           provide: JwtService,
           useValue: {
             signAsync: jest.fn(),
             verifyAsync: jest.fn(),
+          },
+        },
+        {
+          provide: MailService,
+          useValue: {
+            sendMail: jest.fn(),
           },
         },
       ],
@@ -29,5 +50,21 @@ describe('AuthService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should create a new agent and sent a successful email', async () => {
+    const result = await service.agentRegister(
+      'Juan',
+      'Dela',
+      'Cruz',
+      'San Pedro Insurance Inc.',
+      new Date('1990-01-01'),
+      'Tahao Rd., Brgy. 69, Legazpi City',
+      40,
+      'juandelacruz@email.com',
+      'Password@123',
+    );
+
+    expect(result).toStrictEqual({ success: true });
   });
 });

@@ -1,3 +1,4 @@
+import { MailModule } from './modules/mail/mail.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,7 +8,13 @@ import { MonthlyRemittanceModule } from './modules/monthly_remittance/monthly_re
 import { AgentsModule } from './modules/agents/agents.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, MonthlyRemittanceModule, AgentsModule],
+  imports: [
+    MailModule,
+    AuthModule,
+    PrismaModule,
+    MonthlyRemittanceModule,
+    AgentsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

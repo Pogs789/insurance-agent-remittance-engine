@@ -1,8 +1,16 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
+import 'package:life_insurance_monitoring_mobile/data/repositories/agent_repository.dart';
     import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
+import 'package:life_insurance_monitoring_mobile/domain/repositories/agent_repository.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/themes/app_colors.dart';
+import '../../providers/auth/auth_provider.dart';
 
     class RegistrationPage extends StatefulWidget {
       const RegistrationPage({super.key});
@@ -13,7 +21,6 @@ import '../../../core/themes/app_colors.dart';
 
     class _RegistrationPageState extends State<RegistrationPage> {
       final _formKey = GlobalKey<FormState>();
-
       final _firstNameController = TextEditingController();
       final _middleNameController = TextEditingController();
       final _lastNameController = TextEditingController();
@@ -22,8 +29,20 @@ import '../../../core/themes/app_colors.dart';
       final _commissionRateController = TextEditingController();
       final _emailController = TextEditingController();
       final _passwordController = TextEditingController();
+      late final AuthProvider authProvider;
+      late final AgentUseCase agentUseCase;
+      late final AgentRepository agentRepository;
+      late final AuthRemoteDataSource authRemoteDataSource;
 
       DateTime? _birthDate;
+
+      @override
+      void initState() {
+        super.initState();
+        authRemoteDataSource = AuthRemoteDataSourceImpl(dio: Dio());
+        agentRepository = AgentRepositoryImpl(authRemoteDataSource);
+        agentUseCase = AgentUseCase(agentRepository);
+      }
 
       @override
       void dispose() {
@@ -63,8 +82,7 @@ import '../../../core/themes/app_colors.dart';
         return null;
       }
 
-      void _submit() {
-        final isValid = _formKey.currentState?.validate() ?? false;
+      void _agentSubmit(BuildContext providerContext) async {
 
         if (_birthDate == null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -72,8 +90,6 @@ import '../../../core/themes/app_colors.dart';
           );
           return;
         }
-
-        if (!isValid) return;
 
         final commissionRate = double.tryParse(_commissionRateController.text.trim());
         if (commissionRate == null) {
@@ -95,10 +111,19 @@ import '../../../core/themes/app_colors.dart';
           rawPassword: _passwordController.text,
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration data captured successfully')),
+        final provider = providerContext.read<AuthProvider>();
+
+        await provider.newAgentSubmit(user);
+
+        if(!providerContext.mounted) return;
+
+        String error = provider.errorMessage ?? "An Error Occured while registering your account. Maybe you don't have an internet connection.";
+
+        AuthDialog.show(
+          providerContext,
+          title: provider.isSuccess ? "You have successfully registered. Please check your email to confirm it" : error,
+          message: ''
         );
-        debugPrint('Registered user: ${user.email} - ${user.firstName} ${user.lastName}');
       }
 
       @override
@@ -107,124 +132,143 @@ import '../../../core/themes/app_colors.dart';
             ? 'Select birth date'
             : '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}';
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Registration Form'),
+        return ChangeNotifierProvider(
+          create: (_) => AuthProvider(
+            AgentUseCase(
+              AgentRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio())
+              )
+            )
           ),
-          body: SafeArea(
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  Text('Part 1: Basic Personal Information'),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: _buildTextFormField(
-                          textEditingController: _firstNameController,
-                          labelText: 'First Name',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildTextFormField(
-                          textEditingController: _middleNameController,
-                          labelText: 'Middle Name',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildTextFormField(
-                          textEditingController: _lastNameController,
-                          labelText: 'Last Name',
-                        )
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Birth Date'),
-                    subtitle: Text(birthDateText),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: _pickBirthDate,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTextFormField(
-                    textEditingController: _emailController,
-                    labelText: 'Email',
-                    keyboardType: TextInputType.emailAddress,
-                    customValidator: (value) {
-                      final requiredError = _requiredValidator(value, 'Email');
-                      if (requiredError != null) return requiredError;
+          child: Builder(
+            builder: (providerContext) {
+              final provider = providerContext.watch<AuthProvider>();
 
-                      final email = value!.trim();
-                      if (!email.contains('@') || !email.contains('.')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTextFormField(
-                    textEditingController: _passwordController,
-                    labelText: 'Password',
-                    obscureText: true,
-                    minLength: 6,
-                    validationErrorMessage: 'Password must be at least 6 characters',
-                  ),
-                  const Divider(),
-                  const SizedBox(height: 12),
-                  _buildTextFormField(
-                    textEditingController: _insuranceCompanyController,
-                    labelText: 'Insurance Company',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTextFormField(
-                    textEditingController: _branchAddressController,
-                    labelText: 'Branch Address',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTextFormField(
-                    textEditingController: _commissionRateController,
-                    labelText: 'Commission Rate',
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    customValidator: (value) {
-                      final requiredError = _requiredValidator(value, 'Commission rate');
-                      if (requiredError != null) return requiredError;
-
-                      final parsed = double.tryParse(value!.trim());
-                      if (parsed == null) return 'Enter a valid number';
-                      if (parsed < 0) return 'Commission rate cannot be negative';
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      if(AppConstants.isUnderDevelopment) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Registration Form'),
+                ),
+                body: SafeArea(
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        Text('Part 1: Basic Personal Information'),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(
+                              child: _buildTextFormField(
+                                textEditingController: _firstNameController,
+                                labelText: 'First Name',
+                              ),
                             ),
-                            backgroundColor: AppColors.colorWarning,
-                          )
-                        );
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildTextFormField(
+                                textEditingController: _middleNameController,
+                                labelText: 'Middle Name',
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                                child: _buildTextFormField(
+                                  textEditingController: _lastNameController,
+                                  labelText: 'Last Name',
+                                )
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Birth Date'),
+                          subtitle: Text(birthDateText),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: _pickBirthDate,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTextFormField(
+                          textEditingController: _emailController,
+                          labelText: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          customValidator: (value) {
+                            final requiredError = _requiredValidator(value, 'Email');
+                            if (requiredError != null) return requiredError;
 
-                        return;
-                      }
+                            final email = value!.trim();
+                            if (!email.contains('@') || !email.contains('.')) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTextFormField(
+                          textEditingController: _passwordController,
+                          labelText: 'Password',
+                          obscureText: true,
+                          minLength: 6,
+                          validationErrorMessage: 'Password must be at least 6 characters',
+                        ),
+                        const Divider(),
+                        const SizedBox(height: 12),
+                        _buildTextFormField(
+                          textEditingController: _insuranceCompanyController,
+                          labelText: 'Insurance Company',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTextFormField(
+                          textEditingController: _branchAddressController,
+                          labelText: 'Branch Address',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTextFormField(
+                          textEditingController: _commissionRateController,
+                          labelText: 'Commission Rate',
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          customValidator: (value) {
+                            final requiredError = _requiredValidator(value, 'Commission rate');
+                            if (requiredError != null) return requiredError;
 
-                      _submit();
-                    },
-                    child: const Text('Register'),
+                            final parsed = double.tryParse(value!.trim());
+                            if (parsed == null) return 'Enter a valid number';
+                            if (parsed < 0) return 'Commission rate cannot be negative';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: provider.isLoading ? null : () async {
+                            if(AppConstants.isUnderDevelopment) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
+                                    ),
+                                    backgroundColor: AppColors.colorWarning,
+                                  )
+                              );
+
+                              return;
+                            }
+
+                            if(_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+
+                              _agentSubmit(providerContext);
+                            }
+                          },
+                          child: const Text('Register'),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                ),
+              );
+            }
+          )
         );
       }
 

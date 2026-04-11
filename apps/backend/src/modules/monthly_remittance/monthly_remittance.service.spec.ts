@@ -3,6 +3,7 @@ import { MonthlyRemittanceService } from './monthly_remittance.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AppConstants } from '../../common/constants/app.constants';
 import { Decimal } from '@prisma/client/runtime/client';
+import { PlanholderDataDto } from './dto/planholder_data.dto';
 
 describe('MonthlyRemittanceService', () => {
   let service: MonthlyRemittanceService;
@@ -72,12 +73,11 @@ describe('MonthlyRemittanceService', () => {
     );
 
     const result = await service.calculateRemittanceAmount(
-      planholders as any,
+      planholders as PlanholderDataDto[],
       30,
       'user-1',
     );
 
-    // 3000 * (100 - 20)% = 2400
     expect(result).toStrictEqual({ amountToBeRemitted: new Decimal(239715.2) });
 
     expect(prismaMock.user.findFirst).toHaveBeenCalledWith({
