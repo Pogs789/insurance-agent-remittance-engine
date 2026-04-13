@@ -118,7 +118,7 @@ export class MonthlyRemittanceService {
     await this.prisma.monthlyRemittanceHistory.update({
       where: {
         id: id,
-        userId: userId,
+        agentId: userId,
       },
       data: {
         amountRemitted: amountToBeRemitted,
