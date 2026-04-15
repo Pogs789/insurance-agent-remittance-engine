@@ -8,9 +8,9 @@ import 'package:life_insurance_monitoring_mobile/domain/repositories/agent_repos
 import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_usecase.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/themes/app_colors.dart';
 import '../../providers/auth/auth_provider.dart';
+import 'package:flutter/services.dart';
 
     class RegistrationPage extends StatefulWidget {
       const RegistrationPage({super.key});
@@ -117,12 +117,12 @@ import '../../providers/auth/auth_provider.dart';
 
         if(!providerContext.mounted) return;
 
-        String error = provider.errorMessage ?? "An Error Occured while registering your account. Maybe you don't have an internet connection.";
+        String error = provider.errorMessage ?? "An Error Occurred while registering your account. Maybe you don't have an internet connection.";
 
         AuthDialog.show(
           providerContext,
-          title: provider.isSuccess ? "You have successfully registered. Please check your email to confirm it" : error,
-          message: ''
+          title: provider.isSuccess ? "Successfully Registered" : "Registration Failed",
+          message: provider.isSuccess ? "You have successfully registered. Please check your email to confirm it" : error
         );
       }
 
@@ -154,7 +154,16 @@ import '../../providers/auth/auth_provider.dart';
                     child: ListView(
                       padding: const EdgeInsets.all(16),
                       children: [
-                        Text('Part 1: Basic Personal Information'),
+                        Text(
+                          'Part 1: Basic Personal Information',
+                          overflow: TextOverflow.fade,
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: AppConstants.fontSizeLG,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(height: AppConstants.spaceLG),
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -228,32 +237,26 @@ import '../../providers/auth/auth_provider.dart';
                           textEditingController: _commissionRateController,
                           labelText: 'Commission Rate',
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                          ],
                           customValidator: (value) {
                             final requiredError = _requiredValidator(value, 'Commission rate');
                             if (requiredError != null) return requiredError;
 
                             final parsed = double.tryParse(value!.trim());
                             if (parsed == null) return 'Enter a valid number';
-                            if (parsed < 0) return 'Commission rate cannot be negative';
+                            if (parsed < AppConstants.minCommissionRate) {
+                              return 'Commission rate cannot be negative';
+                            } else if(parsed > AppConstants.maxCommissionRate) {
+                              return 'Commission Rate cannot exceed 100%';
+                            }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: provider.isLoading ? null : () async {
-                            if(AppConstants.isUnderDevelopment) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
-                                    ),
-                                    backgroundColor: AppColors.colorWarning,
-                                  )
-                              );
-
-                              return;
-                            }
-
                             if(_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
 
@@ -280,10 +283,12 @@ import '../../providers/auth/auth_provider.dart';
         String? validationErrorMessage,
         TextInputType? keyboardType,
         String? Function(String?)? customValidator,
+        List<TextInputFormatter>? inputFormatters,
       }) {
         return TextFormField(
           controller: textEditingController,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             labelText: labelText,
             border: OutlineInputBorder(

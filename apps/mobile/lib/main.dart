@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
 import 'core/themes/app_theme.dart';
 
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const RemittanceFormPage(),
         '/register': (context) => const RegistrationPage(),
-        '/login': (context) => const LoginPage()
+        '/login': (context) => const LoginPage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/remittance-history': (context) => const Placeholder()
       }
     );
   }

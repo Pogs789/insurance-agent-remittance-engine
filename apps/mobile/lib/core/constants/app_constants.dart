@@ -22,7 +22,7 @@ class AppConstants {
 
   // ── Timeouts & Durations ──────────────────────────────────
   static const int splashDurationSeconds = 2;
-  static const int loginDelaySeconds = 1;        // replaces hardcoded delay in login_page.dart
+  static const int loginDelaySeconds = 1;
   static const int httpTimeoutSeconds = 30;
 
   // ── Route Names ───────────────────────────────────────────

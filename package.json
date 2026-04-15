@@ -17,8 +17,7 @@
     "lint:backend": "pnpm --filter backend lint",
     "lint:mobile": "cd apps/mobile && flutter analyze",
     "format": "prettier --write \"apps/backend/**/*.{ts,json}\" && cd apps/mobile && dart format .",
-    "prepare": "husky",
-    "postinstall": "pnpm exec prisma generate --schema=apps/backend/prisma/schema.prisma"
+    "prepare": "husky"
   },
   "lint-staged": {
     "apps/backend/**/*.{ts,js,json}": [

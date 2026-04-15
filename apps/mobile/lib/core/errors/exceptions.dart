@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -66,11 +68,68 @@ final class UnknownException extends AppException {
   );
 }
 
+String? _extractValidationMessage(dynamic data) {
+  if (data == null) return null;
+
+  dynamic normalized = data;
+
+  // If backend sent plain JSON string, decode it.
+  if (normalized is String) {
+    try {
+      normalized = jsonDecode(normalized);
+    } catch (_) {
+      return normalized.trim().isEmpty ? null : normalized;
+    }
+  }
+
+  if (normalized is Map<String, dynamic>) {
+    // Common API fields
+    final direct = normalized['message'] ??
+        normalized['error'] ??
+        normalized['detail'] ??
+        normalized['title'];
+    if (direct is String && direct.trim().isNotEmpty) return direct;
+
+    // Common validation structures:
+    // { errors: ["a", "b"] }
+    // { errors: { email: ["invalid"], password: ["too short"] } }
+    final errors = normalized['message'];
+    if (errors is List) {
+      final lines = errors.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+      if (lines.isNotEmpty) return lines.join('\n');
+    }
+
+    if (errors is Map<String, dynamic>) {
+      final lines = <String>[];
+      errors.forEach((field, value) {
+        if (value is List) {
+          for (final v in value) {
+            lines.add('$field: $v');
+          }
+        } else {
+          lines.add('$field: $value');
+        }
+      });
+      if (lines.isNotEmpty) return lines.join('\n');
+    }
+
+    // Fallback: stringify full payload
+    return jsonEncode(normalized);
+  }
+
+  if (normalized is List) {
+    return normalized.map((e) => e.toString()).join('\n');
+  }
+
+  return normalized.toString();
+}
+
 AppException mapToAppException(Object error, StackTrace stackTrace) {
   debugPrintStack(
-    label: 'AppException',
+    label: 'An Error Occurred: $error. Stack Trace',
     stackTrace: stackTrace,
   );
+
   if (error is AppException) return error;
 
   if(error is DioException) {
@@ -93,24 +152,26 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
           cause: error,
         );
       case DioExceptionType.badResponse:
+        final backendMessage = _extractValidationMessage(error.response?.data);
+
         if(statusCode == 401 || statusCode == 403) {
           return AuthException(
-            'This request is Unauthorized.',
+            backendMessage ?? 'This request is Unauthorized.',
             statusCode: statusCode,
             cause: error,
           );
         }
         // TODO: This is the exception where it should be placed under the text.
-        if(statusCode == 422) {
+        if(statusCode == 400 || statusCode == 422) {
           return ValidationException(
-            'Validation Failed. Please check your inputs and try again.',
+            backendMessage ?? 'Validation Failed. Please check your inputs and try again.',
             statusCode: statusCode,
             cause: error,
           );
         }
 
         return ServerException(
-          'Server Error Occurred.',
+          backendMessage ?? 'Server Error Occurred.',
           statusCode: statusCode,
           cause: error,
         );
@@ -128,6 +189,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
         );
     }
   }
+
   return UnknownException(
   'Unexpected application error',
   cause: error,

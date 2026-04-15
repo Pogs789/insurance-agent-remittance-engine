@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
@@ -64,6 +65,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser) async{
     try{
+      debugPrint('API URL: ${ApiEndpoints.registerApi}');
       final response = await dio.post(
         ApiEndpoints.registerApi,
         data: newUser.toJson(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 
 import '../../../domain/entities/user.dart';
 import '../../../domain/usecases/agent/agent_usecase.dart';
@@ -18,12 +19,12 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try{
-      debugPrint('Hi from AuthProvider');
-      debugPrint('useCase runtimeType: ${_submitAgentUseCase.runtimeType}');
       final result = await _submitAgentUseCase(user);
       isSuccess = result['success'];
-    } catch(e) {
-      errorMessage = e.toString();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
     } finally {
       isLoading = false;
       notifyListeners();
@@ -39,10 +40,11 @@ class AuthProvider extends ChangeNotifier {
     try{
       debugPrint('Hi from AuthProvider');
       debugPrint('useCase runtimeType: ${_submitAgentUseCase.runtimeType}');
-      // final result = await _submitAgentUseCase(user);
       isSuccess = true;
-    } catch(e) {
-      errorMessage = e.toString();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
     } finally {
       isLoading = false;
       notifyListeners();
