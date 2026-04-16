@@ -13,7 +13,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private readonly mailService: MailService,
-    private readonly appContstants: AppConstants
+    private readonly appContstants: AppConstants,
   ) {}
 
   async agentRegister(
@@ -39,8 +39,10 @@ export class AuthService {
       throw new Error('Template File not found.');
     }
 
-    
-    const hashedPassword: string = await bcrypt.hash(password, this.appContstants.saltRounds);
+    const hashedPassword: string = await bcrypt.hash(
+      password,
+      this.appContstants.saltRounds,
+    );
     const verificationToken: string = randomUUID();
 
     const isSuccess = await this.prisma.user.create({
@@ -51,7 +53,7 @@ export class AuthService {
         birthDate: birthDate,
         email: email,
         passwordHash: hashedPassword,
-        verificationToken: verificationToken
+        verificationToken: verificationToken,
       },
     });
 
@@ -175,6 +177,29 @@ export class AuthService {
     }
 
     return { success: true };
+  }
+
+  async verifyEmailToken(email: string, verificationToken: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { email, verificationToken },
+    });
+
+    if (!user)
+      throw new UnauthorizedException(
+        'Sorry. Your email does not exist. Please Try Again',
+      );
+
+    await this.prisma.user.update({
+      data: {
+        verificationToken: null,
+      },
+      where: { email },
+    });
+
+    return {
+      message:
+        'You have successfully verified your email. You can now login to the app.',
+    };
   }
 
   /**

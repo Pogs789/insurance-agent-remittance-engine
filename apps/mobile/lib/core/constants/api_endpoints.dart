@@ -1,5 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class ApiEndpoints {
   // Base URL is configured via --dart-define=API_BASE_URL=<url> at build/run time.
   // For local development on an emulator use http://10.0.2.2:3000/api (Android)
