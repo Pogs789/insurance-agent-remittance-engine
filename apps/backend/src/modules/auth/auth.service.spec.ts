@@ -3,11 +3,25 @@ import { AuthService } from './auth.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
+import * as fs from 'fs';
+import { AppConstants } from '../../common/constants/app.constants';
+
+jest.mock('fs', () => {
+  const actualFs: typeof import('fs') = jest.requireActual('fs');
+
+  return {
+    ...actualFs,
+    existsSync: jest.fn(),
+  };
+});
 
 describe('AuthService', () => {
   let service: AuthService;
+  const sendEmailMock = jest.fn();
 
   beforeEach(async () => {
+    sendEmailMock.mockClear();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -30,6 +44,13 @@ describe('AuthService', () => {
           },
         },
         {
+          provide: AppConstants,
+          useValue: {
+            saltRounds: 12,
+            backeendLink: 'http://localhost:3000/api',
+          },
+        },
+        {
           provide: JwtService,
           useValue: {
             signAsync: jest.fn(),
@@ -39,7 +60,7 @@ describe('AuthService', () => {
         {
           provide: MailService,
           useValue: {
-            sendMail: jest.fn(),
+            sendMail: sendEmailMock,
           },
         },
       ],
@@ -53,6 +74,8 @@ describe('AuthService', () => {
   });
 
   it('should create a new agent and sent a successful email', async () => {
+    (fs.existsSync as jest.Mock).mockReturnValue(true);
+
     const result = await service.agentRegister(
       'Juan',
       'Dela',
@@ -66,5 +89,6 @@ describe('AuthService', () => {
     );
 
     expect(result).toStrictEqual({ success: true });
+    expect(sendEmailMock).toHaveBeenCalled();
   });
 });

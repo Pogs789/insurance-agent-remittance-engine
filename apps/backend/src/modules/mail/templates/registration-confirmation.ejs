@@ -49,16 +49,16 @@
         </div>
         
         <div class="content">
-            <p>Hi <%= name %>,</p>
+            <p>Hi <%= locals.firstName %> <%= locals.lastName %>,</p>
             <p>Thank you for registering your email. Please confirm your email address by clicking the button below:</p>
-            <a href="<%= confirmationLink %>" class="button">Confirm Your Email</a>
+            <a href="<%= locals.confirmationLink %>" class="button">Confirm Your Email</a>
             <p>Or copy and paste this link in your browser:</p>
-            <p><%= confirmationLink %></p>
+            <p><%= locals.confirmationLink %></p>
             <p>This link will expire in 24 hours.</p>
         </div>
         
         <div class="footer">
-            <p>&copy; 2024 Insurance Agent Remittance Engine. All rights reserved.</p>
+            <p>&copy; 2026 Insurance Agent Remittance Calculator. All rights reserved.</p>
         </div>
     </div>
 </body>

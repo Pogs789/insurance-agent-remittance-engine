@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PlanholderDataDto } from './dto/planholder_data.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../../generated/client';
 import { AppConstants } from '../../common/constants/app.constants';
 import { Decimal } from '@prisma/client/runtime/client';
 
@@ -118,7 +118,7 @@ export class MonthlyRemittanceService {
     await this.prisma.monthlyRemittanceHistory.update({
       where: {
         id: id,
-        userId: userId,
+        agentId: userId,
       },
       data: {
         amountRemitted: amountToBeRemitted,

@@ -5,12 +5,15 @@ import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { MailService } from '../mail/mail.service';
 import { join } from 'path';
+import { existsSync } from 'fs';
+import { AppConstants } from '../../common/constants/app.constants';
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly appContstants: AppConstants,
   ) {}
 
   async agentRegister(
@@ -24,7 +27,24 @@ export class AuthService {
     email: string,
     password: string,
   ) {
-    //TODO: Implement User Registration with email verification.
+    const templatePath = join(
+      __dirname,
+      '..',
+      'mail',
+      'templates',
+      'registration-confirmation.ejs',
+    );
+
+    if (!existsSync(templatePath)) {
+      throw new Error('Template File not found.');
+    }
+
+    const hashedPassword: string = await bcrypt.hash(
+      password,
+      this.appContstants.saltRounds,
+    );
+    const verificationToken: string = randomUUID();
+
     const isSuccess = await this.prisma.user.create({
       data: {
         firstName: firstName,
@@ -32,7 +52,8 @@ export class AuthService {
         lastName: lastName,
         birthDate: birthDate,
         email: email,
-        passwordHash: password,
+        passwordHash: hashedPassword,
+        verificationToken: verificationToken,
       },
     });
 
@@ -46,17 +67,15 @@ export class AuthService {
         },
       });
 
-      const templatePath = join(
-        __dirname,
-        '..',
-        'views',
-        'registration-confirmation.ejs',
-      );
-
       await this.mailService.sendMail(
         email,
         'Welcome to the Insurance Agent Remittance Engine',
         templatePath,
+        {
+          firstName: firstName,
+          lastName: lastName,
+          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token/verificationToken=${verificationToken}`,
+        },
       );
       return { success: true };
     }
@@ -158,6 +177,32 @@ export class AuthService {
     }
 
     return { success: true };
+  }
+
+  async verifyEmailToken(verificationToken: string) {
+    const userVerify = await this.prisma.user.findFirst({
+      where: { verificationToken },
+    });
+
+    if (!userVerify)
+      throw new UnauthorizedException(
+        'Sorry. This verification token is invalid.',
+      );
+
+    const now: Date = new Date();
+
+    await this.prisma.user.update({
+      data: {
+        verificationToken: null,
+        emailConfirmedAt: now.toISOString(),
+      },
+      where: { email: userVerify.email },
+    });
+
+    return {
+      message:
+        'You have successfully verified your email. You can now login to the app.',
+    };
   }
 
   /**

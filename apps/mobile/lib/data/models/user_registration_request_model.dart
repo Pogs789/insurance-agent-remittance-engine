@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:intl/intl.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 
 class UserRegistrationRequestModel {
@@ -30,9 +31,9 @@ class UserRegistrationRequestModel {
         'firstName': firstName,
         'lastName': lastName,
         'middleName': middleName,
-        'birthDate': birthDate,
+        'birthDate': DateFormat('MM-dd-yyyy').format(birthDate),
         'email': email,
-        'rawPassword': rawPassword,
+        'password': rawPassword,
         'insuranceCompany': insuranceCompany,
         'branchAddress': branchAddress,
         'commissionRate': commissionRate

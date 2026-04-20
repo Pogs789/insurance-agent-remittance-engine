@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/planholders.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/monthly_remittance_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/monthly_remittance_usecase.dart';
-import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
-import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/monthly_remittance/remittance_badge.dart';
 import 'package:provider/provider.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/monthly_remittance/monthly_remittance_provider.dart';

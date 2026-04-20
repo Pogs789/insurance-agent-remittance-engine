@@ -453,10 +453,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] Blueprint and planning
 - [x] Clean architecture implementation
 - [ ] Authentication module
-- [ ] Policy management
-- [ ] Premium tracking
-- [ ] Claims processing
-- [ ] Push notifications
+- [x] Remittance Calculation module
+- [ ] User Management module
 - [ ] Admin dashboard
 - [ ] Testing coverage (>80%)
 - [ ] Documentation completion
