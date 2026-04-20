@@ -74,7 +74,7 @@ export class AuthService {
         {
           firstName: firstName,
           lastName: lastName,
-          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token/${verificationToken}`,
+          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token/verificationToken=${verificationToken}`,
         },
       );
       return { success: true };
@@ -179,21 +179,24 @@ export class AuthService {
     return { success: true };
   }
 
-  async verifyEmailToken(email: string, verificationToken: string) {
-    const user = await this.prisma.user.findFirst({
-      where: { email, verificationToken },
+  async verifyEmailToken(verificationToken: string) {
+    const userVerify = await this.prisma.user.findFirst({
+      where: { verificationToken },
     });
 
-    if (!user)
+    if (!userVerify)
       throw new UnauthorizedException(
-        'Sorry. Your email does not exist. Please Try Again',
+        'Sorry. This verification token is invalid.',
       );
+
+    const now: Date = new Date();
 
     await this.prisma.user.update({
       data: {
         verificationToken: null,
+        emailConfirmedAt: now.toISOString(),
       },
-      where: { email },
+      where: { email: userVerify.email },
     });
 
     return {

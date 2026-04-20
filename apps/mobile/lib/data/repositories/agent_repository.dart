@@ -13,11 +13,4 @@ class AgentRepositoryImpl implements AgentRepository {
     final response = await authRemote.registerUser(req);
     return response;
   }
-
-  @override
-  Future<Map<String, dynamic>> loginUser() {
-    // TODO: implement loginUser
-    throw UnimplementedError();
-  }
-
 }

@@ -9,6 +9,8 @@ import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_use
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
 import 'package:provider/provider.dart';
 import '../../../core/themes/app_colors.dart';
+import '../../../data/repositories/auth_repository.dart';
+import '../../../domain/usecases/auth/auth_usecases.dart';
 import '../../providers/auth/auth_provider.dart';
 import 'package:flutter/services.dart';
 
@@ -138,7 +140,23 @@ import 'package:flutter/services.dart';
               AgentRepositoryImpl(
                 AuthRemoteDataSourceImpl(dio: Dio())
               )
-            )
+            ),
+            LoginUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio())
+              )
+            ),
+            RefreshTokenUseCase(
+                AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio())
+              )
+            ),
+            LogoutUseCase(
+                AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio())
+              )
+            ),
+
           ),
           child: Builder(
             builder: (providerContext) {
