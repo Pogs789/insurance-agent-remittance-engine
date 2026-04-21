@@ -56,6 +56,9 @@ importers:
       '@prisma/client':
         specifier: 7.5.0
         version: 7.5.0(prisma@7.5.0(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3))(typescript@5.9.3)
+      '@prisma/client-runtime-utils':
+        specifier: 7.5.0
+        version: 7.5.0
       '@types/decimal.js':
         specifier: ^7.4.3
         version: 7.4.3
