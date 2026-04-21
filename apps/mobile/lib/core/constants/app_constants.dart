@@ -5,7 +5,8 @@ class AppConstants {
   static const bool isUnderDevelopment = true;
 
   // ── App Identity ──────────────────────────────────────────
-  static const String appName = 'iRemitMo: The Insurance Agent\'s Remittance Calculator';
+  static const String appName =
+      'iRemitMo: The Insurance Agent\'s Remittance Calculator';
   static const String appVersion = '1.0.0';
 
   // ── Commission Defaults ───────────────────────────────────
@@ -63,25 +64,25 @@ class AppConstants {
   static const double fontSizeXXL = 24.0; // page title
   static const double fontSizeDisplay = 32.0; // hero/landing
 
-// -- Responsive Typography: Mobile -------------------------
+  // -- Responsive Typography: Mobile -------------------------
   static const double mobileBodyFontSize = 14.0;
   static const double mobileLabelFontSize = 14.0;
   static const double mobileTitleFontSize = 20.0;
   static const double mobileHeadingFontSize = 24.0;
 
-// -- Responsive Typography: Tablet -------------------------
+  // -- Responsive Typography: Tablet -------------------------
   static const double tabletBodyFontSize = 15.0;
   static const double tabletLabelFontSize = 15.0;
   static const double tabletTitleFontSize = 22.0;
   static const double tabletHeadingFontSize = 28.0;
 
-// -- Responsive Typography: Web ----------------------------
+  // -- Responsive Typography: Web ----------------------------
   static const double webBodyFontSize = 16.0;
   static const double webLabelFontSize = 16.0;
   static const double webTitleFontSize = 24.0;
   static const double webHeadingFontSize = 32.0;
 
-// -- Special Numeric Emphasis ------------------------------
+  // -- Special Numeric Emphasis ------------------------------
   static const double amountFontSizeMobile = 20.0;
   static const double amountFontSizeTablet = 22.0;
   static const double amountFontSizeWeb = 24.0;

@@ -9,7 +9,9 @@ class MonthlyRemittanceUseCase {
 
   MonthlyRemittanceUseCase(this.repository);
 
-  Future<RemittanceCalculationResponseModel> call(MonthlyRemittance remittance) async {
+  Future<RemittanceCalculationResponseModel> call(
+    MonthlyRemittance remittance,
+  ) async {
     return await repository.submitMonthlyRemittance(remittance);
   }
 }

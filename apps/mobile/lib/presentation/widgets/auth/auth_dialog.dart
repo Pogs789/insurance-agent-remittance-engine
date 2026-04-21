@@ -13,7 +13,7 @@ class AuthDialog extends StatelessWidget {
 
   // Brand colours kept in sync with AppTheme's finance palette.
   static const Color _brandError = AppColors.colorError; // AppTheme._error
-  static const Color _iconBg     = AppColors.colorErrorContainer; // soft red tint
+  static const Color _iconBg = AppColors.colorErrorContainer; // soft red tint
 
   const AuthDialog({
     super.key,
@@ -22,20 +22,20 @@ class AuthDialog extends StatelessWidget {
     required this.onConfirm,
     this.onCancel,
     this.confirmLabel = 'Confirm',
-    this.cancelLabel  = 'Cancel',
-    required this.showCancelButton
+    this.cancelLabel = 'Cancel',
+    required this.showCancelButton,
   });
 
   /// Convenience method – returns [true] on confirm, [false] on cancel,
   /// [null] if dismissed (though `barrierDismissible` is false).
   static Future<bool?> show(
-      BuildContext context, {
-        required String title,
-        required String message,
-        bool showCancelDialog = true,
-        String confirmLabel = 'Confirm',
-        String cancelLabel  = 'Cancel',
-      }) {
+    BuildContext context, {
+    required String title,
+    required String message,
+    bool showCancelDialog = true,
+    String confirmLabel = 'Confirm',
+    String cancelLabel = 'Cancel',
+  }) {
     return showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -43,9 +43,9 @@ class AuthDialog extends StatelessWidget {
         dialogueTitle: title,
         dialogueMessage: message,
         confirmLabel: confirmLabel,
-        cancelLabel:  cancelLabel,
+        cancelLabel: cancelLabel,
         onConfirm: () => Navigator.of(dialogContext).pop(true),
-        onCancel:  () => Navigator.of(dialogContext).pop(false),
+        onCancel: () => Navigator.of(dialogContext).pop(false),
         showCancelButton: showCancelDialog,
       ),
     );
@@ -53,7 +53,7 @@ class AuthDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme       = Theme.of(context);
+    final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Dialog(
@@ -64,7 +64,7 @@ class AuthDialog extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.spaceXXL, // 32
-          vertical:   AppConstants.spaceXXL, // 32
+          vertical: AppConstants.spaceXXL, // 32
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -83,7 +83,6 @@ class AuthDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceXL), // 24
-
             // ── Title ─────────────────────────────────────────────────────
             Text(
               dialogueTitle,
@@ -95,7 +94,6 @@ class AuthDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceMD), // 12
-
             // ── Message ───────────────────────────────────────────────────
             Text(
               dialogueMessage,
@@ -107,56 +105,27 @@ class AuthDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceXXL), // 32
-
             // ── Action buttons ────────────────────────────────────────────
             Row(
               children: [
                 // Cancel ─────────────────────────────────────────────────
-
-                if(showCancelButton)
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      if (onCancel != null) {
-                        onCancel!();
-                      } else {
-                        // Use the dialog's own context so Navigator.of() finds
-                        // the overlay route, not the underlying page's route.
-                        Navigator.of(context, rootNavigator: true).pop(false);
-                      }
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppConstants.spaceLG, // 16
-                      ),
-                      side: BorderSide(color: colorScheme.outline),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          AppConstants.cardBorderRadius,
-                        ),
-                      ),
-                    ),
-                    child: Text(
-                      cancelLabel,
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppConstants.spaceMD), // 12
-
-                // Confirm ────────────────────────────────────────────────
+                if (showCancelButton)
                   Expanded(
-                    child: FilledButton(
-                      onPressed: onConfirm,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: _brandError,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        if (onCancel != null) {
+                          onCancel!();
+                        } else {
+                          // Use the dialog's own context so Navigator.of() finds
+                          // the overlay route, not the underlying page's route.
+                          Navigator.of(context, rootNavigator: true).pop(false);
+                        }
+                      },
+                      style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           vertical: AppConstants.spaceLG, // 16
                         ),
+                        side: BorderSide(color: colorScheme.outline),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             AppConstants.cardBorderRadius,
@@ -164,15 +133,41 @@ class AuthDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        confirmLabel,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        cancelLabel,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ),
+                const SizedBox(width: AppConstants.spaceMD), // 12
+                // Confirm ────────────────────────────────────────────────
+                Expanded(
+                  child: FilledButton(
+                    onPressed: onConfirm,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: _brandError,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppConstants.spaceLG, // 16
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.cardBorderRadius,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      confirmLabel,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ],

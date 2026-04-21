@@ -26,7 +26,9 @@ class AppColors {
   static const Color colorInfoContainer = Color(0xFFDBEAFE);
   static const Color colorOnInfoContainer = Color(0xFF1E3A8A);
 
-  static const Color textPrimary = Color(0xFF111827); // main body textstatic const Color textSecondary = Color(0xFF4B5563); // supporting textstatic const Color textTertiary = Color(0xFF6B7280); // hints/placeholdersstatic const Color textDisabled = Color(0xFF9CA3AF); // disabled labelsstatic const Color textInverse = Colors.white; // text on dark surfacesstatic const Color textLink = Color(0xFF1D4ED8); // tappable inline text// -- Text Colors on Semantic Containers --------------------
+  static const Color textPrimary = Color(
+    0xFF111827,
+  ); // main body textstatic const Color textSecondary = Color(0xFF4B5563); // supporting textstatic const Color textTertiary = Color(0xFF6B7280); // hints/placeholdersstatic const Color textDisabled = Color(0xFF9CA3AF); // disabled labelsstatic const Color textInverse = Colors.white; // text on dark surfacesstatic const Color textLink = Color(0xFF1D4ED8); // tappable inline text// -- Text Colors on Semantic Containers --------------------
   static const Color textOnSuccess = colorOnSuccessContainer;
   static const Color textOnError = colorOnErrorContainer;
   static const Color textOnWarning = colorOnWarningContainer;

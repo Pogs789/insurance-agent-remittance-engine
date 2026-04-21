@@ -11,61 +11,32 @@ sealed class AppException implements Exception {
   const AppException(this.message, {this.statusCode, this.cause});
 
   @override
-  String toString() => 'AppException(message: $message, statusCode: $statusCode, cause: $cause)';
+  String toString() =>
+      'AppException(message: $message, statusCode: $statusCode, cause: $cause)';
 }
 
 final class NetworkException extends AppException {
-  const NetworkException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const NetworkException(super.message, {super.statusCode, super.cause});
 }
 
 final class ServerException extends AppException {
-  const ServerException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const ServerException(super.message, {super.statusCode, super.cause});
 }
 
 final class RequestTimeoutException extends AppException {
-  const RequestTimeoutException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const RequestTimeoutException(super.message, {super.statusCode, super.cause});
 }
 
 final class AuthException extends AppException {
-  const AuthException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const AuthException(super.message, {super.statusCode, super.cause});
 }
 
 final class ValidationException extends AppException {
-  const ValidationException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const ValidationException(super.message, {super.statusCode, super.cause});
 }
 
 final class UnknownException extends AppException {
-  const UnknownException(
-    super.message, {
-      super.statusCode,
-      super.cause
-    }
-  );
+  const UnknownException(super.message, {super.statusCode, super.cause});
 }
 
 String? _extractValidationMessage(dynamic data) {
@@ -84,7 +55,8 @@ String? _extractValidationMessage(dynamic data) {
 
   if (normalized is Map<String, dynamic>) {
     // Common API fields
-    final direct = normalized['message'] ??
+    final direct =
+        normalized['message'] ??
         normalized['error'] ??
         normalized['detail'] ??
         normalized['title'];
@@ -95,7 +67,10 @@ String? _extractValidationMessage(dynamic data) {
     // { errors: { email: ["invalid"], password: ["too short"] } }
     final errors = normalized['message'];
     if (errors is List) {
-      final lines = errors.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+      final lines = errors
+          .map((e) => e.toString())
+          .where((e) => e.trim().isNotEmpty)
+          .toList();
       if (lines.isNotEmpty) return lines.join('\n');
     }
 
@@ -132,10 +107,10 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
 
   if (error is AppException) return error;
 
-  if(error is DioException) {
+  if (error is DioException) {
     final statusCode = error.response?.statusCode;
 
-    switch(error.type) {
+    switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
@@ -154,7 +129,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
       case DioExceptionType.badResponse:
         final backendMessage = _extractValidationMessage(error.response?.data);
 
-        if(statusCode == 401 || statusCode == 403) {
+        if (statusCode == 401 || statusCode == 403) {
           return AuthException(
             backendMessage ?? 'This request is Unauthorized.',
             statusCode: statusCode,
@@ -162,9 +137,10 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
           );
         }
         // TODO: This is the exception where it should be placed under the text.
-        if(statusCode == 400 || statusCode == 422) {
+        if (statusCode == 400 || statusCode == 422) {
           return ValidationException(
-            backendMessage ?? 'Validation Failed. Please check your inputs and try again.',
+            backendMessage ??
+                'Validation Failed. Please check your inputs and try again.',
             statusCode: statusCode,
             cause: error,
           );
@@ -190,8 +166,5 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
     }
   }
 
-  return UnknownException(
-  'Unexpected application error',
-  cause: error,
-  );
+  return UnknownException('Unexpected application error', cause: error);
 }

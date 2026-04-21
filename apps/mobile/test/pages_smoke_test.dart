@@ -43,7 +43,9 @@ void main() {
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets('Insurance Remittance Calculation Loads', (WidgetTester tester) async {
+    testWidgets('Insurance Remittance Calculation Loads', (
+      WidgetTester tester,
+    ) async {
       await _pumpApp(tester);
 
       await _openRoute(tester, routeName: '/');

@@ -20,7 +20,8 @@ import '../../../core/themes/app_colors.dart';
 class RemittanceFormPage extends StatefulWidget {
   const RemittanceFormPage({super.key});
 
-  @override State<RemittanceFormPage> createState() => _RemittanceFormPageState();
+  @override
+  State<RemittanceFormPage> createState() => _RemittanceFormPageState();
 }
 
 class _RemittanceFormPageState extends State<RemittanceFormPage> {
@@ -45,9 +46,9 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
     return PlanholderData(
       planholderName: '',
       insuranceProduct: '',
-      insuranceAmount:0.0,
+      insuranceAmount: 0.0,
       paymentPeriod: PaymentPeriod.monthly,
-      paymentPeriodAmount:0.0,
+      paymentPeriodAmount: 0.0,
       planholderStatus: PlanholderStatus.active,
     );
   }
@@ -71,7 +72,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
     await provider.submit(
       MonthlyRemittance(
         commissionRate: _commissionRate,
-        planholderData: _planholders
+        planholderData: _planholders,
       ),
     );
   }
@@ -79,13 +80,13 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => MonthlyRemittanceProvider(
-            MonthlyRemittanceUseCase(
-              MonthlyRemittanceRepositoryImpl(
-                MonthlyRemittanceRemoteDataSourceImpl(dio: Dio())
-              )
-            )
+      create: (_) => MonthlyRemittanceProvider(
+        MonthlyRemittanceUseCase(
+          MonthlyRemittanceRepositoryImpl(
+            MonthlyRemittanceRemoteDataSourceImpl(dio: Dio()),
+          ),
         ),
+      ),
       child: Builder(
         builder: (providerContext) {
           final provider = providerContext.watch<MonthlyRemittanceProvider>();
@@ -94,26 +95,23 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
             appBar: AppBar(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Remittance Calculator'),
-                    Row(
-                      spacing: 10.0,
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pushNamed(context, '/register'),
-                          icon: Icon(
-                              Icons.app_registration
-                          ),
-                        ),
-                        IconButton(
-                            onPressed: () => Navigator.pushNamed(context, '/login'),
-                            icon: Icon(
-                                Icons.login
-                            )
-                        )
-                      ],
-                    )
-                  ],
+                children: [
+                  Text('Remittance Calculator'),
+                  Row(
+                    spacing: 10.0,
+                    children: [
+                      IconButton(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/register'),
+                        icon: Icon(Icons.app_registration),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pushNamed(context, '/login'),
+                        icon: Icon(Icons.login),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             body: SafeArea(
@@ -128,8 +126,8 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                         'Want to view your remittance history? You can register to view it.',
                         style: TextStyle(
                           fontSize: AppConstants.fontSizeSM,
-                          fontWeight: FontWeight.w400
-                        )
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                       const SizedBox(width: 24),
                       Center(
@@ -139,7 +137,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                               'Your Commission Rate (%): ',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize:18,
+                                fontSize: 18,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -150,11 +148,16 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                                   border: OutlineInputBorder(),
                                 ),
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d*'),
+                                  ),
                                 ],
-                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
                                 validator: (v) {
-                                  if(v == null || v.trim().isEmpty) {
+                                  if (v == null || v.trim().isEmpty) {
                                     return 'Please enter your commission rate set by your company.';
                                   }
 
@@ -178,11 +181,11 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                                   _commissionRate = double.tryParse(v) ?? 0.0;
                                 },
                               ),
-                            )
-                          ]
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height:24),
+                      const SizedBox(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -194,30 +197,32 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                             ),
                           ),
                           RemittanceBadge(
-                            text: '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
+                            text:
+                                '₱ ${provider.amountToBeRemitted.toStringAsFixed(2)}',
                             fontSize: AppConstants.fontSizeLG,
                             backgroundColor: AppColors.colorOnSuccessContainer,
                             textColor: AppColors.colorOnSuccess,
-                          )
+                          ),
                         ],
                       ),
-                      const SizedBox(height:24),
+                      const SizedBox(height: 24),
                       Center(
                         child: RemittanceBadge(
-                          text: 'NOTE: This is only a demo. We are upgrading this tool to make it more convenient to you. So stay tuned...',
+                          text:
+                              'NOTE: This is only a demo. We are upgrading this tool to make it more convenient to you. So stay tuned...',
                           icon: Icons.info,
                         ),
                       ),
-                      const SizedBox(height:24),
+                      const SizedBox(height: 24),
                       const Divider(),
                       Text(
                         'Planholders',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize:16,
+                          fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height:12),
+                      const SizedBox(height: 12),
                       //This section of code is for an insurance agent to input necessary data related to their own insurance company.
                       if (_planholders.isEmpty)
                         Center(
@@ -234,7 +239,8 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: _planholders.length,
-                          separatorBuilder: (_, __) => const SizedBox(height:8),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 8),
                           itemBuilder: (context, index) {
                             return PlanholderRow(
                               index: index,
@@ -243,64 +249,71 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                             );
                           },
                         ),
-                      const SizedBox(height:24),
+                      const SizedBox(height: 24),
                       const Divider(),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: provider.isLoading ? null : () async {
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
+                          onPressed: provider.isLoading
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    _formKey.currentState!.save();
 
-                              if(_planholders.isEmpty) {
-                                await MonthlyRemittanceDialog.show(
-                                    context,
-                                    title: 'Input Error',
-                                    message: 'Please add first your planholder before calculating the remittance needed.',
-                                    showConfirmationDialog: false,
-                                    cancelLabel: 'Okay'
-                                );
+                                    if (_planholders.isEmpty) {
+                                      await MonthlyRemittanceDialog.show(
+                                        context,
+                                        title: 'Input Error',
+                                        message:
+                                            'Please add first your planholder before calculating the remittance needed.',
+                                        showConfirmationDialog: false,
+                                        cancelLabel: 'Okay',
+                                      );
 
-                                return;
-                              }
+                                      return;
+                                    }
 
-                              final confirmed = await MonthlyRemittanceDialog.show(
-                                context,
-                                title: 'Confirmation',
-                                message: 'Are you sure that the planholders that you inputted were correct? Please double check your inputs before calculating the remittance needed.',
-                              );
+                                    final confirmed =
+                                        await MonthlyRemittanceDialog.show(
+                                          context,
+                                          title: 'Confirmation',
+                                          message:
+                                              'Are you sure that the planholders that you inputted were correct? Please double check your inputs before calculating the remittance needed.',
+                                        );
 
-                              if(confirmed == true) {
-                                _submitForm(providerContext);
-                                return;
-                              }
-                            }
-                          },
+                                    if (confirmed == true) {
+                                      _submitForm(providerContext);
+                                      return;
+                                    }
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical:16),
-                            backgroundColor: Theme.of(context).primaryColorLight
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).primaryColorLight,
                           ),
-                          child: provider.isLoading ? const CircularProgressIndicator() : const Text(
-                              'Calculate Total Amount Needed to be Remitted',
-                            style: TextStyle(
-                              color: AppColors.colorInfo,
-                              fontSize: AppConstants.fontSizeMD
-                            ),
-                          ),
+                          child: provider.isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Calculate Total Amount Needed to be Remitted',
+                                  style: TextStyle(
+                                    color: AppColors.colorInfo,
+                                    fontSize: AppConstants.fontSizeMD,
+                                  ),
+                                ),
                         ),
                       ),
-                      if(provider.errorMessage != null)
+                      if (provider.errorMessage != null)
                         Text(
                           provider.errorMessage!,
-                          style: const TextStyle(
-                            color: Colors.red
-                          )
+                          style: const TextStyle(color: Colors.red),
                         ),
-                      if(provider.isSuccess)
+                      if (provider.isSuccess)
                         const Text(
                           'Form Submitted. The Amount to be remitted is already shown in the results.',
-                          style: TextStyle(color: Colors.green)
-                        )
+                          style: TextStyle(color: Colors.green),
+                        ),
                     ],
                   ),
                 ),
@@ -308,16 +321,11 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: _addRow,
-              label: Row(
-                children: [
-                  Icon(Icons.add),
-                  Text('Add Planholder'),
-                ]
-              ),
+              label: Row(children: [Icon(Icons.add), Text('Add Planholder')]),
             ),
           );
-        }
-      )
+        },
+      ),
     );
   }
 }
@@ -327,7 +335,8 @@ class PlanholderRow extends StatefulWidget {
   final PlanholderData data;
   final VoidCallback onRemove;
 
-  const PlanholderRow({super.key,
+  const PlanholderRow({
+    super.key,
     required this.index,
     required this.data,
     required this.onRemove,
@@ -350,7 +359,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
 
   Future<void> _loadUserId() async {
     final userId = await auth.isLoggedIn();
-    if(!mounted) return;
+    if (!mounted) return;
     setState(() {
       _showInsuranceInput = userId;
     });
@@ -359,7 +368,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical:4),
+      margin: const EdgeInsets.symmetric(vertical: 4),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -369,7 +378,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Planholder #${widget.index +1}',
+                  'Planholder #${widget.index + 1}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 IconButton(
@@ -383,49 +392,58 @@ class _PlanholderRowState extends State<PlanholderRow> {
               decoration: const InputDecoration(
                 labelText: 'Insurance Product',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
                 ),
               ),
-              validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+              validator: (v) => v == null || v.trim().isEmpty
+                  ? 'This field is required.'
+                  : null,
               onChanged: (v) => widget.data.insuranceProduct = v,
             ),
-            const SizedBox(height:8),
-            if(_showInsuranceInput)...[
+            const SizedBox(height: 8),
+            if (_showInsuranceInput) ...[
               TextFormField(
                 initialValue: widget.data.insuranceProduct,
                 decoration: const InputDecoration(
                   labelText: 'Insurance Product',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0))
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
                   ),
                 ),
-                validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? 'This field is required.'
+                    : null,
                 onChanged: (v) => widget.data.insuranceProduct = v,
               ),
-              const SizedBox(height:8),
+              const SizedBox(height: 8),
               TextFormField(
-                initialValue:
-                widget.data.insuranceAmount >0 ? widget.data.insuranceAmount.toString() : '',
+                initialValue: widget.data.insuranceAmount > 0
+                    ? widget.data.insuranceAmount.toString()
+                    : '',
                 decoration: const InputDecoration(
                   labelText: 'Insurance Amount (₱)',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0))
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
                   ),
                 ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                validator: (v) => v == null || v.trim().isEmpty
+                    ? 'This field is required.'
+                    : null,
                 onChanged: (v) {
-                  widget.data.insuranceAmount = double.tryParse(v) ??0.0;
+                  widget.data.insuranceAmount = double.tryParse(v) ?? 0.0;
                 },
               ),
-              const SizedBox(height:8),
+              const SizedBox(height: 8),
             ],
             DropdownButtonFormField<PaymentPeriod>(
               value: widget.data.paymentPeriod,
               decoration: const InputDecoration(
                 labelText: 'Payment Period',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
                 ),
               ),
               items: PaymentPeriod.values.map((e) {
@@ -438,29 +456,34 @@ class _PlanholderRowState extends State<PlanholderRow> {
                 widget.data.paymentPeriod = v ?? PaymentPeriod.monthly;
               },
             ),
-            const SizedBox(height:8),
+            const SizedBox(height: 8),
             TextFormField(
-              initialValue: widget.data.paymentPeriodAmount >0 ? widget.data.paymentPeriodAmount.toString()
+              initialValue: widget.data.paymentPeriodAmount > 0
+                  ? widget.data.paymentPeriodAmount.toString()
                   : '',
               decoration: const InputDecoration(
                 labelText: 'Amount Due (₱)',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
                 ),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: (v) => v == null || v.trim().isEmpty ? 'This field is required.' : null,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (v) => v == null || v.trim().isEmpty
+                  ? 'This field is required.'
+                  : null,
               onChanged: (v) {
-                widget.data.paymentPeriodAmount = double.tryParse(v) ??0.0;
+                widget.data.paymentPeriodAmount = double.tryParse(v) ?? 0.0;
               },
             ),
-            const SizedBox(height:8),
+            const SizedBox(height: 8),
             DropdownButtonFormField<PlanholderStatus>(
               value: widget.data.planholderStatus,
               decoration: const InputDecoration(
                 labelText: 'Planholder Status',
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                  borderRadius: BorderRadius.all(Radius.circular(12.0)),
                 ),
               ),
               items: PlanholderStatus.values.map((e) {

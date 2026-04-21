@@ -28,20 +28,13 @@ class RemittanceBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(4.0),
-        border: Border.all(
-          color: textColor,
-          width: 1.0,
-        ),
+        border: Border.all(color: textColor, width: 1.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if(icon != null) ... [
-            Icon(
-              icon,
-              size: fontSize,
-              color: textColor,
-            ),
+          if (icon != null) ...[
+            Icon(icon, size: fontSize, color: textColor),
             const SizedBox(width: 4.0),
           ],
           Flexible(
@@ -55,7 +48,7 @@ class RemittanceBadge extends StatelessWidget {
                 color: textColor,
                 letterSpacing: 0.5,
               ),
-            )
+            ),
           ),
         ],
       ),

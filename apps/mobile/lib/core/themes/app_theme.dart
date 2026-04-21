@@ -4,7 +4,7 @@ class AppTheme {
   AppTheme._();
 
   // Brand colors for trust + finance context
-  static const Color _primary = Color(0xFF1E40AF);   // blue
+  static const Color _primary = Color(0xFF1E40AF); // blue
   static const Color _secondary = Color(0xFF0F766E); // teal
   static const Color _error = Color(0xFFB00020);
 
@@ -25,16 +25,12 @@ class AppTheme {
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
       cardTheme: CardThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -63,4 +59,3 @@ class AppTheme {
     );
   }
 }
-

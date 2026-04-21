@@ -1,7 +1,4 @@
-enum Role {
-  agent,
-  admin
-}
+enum Role { agent, admin }
 
 class UserEntity {
   final String firstName;
@@ -23,6 +20,6 @@ class UserEntity {
     required this.branchAddress,
     required this.commissionRate,
     required this.email,
-    required this.rawPassword
+    required this.rawPassword,
   });
 }

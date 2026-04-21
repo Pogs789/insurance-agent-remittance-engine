@@ -20,7 +20,10 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
       ),
       body: ListView(
@@ -34,7 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
           // 2. App Preferences Section
           const Text(
             "PREFERENCES",
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -75,7 +82,11 @@ class _SettingsPageState extends State<SettingsPage> {
           // 3. Security Section
           const Text(
             "SECURITY",
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 8),
           Container(
@@ -140,9 +151,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 foregroundColor: Colors.red,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.red.withOpacity(0.1),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              child: const Text("Log Out", style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text(
+                "Log Out",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
 
@@ -169,7 +185,10 @@ class _SettingsPageState extends State<SettingsPage> {
             const CircleAvatar(
               radius: 35,
               backgroundColor: Colors.blueAccent,
-              child: Text("E", style: TextStyle(fontSize: 28, color: Colors.white)),
+              child: Text(
+                "E",
+                style: TextStyle(fontSize: 28, color: Colors.white),
+              ),
             ),
             Positioned(
               bottom: 0,
@@ -180,9 +199,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.edit, size: 14, color: Colors.blueAccent),
+                child: const Icon(
+                  Icons.edit,
+                  size: 14,
+                  color: Colors.blueAccent,
+                ),
               ),
-            )
+            ),
           ],
         ),
         const SizedBox(width: 16),
@@ -220,7 +243,9 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Icon(icon, color: Colors.blueAccent),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: subtitle != null ? Text(subtitle, style: const TextStyle(fontSize: 12)) : null,
+      subtitle: subtitle != null
+          ? Text(subtitle, style: const TextStyle(fontSize: 12))
+          : null,
       trailing: Switch.adaptive(
         value: value,
         onChanged: onChanged,
@@ -254,7 +279,9 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text("Log Out"),
-        content: const Text("Are you sure you want to log out of your account?"),
+        content: const Text(
+          "Are you sure you want to log out of your account?",
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx), // Close dialog
@@ -270,7 +297,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginPage()),
-                    (route) => false,
+                (route) => false,
               );
             },
             child: const Text("Log Out", style: TextStyle(color: Colors.red)),

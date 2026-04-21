@@ -22,7 +22,9 @@ class RemittanceCalculationRequestModel {
     };
   }
 
-  factory RemittanceCalculationRequestModel.fromJson(Map<String, dynamic> json) {
+  factory RemittanceCalculationRequestModel.fromJson(
+    Map<String, dynamic> json,
+  ) {
     return RemittanceCalculationRequestModel(
       commissionRate: (json['commissionRate'] as num).toDouble(),
       amountRemitted: (json['amountRemitted'] as num).toDouble(),
@@ -36,7 +38,7 @@ class RemittanceCalculationRequestModel {
     return RemittanceCalculationRequestModel(
       commissionRate: e.commissionRate,
       amountRemitted: e.amountRemitted,
-      planholderData: e.planholderData
+      planholderData: e.planholderData,
     );
   }
 
