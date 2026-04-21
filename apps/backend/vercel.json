@@ -1,0 +1,4 @@
+{
+  "buildCommand": "pnpm exec prisma generate --schema=prisma/schema.prisma && pnpm run build",
+  "outputDirectory": "dist"
+}
