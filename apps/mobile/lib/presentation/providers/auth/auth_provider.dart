@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
-import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
 
 import '../../../domain/entities/user.dart';
