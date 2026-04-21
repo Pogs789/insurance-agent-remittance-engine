@@ -23,21 +23,20 @@ class UserRegistrationRequestModel {
     required this.branchAddress,
     required this.commissionRate,
     required this.email,
-    required this.rawPassword
+    required this.rawPassword,
   });
 
-  Map<String, dynamic> toJson() =>
-      {
-        'firstName': firstName,
-        'lastName': lastName,
-        'middleName': middleName,
-        'birthDate': DateFormat('MM-dd-yyyy').format(birthDate),
-        'email': email,
-        'password': rawPassword,
-        'insuranceCompany': insuranceCompany,
-        'branchAddress': branchAddress,
-        'commissionRate': commissionRate
-      };
+  Map<String, dynamic> toJson() => {
+    'firstName': firstName,
+    'lastName': lastName,
+    'middleName': middleName,
+    'birthDate': DateFormat('MM-dd-yyyy').format(birthDate),
+    'email': email,
+    'password': rawPassword,
+    'insuranceCompany': insuranceCompany,
+    'branchAddress': branchAddress,
+    'commissionRate': commissionRate,
+  };
 
   factory UserRegistrationRequestModel.fromJson(Map<String, dynamic> json) {
     return UserRegistrationRequestModel(

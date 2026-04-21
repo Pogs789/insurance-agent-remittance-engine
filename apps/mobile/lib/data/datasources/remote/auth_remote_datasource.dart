@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
@@ -10,13 +9,13 @@ abstract class AuthRemoteDataSource {
   Future<AuthSessionModel> login(String email, String password);
   Future<void> logout();
   Future<void> refreshToken();
-  Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser);
+  Future<Map<String, dynamic>> registerUser(
+    UserRegistrationRequestModel newUser,
+  );
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl({
-    required this.dio,
-  });
+  AuthRemoteDataSourceImpl({required this.dio});
 
   final Dio dio;
 
@@ -25,13 +24,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await dio.post(
         ApiEndpoints.loginApi,
-        data: {
-          'email': email,
-          'password': password,
-        },
-        options: Options(
-          contentType: Headers.jsonContentType
-        )
+        data: {'email': email, 'password': password},
+        options: Options(contentType: Headers.jsonContentType),
       );
 
       return AuthSessionModel.fromJson(response.data);
@@ -48,10 +42,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final refreshToken = await localDataSource.getRefreshToken();
 
     try {
-      await dio.post(ApiEndpoints.logoutApi, data: {
-        'userId': userId,
-        'refreshToken': refreshToken,
-      });
+      await dio.post(
+        ApiEndpoints.logoutApi,
+        data: {'userId': userId, 'refreshToken': refreshToken},
+      );
     } catch (e, stackTrace) {
       throw mapToAppException(e, stackTrace);
     }
@@ -65,17 +59,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final refreshToken = await localDataSource.getRefreshToken();
 
     try {
-      final response = await dio.post(ApiEndpoints.refreshApi, data: {
-        'userId': userId,
-        'refreshToken': refreshToken,
-      });
+      final response = await dio.post(
+        ApiEndpoints.refreshApi,
+        data: {'userId': userId, 'refreshToken': refreshToken},
+      );
 
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final session = AuthSessionModel.fromJson(response.data);
         await localDataSource.saveSession(session);
       } else {
         await localDataSource.clearSession();
-        throw Exception("Your session has either expired, malformed, or something else must have gone wrong. Please login again.");
+        throw Exception(
+          "Your session has either expired, malformed, or something else must have gone wrong. Please login again.",
+        );
       }
     } catch (e, stackTrace) {
       throw mapToAppException(e, stackTrace);
@@ -83,18 +79,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> registerUser(UserRegistrationRequestModel newUser) async{
-    try{
+  Future<Map<String, dynamic>> registerUser(
+    UserRegistrationRequestModel newUser,
+  ) async {
+    try {
       final response = await dio.post(
         ApiEndpoints.registerApi,
         data: newUser.toJson(),
-        options: Options(
-          contentType: Headers.jsonContentType
-        )
+        options: Options(contentType: Headers.jsonContentType),
       );
 
       return response.data;
-    }catch(e, stackTrace) {
+    } catch (e, stackTrace) {
       throw mapToAppException(e, stackTrace);
     }
   }

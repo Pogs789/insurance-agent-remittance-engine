@@ -13,7 +13,7 @@ class MonthlyRemittanceDialog extends StatelessWidget {
 
   // Brand colours kept in sync with AppTheme's finance palette.
   static const Color _brandError = AppColors.colorError; // AppTheme._error
-  static const Color _iconBg     = AppColors.colorErrorContainer; // soft red tint
+  static const Color _iconBg = AppColors.colorErrorContainer; // soft red tint
 
   const MonthlyRemittanceDialog({
     super.key,
@@ -22,8 +22,8 @@ class MonthlyRemittanceDialog extends StatelessWidget {
     required this.onConfirm,
     this.onCancel,
     this.confirmLabel = 'Confirm',
-    this.cancelLabel  = 'Cancel',
-    required this.showConfirmationButton
+    this.cancelLabel = 'Cancel',
+    required this.showConfirmationButton,
   });
 
   /// Convenience method – returns [true] on confirm, [false] on cancel,
@@ -34,7 +34,7 @@ class MonthlyRemittanceDialog extends StatelessWidget {
     required String message,
     bool showConfirmationDialog = true,
     String confirmLabel = 'Confirm',
-    String cancelLabel  = 'Cancel',
+    String cancelLabel = 'Cancel',
   }) {
     return showDialog<bool>(
       context: context,
@@ -43,9 +43,9 @@ class MonthlyRemittanceDialog extends StatelessWidget {
         dialogueTitle: title,
         dialogueMessage: message,
         confirmLabel: confirmLabel,
-        cancelLabel:  cancelLabel,
+        cancelLabel: cancelLabel,
         onConfirm: () => Navigator.of(dialogContext).pop(true),
-        onCancel:  () => Navigator.of(dialogContext).pop(false),
+        onCancel: () => Navigator.of(dialogContext).pop(false),
         showConfirmationButton: showConfirmationDialog,
       ),
     );
@@ -53,7 +53,7 @@ class MonthlyRemittanceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme       = Theme.of(context);
+    final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Dialog(
@@ -64,7 +64,7 @@ class MonthlyRemittanceDialog extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.spaceXXL, // 32
-          vertical:   AppConstants.spaceXXL, // 32
+          vertical: AppConstants.spaceXXL, // 32
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -83,7 +83,6 @@ class MonthlyRemittanceDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceXL), // 24
-
             // ── Title ─────────────────────────────────────────────────────
             Text(
               dialogueTitle,
@@ -95,7 +94,6 @@ class MonthlyRemittanceDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceMD), // 12
-
             // ── Message ───────────────────────────────────────────────────
             Text(
               dialogueMessage,
@@ -107,7 +105,6 @@ class MonthlyRemittanceDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppConstants.spaceXXL), // 32
-
             // ── Action buttons ────────────────────────────────────────────
             Row(
               children: [
@@ -145,33 +142,32 @@ class MonthlyRemittanceDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppConstants.spaceMD), // 12
-
                 // Confirm ────────────────────────────────────────────────
-                if(showConfirmationButton)
-                Expanded(
-                  child: FilledButton(
-                    onPressed: onConfirm,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _brandError,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppConstants.spaceLG, // 16
+                if (showConfirmationButton)
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: onConfirm,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _brandError,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppConstants.spaceLG, // 16
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppConstants.cardBorderRadius,
+                          ),
+                        ),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          AppConstants.cardBorderRadius,
+                      child: Text(
+                        confirmLabel,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    child: Text(
-                      confirmLabel,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
                   ),
-                ),
               ],
             ),
           ],

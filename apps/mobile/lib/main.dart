@@ -14,7 +14,7 @@ Future main() async {
   if (!kIsWeb) {
     await dotenv.load(fileName: '.env');
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegistrationPage(),
         '/login': (context) => const LoginPage(),
         '/dashboard': (context) => const DashboardPage(),
-        '/remittance-history': (context) => const Placeholder()
-      }
+        '/remittance-history': (context) => const Placeholder(),
+      },
     );
   }
 }

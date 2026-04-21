@@ -11,11 +11,15 @@ class MonthlyRemittanceRepositoryImpl implements MonthlyRemittanceRepository {
 
   //TODO: Implement here offline-first capability where if theres no network connection, the calculation should be done within the mobile app.
   @override
-  Future<RemittanceCalculationResponseModel> submitMonthlyRemittance(MonthlyRemittance remittance) async {
+  Future<RemittanceCalculationResponseModel> submitMonthlyRemittance(
+    MonthlyRemittance remittance,
+  ) async {
     final req = RemittanceCalculationRequestModel.fromEntity(remittance);
     final userId = await AuthLocalDataSourceImpl().getUserId();
     final response = await remote.calculateRemittanceAmount(req, userId);
 
-    return RemittanceCalculationResponseModel(amountToBeRemitted: response.amountToBeRemitted);
+    return RemittanceCalculationResponseModel(
+      amountToBeRemitted: response.amountToBeRemitted,
+    );
   }
 }

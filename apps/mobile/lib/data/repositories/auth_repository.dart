@@ -14,10 +14,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSessionModel> loginUser(UserEntity user) async {
     // TODO: implement loginUser
     final req = UserRegistrationRequestModel.fromEntity(user);
-    final response = await authRemote.login(
-      req.email,
-      req.rawPassword
-    );
+    final response = await authRemote.login(req.email, req.rawPassword);
     return response;
   }
 

@@ -17,7 +17,7 @@ class _RemittancePageState extends State<RemittancePage> {
       "amount": "₱ 4,500.00",
       "date": "Dec 18, 2025",
       "status": "Verified",
-      "method": "Bank Transfer"
+      "method": "Bank Transfer",
     },
     {
       "id": "REM-2025-002",
@@ -25,7 +25,7 @@ class _RemittancePageState extends State<RemittancePage> {
       "amount": "₱ 2,100.00",
       "date": "Dec 17, 2025",
       "status": "Pending",
-      "method": "Gcash"
+      "method": "Gcash",
     },
     {
       "id": "REM-2025-003",
@@ -33,7 +33,7 @@ class _RemittancePageState extends State<RemittancePage> {
       "amount": "₱ 15,000.00",
       "date": "Dec 15, 2025",
       "status": "Verified",
-      "method": "Check Deposit"
+      "method": "Check Deposit",
     },
     {
       "id": "REM-2025-004",
@@ -41,7 +41,7 @@ class _RemittancePageState extends State<RemittancePage> {
       "amount": "₱ 3,250.00",
       "date": "Dec 10, 2025",
       "status": "Rejected", // Good for demonstrating error handling UI
-      "method": "Bank Transfer"
+      "method": "Bank Transfer",
     },
     {
       "id": "REM-2025-005",
@@ -49,7 +49,7 @@ class _RemittancePageState extends State<RemittancePage> {
       "amount": "₱ 4,500.00",
       "date": "Dec 05, 2025",
       "status": "Verified",
-      "method": "Auto-Debit"
+      "method": "Auto-Debit",
     },
   ];
 
@@ -58,12 +58,18 @@ class _RemittancePageState extends State<RemittancePage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('My Remittances', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'My Remittances',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: false,
         elevation: 0,
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.print_outlined)), // Print Report is a common agent task
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.print_outlined),
+          ), // Print Report is a common agent task
         ],
       ),
       body: Column(
@@ -92,7 +98,10 @@ class _RemittancePageState extends State<RemittancePage> {
                 const SizedBox(height: 16),
                 // Month Selector (Visual Only)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(20),
@@ -103,7 +112,10 @@ class _RemittancePageState extends State<RemittancePage> {
                     children: const [
                       Icon(Icons.calendar_today, size: 16, color: Colors.grey),
                       SizedBox(width: 8),
-                      Text("December 2025", style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(
+                        "December 2025",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       Icon(Icons.arrow_drop_down, color: Colors.grey),
                     ],
                   ),
@@ -131,8 +143,7 @@ class _RemittancePageState extends State<RemittancePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => RemittanceFormPage())
+            MaterialPageRoute(builder: (context) => RemittanceFormPage()),
           );
         },
         backgroundColor: Colors.blueAccent,
@@ -191,10 +202,7 @@ class _RemittancePageState extends State<RemittancePage> {
                 ),
                 Text(
                   item['date'],
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
             ),
@@ -209,7 +217,10 @@ class _RemittancePageState extends State<RemittancePage> {
                   children: [
                     Text(
                       item['policyNo'],
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -218,10 +229,13 @@ class _RemittancePageState extends State<RemittancePage> {
                         const SizedBox(width: 4),
                         Text(
                           item['method'],
-                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13,
+                          ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
                 Text(

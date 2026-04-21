@@ -102,11 +102,11 @@ class PlanholderData {
       insuranceProduct: json['insuranceProduct'] as String,
       insuranceAmount: (json['insuranceAmount'] as num).toDouble(),
       paymentPeriod: PaymentPeriod.values.firstWhere(
-            (e) => e.name == json['paymentPeriod'],
+        (e) => e.name == json['paymentPeriod'],
       ),
       paymentPeriodAmount: (json['paymentPeriodAmount'] as num).toDouble(),
       planholderStatus: PlanholderStatus.values.firstWhere(
-            (e) => e.name == json['planholderStatus'],
+        (e) => e.name == json['planholderStatus'],
       ),
     );
   }

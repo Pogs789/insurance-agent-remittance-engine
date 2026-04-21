@@ -34,9 +34,9 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       // TODO: Replace with ref.read(authProvider).login(email, password).
       // Handle: invalid credentials, network errors, and empty-field validation.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Simulating Login...')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Simulating Login...')));
 
       // TODO: Wrap this logic inside a successful login response.
       Future.delayed(const Duration(seconds: 1), () {
@@ -55,9 +55,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // Using Safe Area to avoid notches
-      appBar: AppBar(
-        title: Text('Insurance Remittance Tool Login'),
-      ),
+      appBar: AppBar(title: Text('Insurance Remittance Tool Login')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -69,7 +67,11 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // 1. Logo or Header
-                  const Icon(Icons.lock_person_outlined, size: 80, color: Colors.blueAccent),
+                  const Icon(
+                    Icons.lock_person_outlined,
+                    size: 80,
+                    color: Colors.blueAccent,
+                  ),
                   const SizedBox(height: 24),
                   Text(
                     'Welcome Back',
@@ -81,9 +83,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to access the dashboard',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
@@ -142,17 +144,17 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50, // Standard touch target height
                     child: ElevatedButton(
                       onPressed: () {
-                        if(AppConstants.isUnderDevelopment) {
+                        if (AppConstants.isUnderDevelopment) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.'
+                                'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.',
                               ),
                               backgroundColor: AppColors.colorWarning,
-                            )
+                            ),
                           );
 
-                         return;
+                          return;
                         }
 
                         _handleLogin();
@@ -166,19 +168,22 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: const Text(
                         'Sign In',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 8),
                   TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegistrationPage())
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RegistrationPage(),
                       ),
-                      child: Text(
-                        'New Agent? Register now!'
-                      ),
+                    ),
+                    child: Text('New Agent? Register now!'),
                   ),
                 ],
               ),

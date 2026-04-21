@@ -16,9 +16,8 @@ abstract class AuthLocalDataSource {
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  AuthLocalDataSourceImpl({
-    FlutterSecureStorage? secureStorage,
-  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage();
+  AuthLocalDataSourceImpl({FlutterSecureStorage? secureStorage})
+    : _secureStorage = secureStorage ?? const FlutterSecureStorage();
 
   final FlutterSecureStorage _secureStorage;
 
@@ -26,16 +25,28 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> saveSession(AuthSessionModel session) async {
     final sessionJson = jsonEncode(session.toJson());
 
-    await _secureStorage.write(key: StorageConstants.sessionKey, value: sessionJson);
-    await _secureStorage.write(key: StorageConstants.accessTokenKey, value: session.accessToken);
-    await _secureStorage.write(key: StorageConstants.refreshTokenKey, value: session.refreshToken);
-    await _secureStorage.write(key: StorageConstants.userIdKey, value: session.userId);
+    await _secureStorage.write(
+      key: StorageConstants.sessionKey,
+      value: sessionJson,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.accessTokenKey,
+      value: session.accessToken,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.refreshTokenKey,
+      value: session.refreshToken,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.userIdKey,
+      value: session.userId,
+    );
   }
 
   @override
   Future<AuthSessionModel?> getSession() async {
     final raw = await _secureStorage.read(key: StorageConstants.sessionKey);
-    if(raw == null || raw.isEmpty) {
+    if (raw == null || raw.isEmpty) {
       return null;
     }
 
@@ -48,15 +59,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<String?> getAccessToken() => _secureStorage.read(key: StorageConstants.accessTokenKey);
+  Future<String?> getAccessToken() =>
+      _secureStorage.read(key: StorageConstants.accessTokenKey);
 
   @override
-  Future<String?> getRefreshToken() => _secureStorage.read(key: StorageConstants.refreshTokenKey);
+  Future<String?> getRefreshToken() =>
+      _secureStorage.read(key: StorageConstants.refreshTokenKey);
 
   @override
   Future<String?> getUserId() async {
     final userId = await _secureStorage.read(key: StorageConstants.userIdKey);
-    if(userId == null) return null;
+    if (userId == null) return null;
 
     final trimmed = userId.trim();
     return trimmed.isEmpty ? null : trimmed;
