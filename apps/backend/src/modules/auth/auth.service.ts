@@ -54,6 +54,7 @@ export class AuthService {
         email: email,
         passwordHash: hashedPassword,
         verificationToken: verificationToken,
+        verificationTokenExpiresAt: new Date().toISOString(),
       },
     });
 
@@ -184,11 +185,11 @@ export class AuthService {
       where: { verificationToken },
     });
 
-    if (!userVerify)
-      throw new UnauthorizedException(
-        'Sorry. This verification token is invalid.',
-      );
-
+    if (!userVerify) {
+      return {
+        message: 'Sorry. This token is invalid. Please register again. ',
+      };
+    }
     const now: Date = new Date();
 
     await this.prisma.user.update({
@@ -201,7 +202,7 @@ export class AuthService {
 
     return {
       message:
-        'You have successfully verified your email. You can now login to the app.',
+        'You have successfully verified your email. You can now login to the app. Please click this link to be able to login: ',
     };
   }
 

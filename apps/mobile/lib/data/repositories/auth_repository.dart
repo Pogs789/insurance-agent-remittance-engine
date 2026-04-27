@@ -1,3 +1,4 @@
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 
@@ -8,23 +9,36 @@ import '../models/user_registration_request_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemote;
-  AuthRepositoryImpl(this.authRemote);
+  final AuthLocalDataSource authLocal;
+  AuthRepositoryImpl(this.authRemote, this.authLocal);
 
   @override
-  Future<AuthSessionModel> loginUser(UserEntity user) async {
-    // TODO: implement loginUser
-    final req = UserRegistrationRequestModel.fromEntity(user);
-    final response = await authRemote.login(req.email, req.rawPassword);
-    return response;
+  Future<void> loginUser(String email, String password) async {
+    final response = await authRemote.login(email, password);
+    await authLocal.saveSession(response);
   }
 
   @override
   Future<void> logout() async {
-    await authRemote.logout();
+    final String? userId = await authLocal.getUserId();
+    final String? refreshToken = await authLocal.getRefreshToken();
+
+    if(userId == null || refreshToken == null){
+      await authLocal.clearSession();
+    }
+
+    await authRemote.logout(userId!, refreshToken!);
   }
 
   @override
   Future<void> refreshToken() async {
-    await authRemote.refreshToken();
+    final String? userId = await authLocal.getUserId();
+    final String? refreshToken = await authLocal.getRefreshToken();
+
+    if(userId == null || refreshToken == null){
+      await authLocal.clearSession();
+    }
+
+    await authRemote.refreshToken(userId!, refreshToken!);
   }
 }

@@ -40,14 +40,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> login(UserEntity user) async {
+  Future<void> login(String email, String password) async {
     isLoading = false;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
 
     try {
-      final result = await _loginUseCase(user);
+      await _loginUseCase(email, password);
       isSuccess = true;
     } on AppException catch (e) {
       errorMessage = e.message;

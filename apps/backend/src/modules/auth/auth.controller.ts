@@ -4,8 +4,9 @@ import {
   Post,
   HttpCode,
   HttpStatus,
-  Put,
   Query,
+  Render,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto, LogOutDto } from './dto/login.dto';
@@ -69,7 +70,8 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Put('verify-token')
+  @Get('verify-token')
+  @Render('email_confirmation')
   verifyNewUserToken(@Query('verificationToken') verificationToken: string) {
     return this.authService.verifyEmailToken(verificationToken);
   }

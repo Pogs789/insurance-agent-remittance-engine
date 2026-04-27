@@ -1,4 +1,3 @@
-import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
 
@@ -6,8 +5,8 @@ class LoginUseCase {
   final AuthRepository authRepository;
   LoginUseCase(this.authRepository);
 
-  Future<AuthSessionModel> call(UserEntity user) async {
-    return await authRepository.loginUser(user);
+  Future<void> call(String email, String password) async {
+    await authRepository.loginUser(email, password);
   }
 }
 
