@@ -47,7 +47,7 @@ describe('AuthService', () => {
           provide: AppConstants,
           useValue: {
             saltRounds: 12,
-            backeendLink: 'http://localhost:3000/api',
+            backendlink: 'http://localhost:3000/api',
           },
         },
         {

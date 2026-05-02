@@ -132,6 +132,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
       message: provider.isSuccess
           ? "You have successfully registered. Please check your email to confirm it"
           : error,
+      showCancelDialog: false,
+      confirmLabel: "Okay"
     );
   }
 

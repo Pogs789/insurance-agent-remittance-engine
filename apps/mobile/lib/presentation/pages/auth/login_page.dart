@@ -47,13 +47,14 @@ class _LoginPageState extends State<LoginPage> {
 
       if(provider.isSuccess == true) {
         Navigator.pushNamedAndRemoveUntil(providerContext, '/dashboard', (route) => false);
+        return;
       }
 
       ScaffoldMessenger.of(providerContext).showMaterialBanner(
         MaterialBanner(
           content: Text(provider.errorMessage ?? "An unexpected error occurred while processing your request. Please Try Again."),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(providerContext), child: Text("Close"))
+            TextButton(onPressed: () => ScaffoldMessenger.of(providerContext).hideCurrentMaterialBanner(), child: Text("Close"))
           ],
           backgroundColor: AppColors.colorError,
       ));
@@ -175,18 +176,18 @@ class _LoginPageState extends State<LoginPage> {
                             child: ElevatedButton(
                               onPressed: provider.isLoading ?
                                 null : () async {
-                                  if (AppConstants.isUnderDevelopment) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.',
-                                        ),
-                                        backgroundColor: AppColors.colorWarning,
-                                      ),
-                                    );
-
-                                    return;
-                                  }
+                                  // if (AppConstants.isUnderDevelopment) {
+                                  //   ScaffoldMessenger.of(context).showSnackBar(
+                                  //     SnackBar(
+                                  //       content: Text(
+                                  //         'Tool upgrades are underway to boost your productivity, agent. Please stay tuned.',
+                                  //       ),
+                                  //       backgroundColor: AppColors.colorWarning,
+                                  //     ),
+                                  //   );
+                                  //
+                                  //   return;
+                                  // }
                                   _handleLogin(providerContext);
                                 },
                               style: ElevatedButton.styleFrom(

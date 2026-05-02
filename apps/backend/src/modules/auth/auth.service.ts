@@ -7,6 +7,7 @@ import { MailService } from '../mail/mail.service';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppConstants } from '../../common/constants/app.constants';
+import { User } from 'src/generated/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -75,7 +76,7 @@ export class AuthService {
         {
           firstName: firstName,
           lastName: lastName,
-          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token/verificationToken=${verificationToken}`,
+          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token?verificationToken=${verificationToken}`,
         },
       );
       return { success: true };
@@ -84,7 +85,7 @@ export class AuthService {
     return { success: false };
   }
 
-  async signIn(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user)
@@ -99,6 +100,16 @@ export class AuthService {
         'Your Password is incorrect. Please Try Again',
       );
 
+    return user;
+  }
+
+  async login(user: {
+    id: string;
+    email: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }) {
     const tokens = await this.issueTokens(user.id, user.email, user.role);
 
     await this.storeRefreshToken(user.id, tokens.refreshToken);
@@ -196,6 +207,7 @@ export class AuthService {
       data: {
         verificationToken: null,
         emailConfirmedAt: now.toISOString(),
+        verificationTokenExpiresAt: null,
       },
       where: { email: userVerify.email },
     });
