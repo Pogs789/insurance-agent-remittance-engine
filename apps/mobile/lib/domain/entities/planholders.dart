@@ -1,7 +1,11 @@
 enum PlanholderStatus {
-  active,
-  inactive,
-  pastDue;
+  active('Active'),
+  inactive('Inactive'),
+  pastDue('Past Due');
+
+  final String displayName;
+  const PlanholderStatus(this.displayName);
+
 
   String get apiValue {
     switch (this) {
@@ -29,11 +33,14 @@ enum PlanholderStatus {
 }
 
 enum PaymentPeriod {
-  monthly,
-  quarterly,
-  semiannually,
-  annually,
-  spotOn;
+  monthly('Monthly'),
+  quarterly('Quarterly'),
+  semiannually('Semi-Annually'),
+  annually('Annually'),
+  spotOn('Spot-On');
+
+  final String displayName;
+  const PaymentPeriod(this.displayName);
 
   String get apiValue {
     switch (this) {

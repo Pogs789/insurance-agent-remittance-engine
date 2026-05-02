@@ -282,6 +282,7 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
                                         );
 
                                     if (confirmed == true) {
+                                      if(!providerContext.mounted) return;
                                       _submitForm(providerContext);
                                       return;
                                     }
@@ -358,10 +359,10 @@ class _PlanholderRowState extends State<PlanholderRow> {
   }
 
   Future<void> _loadUserId() async {
-    final userId = await auth.isLoggedIn();
+    final bool isLoggedIn = await auth.isLoggedIn();
     if (!mounted) return;
     setState(() {
-      _showInsuranceInput = userId;
+      _showInsuranceInput = isLoggedIn;
     });
   }
 
@@ -387,10 +388,11 @@ class _PlanholderRowState extends State<PlanholderRow> {
                 ),
               ],
             ),
+            //Planholder Name
             TextFormField(
-              initialValue: widget.data.insuranceProduct,
+              initialValue: widget.data.planholderName,
               decoration: const InputDecoration(
-                labelText: 'Insurance Product',
+                labelText: 'Name of Planholder',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12.0)),
                 ),
@@ -398,10 +400,11 @@ class _PlanholderRowState extends State<PlanholderRow> {
               validator: (v) => v == null || v.trim().isEmpty
                   ? 'This field is required.'
                   : null,
-              onChanged: (v) => widget.data.insuranceProduct = v,
+              onChanged: (v) => widget.data.planholderName = v,
             ),
             const SizedBox(height: 8),
             if (_showInsuranceInput) ...[
+              //Insurance Product
               TextFormField(
                 initialValue: widget.data.insuranceProduct,
                 decoration: const InputDecoration(
@@ -416,6 +419,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
                 onChanged: (v) => widget.data.insuranceProduct = v,
               ),
               const SizedBox(height: 8),
+              //Product Amount
               TextFormField(
                 initialValue: widget.data.insuranceAmount > 0
                     ? widget.data.insuranceAmount.toString()
@@ -438,8 +442,9 @@ class _PlanholderRowState extends State<PlanholderRow> {
               ),
               const SizedBox(height: 8),
             ],
+            //Payment Period
             DropdownButtonFormField<PaymentPeriod>(
-              value: widget.data.paymentPeriod,
+              initialValue: widget.data.paymentPeriod,
               decoration: const InputDecoration(
                 labelText: 'Payment Period',
                 border: OutlineInputBorder(
@@ -449,7 +454,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
               items: PaymentPeriod.values.map((e) {
                 return DropdownMenuItem<PaymentPeriod>(
                   value: e,
-                  child: Text(e.name.toUpperCase()),
+                  child: Text(e.displayName),
                 );
               }).toList(),
               onChanged: (v) {
@@ -479,7 +484,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<PlanholderStatus>(
-              value: widget.data.planholderStatus,
+              initialValue: widget.data.planholderStatus,
               decoration: const InputDecoration(
                 labelText: 'Planholder Status',
                 border: OutlineInputBorder(
@@ -489,7 +494,7 @@ class _PlanholderRowState extends State<PlanholderRow> {
               items: PlanholderStatus.values.map((e) {
                 return DropdownMenuItem<PlanholderStatus>(
                   value: e,
-                  child: Text(e.name.toUpperCase()),
+                  child: Text(e.displayName),
                 );
               }).toList(),
               onChanged: (v) {

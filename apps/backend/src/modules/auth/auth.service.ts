@@ -7,6 +7,7 @@ import { MailService } from '../mail/mail.service';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppConstants } from '../../common/constants/app.constants';
+import { User } from 'src/generated/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -54,6 +55,7 @@ export class AuthService {
         email: email,
         passwordHash: hashedPassword,
         verificationToken: verificationToken,
+        verificationTokenExpiresAt: new Date().toISOString(),
       },
     });
 
@@ -74,7 +76,7 @@ export class AuthService {
         {
           firstName: firstName,
           lastName: lastName,
-          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token/verificationToken=${verificationToken}`,
+          confirmationLink: `${this.appContstants.backendLink}/auth/verify-token?verificationToken=${verificationToken}`,
         },
       );
       return { success: true };
@@ -83,7 +85,7 @@ export class AuthService {
     return { success: false };
   }
 
-  async signIn(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user)
@@ -98,6 +100,16 @@ export class AuthService {
         'Your Password is incorrect. Please Try Again',
       );
 
+    return user;
+  }
+
+  async login(user: {
+    id: string;
+    email: string;
+    role: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }) {
     const tokens = await this.issueTokens(user.id, user.email, user.role);
 
     await this.storeRefreshToken(user.id, tokens.refreshToken);
@@ -184,24 +196,25 @@ export class AuthService {
       where: { verificationToken },
     });
 
-    if (!userVerify)
-      throw new UnauthorizedException(
-        'Sorry. This verification token is invalid.',
-      );
-
+    if (!userVerify) {
+      return {
+        message: 'Sorry. This token is invalid. Please register again. ',
+      };
+    }
     const now: Date = new Date();
 
     await this.prisma.user.update({
       data: {
         verificationToken: null,
         emailConfirmedAt: now.toISOString(),
+        verificationTokenExpiresAt: null,
       },
       where: { email: userVerify.email },
     });
 
     return {
       message:
-        'You have successfully verified your email. You can now login to the app.',
+        'You have successfully verified your email. You can now login to the app. Please click this link to be able to login: ',
     };
   }
 

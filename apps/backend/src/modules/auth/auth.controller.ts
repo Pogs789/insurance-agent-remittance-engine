@@ -4,13 +4,30 @@ import {
   Post,
   HttpCode,
   HttpStatus,
-  Put,
   Query,
+  Render,
+  Get,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInDto, LogOutDto } from './dto/login.dto';
+import { LogOutDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AgentRegisterDto } from './dto/register.dto';
+import { LocalAuthGuard } from './passport/local-auth.guard';
+
+type AuthenticatedUser = {
+  id: string;
+  email: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// added
+type RequestWithUser = Request & {
+  user: AuthenticatedUser;
+};
 
 @Controller('auth')
 export class AuthController {
@@ -19,8 +36,9 @@ export class AuthController {
   // POST auth/login
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  @UseGuards(LocalAuthGuard)
+  signIn(@Request() req: { user: RequestWithUser['user'] }) {
+    return this.authService.login(req.user);
   }
 
   // POST auth/logout
@@ -69,7 +87,8 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Put('verify-token')
+  @Get('verify-token')
+  @Render('email_confirmation')
   verifyNewUserToken(@Query('verificationToken') verificationToken: string) {
     return this.authService.verifyEmailToken(verificationToken);
   }

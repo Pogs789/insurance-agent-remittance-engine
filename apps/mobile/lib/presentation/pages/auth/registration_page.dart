@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/agent_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
@@ -131,6 +132,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
       message: provider.isSuccess
           ? "You have successfully registered. Please check your email to confirm it"
           : error,
+      showCancelDialog: false,
+      confirmLabel: "Okay"
     );
   }
 
@@ -143,11 +146,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return ChangeNotifierProvider(
       create: (_) => AuthProvider(
         AgentUseCase(AgentRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()))),
-        LoginUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()))),
+        LoginUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
         RefreshTokenUseCase(
-          AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio())),
+          AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl()),
         ),
-        LogoutUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()))),
+        LogoutUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
       ),
       child: Builder(
         builder: (providerContext) {
@@ -233,6 +236,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           'Password must be at least 6 characters',
                     ),
                     const Divider(),
+                    Text(
+                      'Part 2: About Your Insurance Company',
+                      overflow: TextOverflow.fade,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: AppConstants.fontSizeLG,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: AppConstants.spaceLG),
                     const SizedBox(height: 12),
                     _buildTextFormField(
                       textEditingController: _insuranceCompanyController,
