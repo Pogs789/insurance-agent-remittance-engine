@@ -11,15 +11,19 @@ class AuthProvider extends ChangeNotifier {
     this._loginUseCase,
     this._refreshTokenUseCase,
     this._logoutUseCase,
+    this._isLoggedInUseCase
   );
   final AgentUseCase _submitAgentUseCase;
   final LoginUseCase _loginUseCase;
   final RefreshTokenUseCase _refreshTokenUseCase;
   final LogoutUseCase _logoutUseCase;
+  final IsLoggedInUseCase _isLoggedInUseCase;
 
   bool isLoading = false;
   String? errorMessage;
   bool isSuccess = false;
+  bool _isLoggedIn = false;
+  bool get isLoggedInSync => _isLoggedIn;
 
   Future<void> newAgentSubmit(UserEntity user) async {
     isLoading = false;
@@ -72,6 +76,28 @@ class AuthProvider extends ChangeNotifier {
       errorMessage = e.message;
     } catch (_) {
       errorMessage = 'Something went wrong. Please try again.';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> isLoggedIn() async {
+    isLoading = false;
+    notifyListeners();
+
+    try {
+      final result = await _isLoggedInUseCase();
+      _isLoggedIn = result;
+      return result;
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      _isLoggedIn = false;
+      return false;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      _isLoggedIn = false;
+      return false;
     } finally {
       isLoading = false;
       notifyListeners();

@@ -41,4 +41,17 @@ class AuthRepositoryImpl implements AuthRepository {
 
     await authRemote.refreshToken(userId!, refreshToken!);
   }
+
+  @override
+  Future<bool> checkLoggedInUser() async {
+    final session = await authLocal.getSession();
+    final loggedInUser = await authLocal.getUserId();
+
+    if(session != null && loggedInUser != null) {
+      return true;
+    }
+
+    await authLocal.clearSession();
+    return false;
+  }
 }

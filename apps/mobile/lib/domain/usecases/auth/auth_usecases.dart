@@ -27,3 +27,12 @@ class LogoutUseCase {
     return authRepository.logout();
   }
 }
+
+class IsLoggedInUseCase {
+  final AuthRepository authRepository;
+  IsLoggedInUseCase(this.authRepository);
+
+  Future<bool> call() async {
+    return authRepository.checkLoggedInUser();
+  }
+}

@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
           AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl()),
         ),
         LogoutUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
+        IsLoggedInUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
       ),
         child: Builder(
           builder: (providerContext) {

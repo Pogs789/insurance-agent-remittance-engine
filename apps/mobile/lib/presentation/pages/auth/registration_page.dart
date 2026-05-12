@@ -151,6 +151,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl()),
         ),
         LogoutUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
+        IsLoggedInUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
       ),
       child: Builder(
         builder: (providerContext) {
