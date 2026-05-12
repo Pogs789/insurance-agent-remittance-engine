@@ -27,7 +27,6 @@ model User {
   insuranceAgent InsuranceAgent?
 }
 
-//TODO: Add here Insuranceagent model once the tool has many insurance agents using it.
 model InsuranceAgent {
   id                         String                     @id @default(uuid())
   userId                     String                     @unique
