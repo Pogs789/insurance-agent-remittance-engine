@@ -52,6 +52,7 @@ model RefreshToken {
   @@index([userId])
 }
 
+//TODO: Create another Model called Policies, which it has a One-To-Many Relationship with the planholder data, and PlanholderData, which it has a one-to-many relationship with the MonthlyRemittanceHistory.
 model MonthlyRemittanceHistory {
   id             String         @id @default(uuid())
   agentId        String
