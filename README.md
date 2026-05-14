@@ -1,4 +1,4 @@
-# Insurance Agent's Remittance Engine
+# Insurance Agent's Remittance Management System
 
 This is a simple tool for insurance agents which automatically calculates the monthly collection needed to be remitted to the insurance company.
 
@@ -62,7 +62,6 @@ This application provides an automated monitoring system that:
 - **Dart** - Programming language
 - **Provider** - State management solution
 - **Dio** - HTTP client for API requests
-- **Shared Preferences** - Local data persistence
 - **Secure Storage** - Secured Data persistence
 
 ### Backend (API Server)
@@ -77,6 +76,7 @@ This application provides an automated monitoring system that:
 - **Git** - Version control
 - **Docker** - Containerization (optional)
 - **Postman** - API testing
+- **AWS** - Cloud Platform
 
 ---
 
