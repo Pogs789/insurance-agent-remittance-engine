@@ -57,21 +57,6 @@ class _RemittancePageState extends State<RemittancePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text(
-          'My Remittances',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-        elevation: 0,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.filter_list)),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.print_outlined),
-          ), // Print Report is a common agent task
-        ],
-      ),
       body: Column(
         children: [
           // 1. Monthly Summary Card

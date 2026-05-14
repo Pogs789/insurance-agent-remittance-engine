@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/policy/policy_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_history_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/settings/settings_page.dart';
 
@@ -9,12 +10,13 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
+//TODO: Change the contents of the
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
   late final List<Widget> _pages = <Widget>[
     _buildDashboardPage(),
-    const Center(child: Text('Clients')),
+    const PolicyListPage(),
     const RemittancePage(),
     const SettingsPage(),
   ];
@@ -31,7 +33,8 @@ class _DashboardPageState extends State<DashboardPage> {
               'Agent Dashboard',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text('Hello, Engineer', style: TextStyle(fontSize: 12)),
+            //TODO: Replace this with the authenticated user.
+            Text('Hello, Agent', style: TextStyle(fontSize: 12)),
           ],
         ),
         actions: [
@@ -51,7 +54,10 @@ class _DashboardPageState extends State<DashboardPage> {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Clients'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.policy),
+            label: 'Current Policies'
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
             label: 'Remittances',
@@ -103,7 +109,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
           const SizedBox(height: 12),
           _buildActivityTile(
-            clientName: 'Juan Dela Cruz',
+            dateOfCalculation: 'Juan Dela Cruz',
             policyType: 'Life Insurance',
             status: 'Approved',
             time: '2 hrs ago',
@@ -163,8 +169,9 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  //TODO: Refer to the Retrieved remittance calculations from the backend.
   Widget _buildActivityTile({
-    required String clientName,
+    required String dateOfCalculation,
     required String policyType,
     required String status,
     required String time,
@@ -182,12 +189,12 @@ class _DashboardPageState extends State<DashboardPage> {
         leading: CircleAvatar(
           backgroundColor: Colors.blue.shade50,
           child: Text(
-            clientName[0],
+            dateOfCalculation[0],
             style: TextStyle(color: Colors.blue.shade800),
           ),
         ),
         title: Text(
-          clientName,
+          dateOfCalculation,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(policyType),
