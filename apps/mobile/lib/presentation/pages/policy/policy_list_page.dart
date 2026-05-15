@@ -12,19 +12,24 @@ class PolicyListPage extends StatefulWidget {
 class _PolicyListPageState extends State<PolicyListPage> {
   final List<Map<String, String>> _draftPolicies = const [
     {
-      'name': 'Individual Health Shield',
-      'contractPrice': '25,000.00',
-      'commission': '1,250.00',
+      'name': 'St. John',
+      'contractPrice': '300,000.00',
+      'packageContents': '1,250.00',
     },
     {
-      'name': 'Family Protection Plus',
-      'contractPrice': '18,500.00',
-      'commission': '925.00',
+      'name': 'St. Paul',
+      'contractPrice': '160,000.00',
+      'packageContents': '925.00',
     },
     {
-      'name': 'Business Asset Cover',
-      'contractPrice': '42,000.00',
-      'commission': '2,100.00',
+      'name': 'St. Ferdinand',
+      'contractPrice': '105,000.00',
+      'packageContents': '2,100.00',
+    },
+    {
+      'name': 'St. Francis',
+      'contractPrice': '100,000.00',
+      'packageContents': '2,100.00',
     },
   ];
 
@@ -65,7 +70,7 @@ class _PolicyListPageState extends State<PolicyListPage> {
                   ),
                   const SizedBox(height: AppConstants.spaceSM),
                   _PolicyDetailRow(
-                    label: 'Potential Commission Earned',
+                    label: 'Package Contents',
                     value: policy['commission'] ?? '',
                   ),
                 ],
