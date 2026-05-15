@@ -15,7 +15,7 @@ model User {
   birthDate                  DateTime
   role                       Role      @default(AGENT)
   email                      String    @unique
-  passwordHash               String    @unique
+  passwordHash               String
   emailConfirmedAt           DateTime?
   verificationToken          String?   @unique
   verificationTokenExpiresAt DateTime?
@@ -52,15 +52,47 @@ model RefreshToken {
   @@index([userId])
 }
 
-//TODO: Create another Model called Policies, which it has a One-To-Many Relationship with the planholder data, and PlanholderData, which it has a one-to-many relationship with the MonthlyRemittanceHistory.
 model MonthlyRemittanceHistory {
   id             String         @id @default(uuid())
   agentId        String
   amountRemitted Decimal        @db.Decimal(10, 2)
-  planholderData Json
   createdAt      DateTime       @default(now())
   updatedAt      DateTime?      @updatedAt
   agent          InsuranceAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  planholderData PlanholderData[]
+
+  @@index([agentId])
+}
+
+model PlanholderData {
+  id             String         @id @default(uuid())
+  monthlyRemittanceId String
+  planholderName String
+  insuranceProductId String
+  currentStatus PlanholderStatus @default(ACTIVE)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?      @updatedAt
+
+  monthlyRemittaceHistory MonthlyRemittanceHistory @relation(fields: [monthlyRemittanceId], references: [id], onDelete: Cascade)
+  insuranceProduct InsuranceProduct @relation(fields: [insuranceProductId], references: [id], onDelete: Cascade)
+}
+
+
+model InsuranceProduct {
+  id             String         @id @default(uuid())
+  insuranceProductName String
+  productAmount Decimal @db.Decimal(10, 2)
+  paymentTermss String[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?      @updatedAt
+  planholderData PlanholderData[]
+}
+
+model InsuranceCompany {
+  id             String         @id @default(uuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime?      @updatedAt
 }
 
 model UserFeedback {
@@ -76,5 +108,11 @@ model UserFeedback {
 
 enum Role {
   AGENT
-  ADMIN
+  COMPANYADMIN
+  SUPERADMIN
+}
+
+enum PlanholderStatus {
+  ACTIVE
+  INACTIVE
 }
