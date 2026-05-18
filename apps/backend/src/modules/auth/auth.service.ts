@@ -7,7 +7,6 @@ import { MailService } from '../mail/mail.service';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppConstants } from '../../common/constants/app.constants';
-import { User } from 'src/generated/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,10 +20,8 @@ export class AuthService {
     firstName: string,
     middleName: string,
     lastName: string,
-    insuranceCompany: string,
+    insuranceCompanyId: string,
     birthDate: Date,
-    branchAddress: string,
-    commissionRate: number,
     email: string,
     password: string,
   ) {
@@ -63,9 +60,7 @@ export class AuthService {
       await this.prisma.insuranceAgent.create({
         data: {
           userId: isSuccess.id,
-          insuranceCompany: insuranceCompany,
-          branchAddress: branchAddress,
-          commissionRate: commissionRate,
+          insuranceCompanyId: insuranceCompanyId,
         },
       });
 
@@ -85,7 +80,7 @@ export class AuthService {
     return { success: false };
   }
 
-  async validateUser(email: string, pass: string): Promise<User> {
+  async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user)

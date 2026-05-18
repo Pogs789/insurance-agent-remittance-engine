@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
+import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/policy/policy_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_history_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/settings/settings_page.dart';
@@ -14,6 +17,11 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
+  final Map<String, String> _companyName = {
+    "companyName": "St. Peter Life Insurance",
+    "userName": "Juan Dela Cruz"
+  };
+
   late final List<Widget> _pages = <Widget>[
     _buildDashboardPage(),
     const PolicyListPage(),
@@ -26,15 +34,15 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Agent Dashboard',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              '${_companyName['companyName']} Remittance Calculator',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             //TODO: Replace this with the authenticated user.
-            Text('Hello, Agent', style: TextStyle(fontSize: 12)),
+            Text('Hello, ${_companyName['userName']}', style: const TextStyle(fontSize: 12)),
           ],
         ),
         actions: [
@@ -88,17 +96,17 @@ class _DashboardPageState extends State<DashboardPage> {
           Row(
             children: [
               _buildStatCard(
-                'Active Policies',
+                'Active Insurance Products',
                 '124',
                 Colors.blue,
-                Icons.folder_shared,
+                FontAwesomeIcons.folder,
               ),
               const SizedBox(width: 12),
               _buildStatCard(
-                'Average Monthly Remittance',
-                '\$12k',
+                'Average Remittance Calculated',
+                '100,000',
                 Colors.green,
-                Icons.attach_money,
+                FontAwesomeIcons.pesoSign,
               ),
             ],
           ),
@@ -124,7 +132,7 @@ class _DashboardPageState extends State<DashboardPage> {
     String title,
     String value,
     Color color,
-    IconData icon,
+    FaIconData icon,
   ) {
     return Expanded(
       child: Container(
@@ -147,11 +155,15 @@ class _DashboardPageState extends State<DashboardPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(icon, color: color, size: 28),
+                FaIcon(
+                  icon,
+                  size: AppConstants.fontSizeXXL,
+                  color: color,
+                ),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: AppConstants.fontSizeMD,
                     fontWeight: FontWeight.bold,
                     color: color,
                   ),

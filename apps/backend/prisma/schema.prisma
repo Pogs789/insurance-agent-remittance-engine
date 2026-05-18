@@ -30,9 +30,7 @@ model User {
 model InsuranceAgent {
   id                         String                     @id @default(uuid())
   userId                     String                     @unique
-  insuranceCompany           String
-  branchAddress              String
-  commissionRate             Float
+  insuranceCompanyId         String
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   user                       User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -66,33 +64,42 @@ model MonthlyRemittanceHistory {
 }
 
 model PlanholderData {
-  id             String         @id @default(uuid())
+  id                  String           @id @default(uuid())
   monthlyRemittanceId String
-  planholderName String
-  insuranceProductId String
-  currentStatus PlanholderStatus @default(ACTIVE)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
+  planholderName      String
+  insuranceProductId  String
+  currentStatus       PlanholderStatus @default(ACTIVE)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime?        @updatedAt
 
   monthlyRemittaceHistory MonthlyRemittanceHistory @relation(fields: [monthlyRemittanceId], references: [id], onDelete: Cascade)
-  insuranceProduct InsuranceProduct @relation(fields: [insuranceProductId], references: [id], onDelete: Cascade)
+  insuranceProduct        InsuranceProduct         @relation(fields: [insuranceProductId], references: [id], onDelete: Cascade)
 }
 
-
 model InsuranceProduct {
-  id             String         @id @default(uuid())
+  id                   String           @id @default(uuid())
+  insuranceCompanyId   String
   insuranceProductName String
-  productAmount Decimal @db.Decimal(10, 2)
-  paymentTermss String[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
-  planholderData PlanholderData[]
+  productContents      String
+  productAmount        Decimal          @db.Decimal(10, 2)
+  paymentTerms         String[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime?        @updatedAt
+  planholderData       PlanholderData[]
+
+  insuranceCompany InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
 }
 
 model InsuranceCompany {
-  id             String         @id @default(uuid())
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime?      @updatedAt
+  id              String    @id @default(uuid())
+  companyName     String
+  branchAddress   String
+  productsOffered String
+  commissionRate  Decimal   @db.Decimal(10, 2)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime? @updatedAt
+
+  insuranceProduct InsuranceProduct[]
 }
 
 model UserFeedback {

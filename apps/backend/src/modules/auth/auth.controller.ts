@@ -65,10 +65,8 @@ export class AuthController {
       firstName,
       middleName,
       lastName,
-      insuranceCompany,
+      insuranceCompanyId,
       birthDate,
-      branchAddress,
-      commissionRate,
       email,
       password,
     } = registerDto;
@@ -77,10 +75,8 @@ export class AuthController {
       firstName,
       middleName,
       lastName,
-      insuranceCompany,
+      insuranceCompanyId,
       birthDate,
-      branchAddress,
-      commissionRate,
       email,
       password,
     );

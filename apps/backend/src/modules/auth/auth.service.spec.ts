@@ -80,10 +80,8 @@ describe('AuthService', () => {
       'Juan',
       'Dela',
       'Cruz',
-      'San Pedro Insurance Inc.',
+      'efbesyfbcshbcvyrsfbr',
       new Date('1990-01-01'),
-      'Tahao Rd., Brgy. 69, Legazpi City',
-      40,
       'juandelacruz@email.com',
       'Password@123',
     );

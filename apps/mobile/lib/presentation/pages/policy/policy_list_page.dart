@@ -60,6 +60,7 @@ class _PolicyListPageState extends State<PolicyListPage> {
                     policy['name'] ?? '',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
+                          fontSize: AppConstants.fontSizeXXL,
                           color: AppColors.textPrimary,
                         ),
                   ),
@@ -71,7 +72,7 @@ class _PolicyListPageState extends State<PolicyListPage> {
                   const SizedBox(height: AppConstants.spaceSM),
                   _PolicyDetailRow(
                     label: 'Package Contents',
-                    value: policy['commission'] ?? '',
+                    value: policy['packageContents'] ?? '',
                   ),
                 ],
               ),
@@ -103,6 +104,7 @@ class _PolicyDetailRow extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textPrimary.withValues(alpha: 0.75),
+              fontSize: AppConstants.fontSizeMD,
                 ),
           ),
         ),
