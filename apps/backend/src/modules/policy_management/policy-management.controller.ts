@@ -11,7 +11,7 @@ import { CreatePolicyManagementDto } from './dto/create-policy-management.dto';
 import { UpdatePolicyManagementDto } from './dto/update-policy-management.dto';
 import { PolicyManagementService } from './policy-management.service';
 
-//TODO: Create a Basic CRUD Feature which only the Admin, which is basically the Insurance Company that will use this app, can access it, while the insurance agent can only view it.
+//TODO: Create a Basic CRUD Feature which only the Company Admin (COMPANYADMIN), which is basically the Insurance Company that will use this app, can access it, while the insurance agent can only view it.
 //TODO: If we are done with the "Happy Path", proceed to writing unit tests to identify possible edge cases.
 @Controller('policy-managements')
 export class PolicyManagementController {
@@ -24,26 +24,29 @@ export class PolicyManagementController {
     return this.policyManagementService.create(createPolicyManagementDto);
   }
 
-  @Get()
-  findAll() {
-    return this.policyManagementService.findAll();
+  @Get(':companyId')
+  findAll(@Param(':companyId') id: string) {
+    return this.policyManagementService.findAll(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.policyManagementService.findOne(+id);
+  @Get(':productId')
+  findOne(@Param('productId') id: string) {
+    return this.policyManagementService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':productId')
   update(
-    @Param('id') id: string,
+    @Param('productId') productId: string,
     @Body() updatePolicyManagementDto: UpdatePolicyManagementDto,
   ) {
-    return this.policyManagementService.update(+id, updatePolicyManagementDto);
+    return this.policyManagementService.update(
+      +productId,
+      updatePolicyManagementDto,
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(':productId')
+  remove(@Param('productId') id: string) {
     return this.policyManagementService.remove(+id);
   }
 }
