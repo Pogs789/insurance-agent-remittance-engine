@@ -36,21 +36,11 @@ export class MonthlyRemittanceService {
 
     if (!insuranceAgent) return { amountToBeRemitted: amountToBeRemitted };
 
-    const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
-      planholderName: p.planholderName,
-      insuranceProduct: p.insuranceProduct,
-      insuranceAmount: p.insuranceAmount,
-      paymentPeriod: p.paymentPeriod,
-      paymentPeriodAmount: p.paymentPeriodAmount,
-      planholderStatus: p.planholderStatus,
-    })) as Prisma.JsonArray;
-
     await this.prisma.$transaction([
       this.prisma.monthlyRemittanceHistory.create({
         data: {
           agentId: insuranceAgent.id,
           amountRemitted: amountToBeRemitted,
-          planholderData: planholderDataForDb,
         },
       }),
     ]);
@@ -89,31 +79,22 @@ export class MonthlyRemittanceService {
     userId: string,
     id: string,
   ): Promise<{ amountToBeRemitted: Decimal }> {
-    const insuranceAgent = await this.prisma.insuranceAgent.findFirst({
+    const insuranceCompany = await this.prisma.insuranceCompany.findFirst({
       where: { id: userId },
     });
 
-    if (!insuranceAgent) {
-      throw new NotFoundException('Insurance Agent Not Found.');
+    if (!insuranceCompany) {
+      throw new NotFoundException('Insurance Company Not Found.');
     }
 
-    const amountToBeRemitted = new Decimal(
-      planholders.reduce((sum, p) => {
-        const rate = insuranceAgent.commissionRate / 100;
-        const grossCommission = p.paymentPeriodAmount * rate;
-        const netTakeHome = grossCommission * this.appConstants.valueAddedTax;
-        return sum + (p.paymentPeriodAmount - netTakeHome);
-      }, 0),
-    );
+    const amountToBeRemitted = planholders.reduce((sum, p) => {
+      const rate = new Decimal(insuranceCompany.commissionRate).div(100);
+      const payment = new Decimal(p.paymentPeriodAmount);
 
-    const planholderDataForDb: Prisma.JsonArray = planholders.map((p) => ({
-      planholderName: p.planholderName,
-      insuranceProduct: p.insuranceProduct,
-      insuranceAmount: p.insuranceAmount,
-      paymentPeriod: p.paymentPeriod,
-      paymentPeriodAmount: p.paymentPeriodAmount,
-      planholderStatus: p.planholderStatus,
-    })) as Prisma.JsonArray;
+      const grossCommission = payment.mul(rate);
+      const netTakeHome = grossCommission.mul(this.appConstants.valueAddedTax);
+      return sum.plus(payment.minus(netTakeHome));
+    }, new Decimal(0));
 
     await this.prisma.monthlyRemittanceHistory.update({
       where: {
@@ -122,7 +103,6 @@ export class MonthlyRemittanceService {
       },
       data: {
         amountRemitted: amountToBeRemitted,
-        planholderData: planholderDataForDb,
       },
     });
 

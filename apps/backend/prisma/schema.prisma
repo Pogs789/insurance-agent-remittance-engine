@@ -31,7 +31,6 @@ model InsuranceAgent {
   id                         String                     @id @default(uuid())
   userId                     String                     @unique
   insuranceCompanyId         String
-  branchAddress              String
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   user                       User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
