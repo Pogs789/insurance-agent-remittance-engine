@@ -34,3 +34,18 @@ Mapping out how would the insurance app would look like when it was finished.
 
 **The Solution:**
 * I choose the Standalone Service because of its speed, urgency as well as giving Insurance Companies a way to use our system.
+
+## [05-19-2026] - Fixing the update error in Android Studio
+**Context:**
+Updating to latest Android Studio Version.
+
+**The Challenge:**
+* When I update my Android Studio into the latest release, I encountered a problem, which is Dart, in order to function, requires a plugin called com.redhat.devtools.lsp4ij in order for my project in mobile to continue. 
+* In addition, I encountered a problem when it comes to gradle, which wrongfully identifies my lib folder as its build.
+
+**The Solution:**
+* I simply installed the LSP4IJ Plugin in my Android Studio to support Dart, which in turn support Flutter. This also restarts my IDE.
+* I change my directory to its correct one, which is Android, which exposes another problem when it comes to JAVA_HOME env, which I setted it. Then I initialied my gradle plugin.
+
+**Reference:**
+* https://www.reddit.com/r/flutterhelp/comments/1t4ry8x/comredhatdevtoolslsp4ij_plugin_required_by_new/
