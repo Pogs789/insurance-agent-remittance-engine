@@ -1,4 +1,3 @@
-import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
 
 class LoginUseCase {

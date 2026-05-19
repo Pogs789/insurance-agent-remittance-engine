@@ -65,14 +65,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: _pushNotifications,
                   onChanged: (val) => setState(() => _pushNotifications = val),
                 ),
-                const Divider(height: 1, indent: 50),
-                _buildSwitchTile(
-                  title: "Email Digests",
-                  subtitle: "Weekly performance summary",
-                  icon: Icons.email_outlined,
-                  value: _emailNotifications,
-                  onChanged: (val) => setState(() => _emailNotifications = val),
-                ),
               ],
             ),
           ),
@@ -96,14 +88,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             child: Column(
               children: [
-                _buildSwitchTile(
-                  title: "Biometric Login",
-                  subtitle: "FaceID / Fingerprint",
-                  icon: Icons.fingerprint,
-                  value: _biometricEnabled,
-                  onChanged: (val) => setState(() => _biometricEnabled = val),
-                ),
-                const Divider(height: 1, indent: 50),
                 _buildActionTile(
                   title: "Change Password",
                   icon: Icons.lock_outline,
@@ -150,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.red.withOpacity(0.1),
+                backgroundColor: Colors.red.withValues(),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -237,7 +221,9 @@ class _SettingsPageState extends State<SettingsPage> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.1),
+          color: Colors.blue.withValues(
+            blue: 0.01
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: Colors.blueAccent),
@@ -249,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
       trailing: Switch.adaptive(
         value: value,
         onChanged: onChanged,
-        activeColor: Colors.blueAccent,
+        activeThumbColor: Colors.blueAccent,
       ),
     );
   }
@@ -264,7 +250,8 @@ class _SettingsPageState extends State<SettingsPage> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.1),
+          color: Colors.grey.withValues(
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: Colors.black87),

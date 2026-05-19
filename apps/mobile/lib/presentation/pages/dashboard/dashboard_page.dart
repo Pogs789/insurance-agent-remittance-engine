@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
-import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/policy/policy_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_history_list_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/settings/settings_page.dart';
@@ -142,7 +141,7 @@ class _DashboardPageState extends State<DashboardPage> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -217,7 +216,9 @@ class _DashboardPageState extends State<DashboardPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
+                color: statusColor.withValues(
+                  blue: 0.5,
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

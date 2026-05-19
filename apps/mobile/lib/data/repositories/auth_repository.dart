@@ -1,11 +1,6 @@
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
-import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
-import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
-
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
-
 import '../datasources/remote/auth_remote_datasource.dart';
-import '../models/user_registration_request_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemote;
