@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { PlanholderDataDto } from './dto/planholder_data.dto';
-import { Prisma } from '../../generated/client';
 import { AppConstants } from '../../common/constants/app.constants';
 import { Decimal } from '@prisma/client/runtime/client';
 
@@ -14,19 +13,26 @@ export class MonthlyRemittanceService {
   /**
    * Calculate the total remittance needed based on the percentage set by the insurance company to an agent.
    */
-  async calculateRemittanceAmount(
+  publicCalculation(
     planholders: PlanholderDataDto[],
     commissionRate: number,
-    userId?: string,
-  ): Promise<{ amountToBeRemitted: Decimal }> {
-    const amountToBeRemitted = new Decimal(
-      planholders.reduce((sum, p) => {
-        const rate = commissionRate / 100;
-        const grossCommission = p.paymentPeriodAmount * rate;
-        const netTakeHome =
-          grossCommission * (1 - this.appConstants.valueAddedTax);
-        return sum + (p.paymentPeriodAmount - netTakeHome);
-      }, 0),
+  ): { amountToBeRemitted: Decimal } {
+    const amountToBeRemitted = this.calculateMonthlyRemittance(
+      commissionRate,
+      planholders,
+    );
+
+    return { amountToBeRemitted: amountToBeRemitted };
+  }
+
+  async authenticatedCalculation(
+    planholders: PlanholderDataDto[],
+    commissionRate: number,
+    userId: string,
+  ) {
+    const amountToBeRemitted = this.calculateMonthlyRemittance(
+      commissionRate,
+      planholders,
     );
 
     if (!userId) return { amountToBeRemitted: amountToBeRemitted };
@@ -46,6 +52,22 @@ export class MonthlyRemittanceService {
     ]);
 
     return { amountToBeRemitted: amountToBeRemitted };
+  }
+
+  //Calculates the remittance amount.
+  private calculateMonthlyRemittance(
+    commissionRate: number,
+    planholders: PlanholderDataDto[],
+  ) {
+    return new Decimal(
+      planholders.reduce((sum, p) => {
+        const rate = commissionRate / 100;
+        const grossCommission = p.paymentPeriodAmount * rate;
+        const netTakeHome =
+          grossCommission * (1 - this.appConstants.valueAddedTax);
+        return sum + (p.paymentPeriodAmount - netTakeHome);
+      }, 0),
+    );
   }
 
   /**

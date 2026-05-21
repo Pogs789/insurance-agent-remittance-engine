@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/monthly_remittance.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/monthly_remittance/monthly_remittance_usecase.dart';
 
@@ -18,13 +19,12 @@ class MonthlyRemittanceProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('Hi from MonthlyRemittanceProvider');
-      debugPrint('useCase runtimeType: ${_submitUseCase.runtimeType}');
       final result = await _submitUseCase(remittance);
       amountToBeRemitted = result.amountToBeRemitted;
       isSuccess = true;
     } catch (e) {
-      errorMessage = e.toString();
+      debugPrint('Error in MonthlyRemittanceProvider: $e');
+      errorMessage = e is AppException ? e.message : e.toString();
     } finally {
       isLoading = false;
       notifyListeners();

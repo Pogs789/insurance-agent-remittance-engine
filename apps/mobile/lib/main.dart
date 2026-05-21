@@ -103,8 +103,7 @@ class _MyAppShellState extends State<MyAppShell> {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: ThemeMode.system,
-          //initialRoute: initialRoute,
-          initialRoute: '/dashboard',
+          initialRoute: initialRoute,
           routes: {
             '/': (_) => const RemittanceFormPage(),
             '/register': (_) => const RegistrationPage(),

@@ -67,7 +67,12 @@ describe('MonthlyRemittanceService', () => {
       MonthlyRemittanceService,
     );
 
-    const result = await service.calculateRemittanceAmount(
+    const result = service.publicCalculation(
+      planholders as PlanholderDataDto[],
+      30,
+    );
+
+    await service.authenticatedCalculation(
       planholders as PlanholderDataDto[],
       30,
       'user-1',

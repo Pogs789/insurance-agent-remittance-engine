@@ -100,15 +100,13 @@ String? _extractValidationMessage(dynamic data) {
 }
 
 AppException mapToAppException(Object error, StackTrace stackTrace) {
-  debugPrintStack(
-    label: 'An Error Occurred: $error. Stack Trace',
-    stackTrace: stackTrace,
-  );
 
   if (error is AppException) return error;
 
   if (error is DioException) {
     final statusCode = error.response?.statusCode;
+
+    debugPrint('Status Code Error: ${error.response?.data}');
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -130,6 +128,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
         final backendMessage = _extractValidationMessage(error.response?.data);
 
         if (statusCode == 401 || statusCode == 403) {
+          debugPrint('This transaction is UnAuthorized');
           return AuthException(
             backendMessage ?? 'This request is Unauthorized.',
             statusCode: statusCode,
