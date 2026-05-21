@@ -9,6 +9,7 @@ import {
 import { MonthlyRemittanceService } from './monthly_remittance.service';
 import { CreateMonthlyRemittanceDto } from './dto/create-monthly_remittance.dto';
 import { UpdateMonthlyRemittanceDto } from './dto/update-monthly_remittance.dto';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('monthly-remittance')
 export class MonthlyRemittanceController {
@@ -19,14 +20,27 @@ export class MonthlyRemittanceController {
    * @param createMonthlyRemittanceDto
    * @returns remittanceAmount
    */
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post()
+  calculatePublicInsuranceCollection(
+    @Body() createMonthlyRemittanceDto: CreateMonthlyRemittanceDto,
+  ) {
+    const { planholderData, commissionRate } = createMonthlyRemittanceDto;
+    return this.monthlyRemittanceService.publicCalculation(
+      planholderData,
+      commissionRate,
+    );
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('calculate')
   createNewInsuranceRemittanceRecord(
     @Body() createMonthlyRemittanceDto: CreateMonthlyRemittanceDto,
   ) {
-    const { userId, planholderData, commissionRate } =
-      createMonthlyRemittanceDto;
-    return this.monthlyRemittanceService.calculateRemittanceAmount(
+    const { planholderData, commissionRate } = createMonthlyRemittanceDto;
+    const userId = 'ehfbshjfbeshjdfb';
+    return this.monthlyRemittanceService.authenticatedCalculation(
       planholderData,
       commissionRate,
       userId,

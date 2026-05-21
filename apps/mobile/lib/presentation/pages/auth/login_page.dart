@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registration_page.dart';
 import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleLogin(BuildContext providerContext) async {
+    //This is only temporary as the insides of the mini-app are underway.
+    if (AppConstants.isUnderDevelopment) {
+      ScaffoldMessenger.of(providerContext).showSnackBar(
+        SnackBar(
+          content: Text("Additional Features are still underway. Please stay tuned for the full version."),
+          backgroundColor: AppColors.colorInfo,
+        )
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
       final provider = providerContext.read<AuthProvider>();
 

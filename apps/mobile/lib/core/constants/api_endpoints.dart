@@ -13,5 +13,5 @@ class ApiEndpoints {
   static final String registerApi = '$_url/auth/agent-register';
 
   static final String calculateMonthlyRemittance =
-      '$_url/monthly-remittance/calculate';
+      '$_url/monthly-remittance';
 }

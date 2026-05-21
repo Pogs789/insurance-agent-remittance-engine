@@ -7,11 +7,23 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MailService } from '../mail/mail.service';
 import { AppConstants } from '../../common/constants/app.constants';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './passport/local.strategy';
 
 @Module({
-  imports: [JwtModule.register({}), PassportModule, PrismaModule],
+  imports: [
+    ConfigModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('JWT_ACCESS_SECRET'),
+      }),
+    }),
+    PassportModule,
+    PrismaModule,
+  ],
   providers: [
     LocalStrategy,
     JwtStrategy,

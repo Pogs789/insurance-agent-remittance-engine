@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/monthly_remittance_request_model.dart';
@@ -27,7 +28,6 @@ class MonthlyRemittanceRemoteDataSourceImpl
   ) async {
     final payload = <String, dynamic>{
       ...monthlyRemittance.toJson(),
-      'userId': userId,
     };
     try {
       final result = await dio.post(

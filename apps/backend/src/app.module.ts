@@ -7,6 +7,8 @@ import { MailModule } from './modules/mail/mail.module';
 import { MonthlyRemittanceModule } from './modules/monthly_remittance/monthly_remittance.module';
 import { PolicyManagementModule } from './modules/policy_management/policy-management.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/passport/jwt.guard';
 
 @Module({
   imports: [
@@ -18,6 +20,12 @@ import { PrismaModule } from './prisma/prisma.module';
     AgentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

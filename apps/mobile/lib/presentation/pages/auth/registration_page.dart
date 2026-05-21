@@ -9,6 +9,7 @@ import 'package:life_insurance_monitoring_mobile/domain/repositories/agent_repos
 import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_usecase.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
 import 'package:provider/provider.dart';
+import '../../../core/themes/app_colors.dart';
 import '../../../data/repositories/auth_repository.dart';
 import '../../../domain/usecases/auth/auth_usecases.dart';
 import '../../providers/auth/auth_provider.dart';
@@ -85,6 +86,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   void _agentSubmit(BuildContext providerContext) async {
+    //This is only temporary as the insides of the mini-app are underway.
+    if (AppConstants.isUnderDevelopment) {
+      ScaffoldMessenger.of(providerContext).showSnackBar(
+          SnackBar(
+            content: Text("Additional Features are still underway. Please stay tuned for the full version."),
+            backgroundColor: AppColors.colorInfo,
+          )
+      );
+      return;
+    }
     if (_birthDate == null) {
       ScaffoldMessenger.of(
         context,

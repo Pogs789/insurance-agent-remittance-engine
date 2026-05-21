@@ -15,6 +15,7 @@ import { LogOutDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AgentRegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './passport/local-auth.guard';
+import { Public } from '../../common/decorators/public.decorator';
 
 type AuthenticatedUser = {
   id: string;
@@ -34,6 +35,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   // POST auth/login
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -58,6 +60,7 @@ export class AuthController {
     );
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('agent-register')
   register(@Body() registerDto: AgentRegisterDto) {
@@ -82,6 +85,7 @@ export class AuthController {
     );
   }
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Get('verify-token')
   @Render('email_confirmation')
