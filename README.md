@@ -1,4 +1,4 @@
-<img width="123" height="150" alt="prisma-erd" src="https://github.com/user-attachments/assets/29a97d4f-7bcb-45f6-b085-44398842e5a0" /># Insurance Agent's Remittance Management System
+# Insurance Agent's Remittance Management System
 
 This is a simple tool for insurance agents which automatically calculates the monthly collection needed to be remitted to the insurance company.
 
@@ -112,6 +112,10 @@ User Action → Provider → Use Case → Repository → Data Source → API →
                                                                         ↓
 User sees result ← Provider ← Entity ← Repository ← Model ← Response ←
 ```
+
+### Database Design
+
+<img width="500" height="900" alt="prisma-erd" src="https://github.com/user-attachments/assets/29a97d4f-7bcb-45f6-b085-44398842e5a0" />
 
 ## 📁 Folder Structure
 
