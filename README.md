@@ -13,7 +13,7 @@ The core end-to-end architecture is fully deployed. The project is currently und
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
-Last updated: March 2026
+Last updated: June 2026
 
 ## 📋 Table of Contents
 - [Problem Statement](#problem-statement)
