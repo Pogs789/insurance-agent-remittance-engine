@@ -435,8 +435,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Cesphillip M. Lorica**
-- GitHub: [@yourusername](https://github.com/Pogs789)
-- LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/cesphillip-lorica-5923a523b/)
+- GitHub: [@Pogs789](https://github.com/Pogs789)
+- LinkedIn: [Cesphillip Lorica](https://www.linkedin.com/in/cesphillip-lorica-5923a523b/)
 - Email: loricaphillip@outlook.com
 
 ---
