@@ -9,3 +9,5 @@ allowBuilds:
   prisma: true
   puppeteer: true
   unrs-resolver: true
+overrides:
+  '@types/pg': 8.11.11
