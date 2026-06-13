@@ -4,14 +4,16 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-Some of its CORE FEATURES are already deployed and can be accessed by this URL: 
+Active MVP (Undergoing Maintenance)
 
-https://insurance-agent-remittance-engine-frontend.vercel.app
+~~https://insurance-agent-remittance-engine-frontend.vercel.app~~
+
+The core end-to-end architecture is fully deployed. The project is currently undergoing a planned maintenance pause to optimize database queries and resolve edge-case API errors.
 
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
 
-Last updated: March 2026
+Last updated: June 2026
 
 ## 📋 Table of Contents
 - [Problem Statement](#problem-statement)
@@ -113,7 +115,9 @@ User Action → Provider → Use Case → Repository → Data Source → API →
 User sees result ← Provider ← Entity ← Repository ← Model ← Response ←
 ```
 
----
+### Database Design
+
+<img width="500" height="900" alt="prisma-erd" src="https://github.com/user-attachments/assets/29a97d4f-7bcb-45f6-b085-44398842e5a0" />
 
 ## 📁 Folder Structure
 
@@ -431,8 +435,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Cesphillip M. Lorica**
-- GitHub: [@yourusername](https://github.com/Pogs789)
-- LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/cesphillip-lorica-5923a523b/)
+- GitHub: [@Pogs789](https://github.com/Pogs789)
+- LinkedIn: [Cesphillip Lorica](https://www.linkedin.com/in/cesphillip-lorica-5923a523b/)
 - Email: loricaphillip@outlook.com
 
 ---
