@@ -38,13 +38,5 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
-  },
-  "pnpm": {
-    "neverBuiltDependencies": [
-      "@nestjs/core"
-    ],
-    "overrides": {
-      "@types/pg": "8.20.0"
-    }
   }
 }
