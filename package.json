@@ -2,7 +2,7 @@
   "name": "insurance-agent-remittance-engine",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -38,8 +38,5 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
-  },
-  "pnpm": {
-    "neverBuiltDependencies": ["@nestjs/core"]
   }
 }
