@@ -1,20 +1,18 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
-import { UUID } from 'crypto';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 //TODO: Update the variables here to reflect insurance policy.
 export class CreatePolicyManagementDto {
-  @IsEmail()
-  email!: string;
+  @IsString()
+  @IsNotEmpty()
+  insuranceProductName!: string;
 
   @IsString()
-  @MinLength(8)
-  password!: string;
-}
+  @IsNotEmpty()
+  productContents!: string;
 
-export class LogOutDto {
-  userId!: UUID;
+  @IsNumber()
+  productAmount!: string;
 
-  @IsString()
-  @MinLength(64)
-  refreshToken!: string;
+  @IsArray()
+  paymentTerms!: string[];
 }

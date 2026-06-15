@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
 import '../datasources/remote/auth_remote_datasource.dart';
@@ -41,6 +42,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<bool> checkLoggedInUser() async {
     final session = await authLocal.getSession();
     final loggedInUser = await authLocal.getUserId();
+
+    debugPrint("Is the user recently logged in? $session");
 
     if(session != null && loggedInUser != null) {
       return true;
