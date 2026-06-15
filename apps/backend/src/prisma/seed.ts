@@ -13,7 +13,24 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  //TODO: Put in here necessary seeds (e.g. insurance products, super-admin, company-admin, insurance-agent)
+  const insuranceCompanySample = await prisma.insuranceCompany.createMany({
+    data: [
+      {
+        companyName: 'St. Peter Life Plan Inc.',
+        branchAddress: 'Centro Guinobatan, Albay',
+        productsOffered: 'Funeral Package',
+        commissionRate: 40.0,
+      },
+      {
+        companyName: 'Kaiser Insurance Co.',
+        branchAddress: 'Brgy. Oro Site, Legazpi City, Albay',
+        productsOffered: 'Healthcare Insurance',
+        commissionRate: 30.0,
+      },
+    ],
+  });
+
+  console.log(insuranceCompanySample);
 }
 
 main()

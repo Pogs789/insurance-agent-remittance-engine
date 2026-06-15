@@ -7,6 +7,7 @@ import { MailService } from '../mail/mail.service';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppConstants } from '../../common/constants/app.constants';
+import { User } from '../../generated/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -80,7 +81,7 @@ export class AuthService {
     return { success: false };
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user)

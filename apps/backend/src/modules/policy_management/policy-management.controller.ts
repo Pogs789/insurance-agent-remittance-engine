@@ -40,13 +40,13 @@ export class PolicyManagementController {
     @Body() updatePolicyManagementDto: UpdatePolicyManagementDto,
   ) {
     return this.policyManagementService.update(
-      +productId,
+      productId,
       updatePolicyManagementDto,
     );
   }
 
   @Delete(':productId')
   remove(@Param('productId') id: string) {
-    return this.policyManagementService.remove(+id);
+    return this.policyManagementService.remove(id);
   }
 }

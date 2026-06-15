@@ -91,6 +91,11 @@ class _MyAppShellState extends State<MyAppShell> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool?>(
       future: _isLoggedInFuture,

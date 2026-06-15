@@ -9,6 +9,7 @@ import { PolicyManagementModule } from './modules/policy_management/policy-manag
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/passport/jwt.guard';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtAuthGuard } from './modules/auth/passport/jwt.guard';
     PrismaModule,
     MonthlyRemittanceModule,
     AgentsModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [
