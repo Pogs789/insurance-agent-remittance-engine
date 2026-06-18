@@ -98,7 +98,6 @@ model InsuranceProduct {
 model InsuranceCompany {
   id              String    @id @default(uuid())
   companyName     String
-  branchAddress   String
   productsOffered String
   commissionRate  Decimal   @db.Decimal(10, 2)
   createdAt       DateTime  @default(now())

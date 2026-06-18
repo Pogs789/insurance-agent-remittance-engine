@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/remote/company_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/agent_repository.dart';
+import 'package:life_insurance_monitoring_mobile/data/repositories/company_repository.dart';
+import 'package:life_insurance_monitoring_mobile/domain/entities/company.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/agent_repository.dart';
+import 'package:life_insurance_monitoring_mobile/domain/repositories/company_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/company/company_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/providers/company/company_provider.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
 import 'package:provider/provider.dart';
-import '../../../core/themes/app_colors.dart';
-import '../../../data/repositories/auth_repository.dart';
-import '../../../domain/usecases/auth/auth_usecases.dart';
-import '../../providers/auth/auth_provider.dart';
+import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
+import 'package:life_insurance_monitoring_mobile/data/repositories/auth_repository.dart';
+import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/providers/auth/auth_provider.dart';
 import 'package:flutter/services.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -28,7 +34,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _middleNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _insuranceCompanyController = TextEditingController();
-  final _branchAddressController = TextEditingController();
+  final _companyIdController = TextEditingController();
   final _commissionRateController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -36,8 +42,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
   late final AgentUseCase agentUseCase;
   late final AgentRepository agentRepository;
   late final AuthRemoteDataSource authRemoteDataSource;
+  late final CompanyProvider companyProvider;
+  late final GetCompanyUseCase getCompanyUseCase;
+  late final CompanyRepository companyRepository;
+  late final CompanyRemoteDataSource companyRemoteDataSource;
 
   DateTime? _birthDate;
+  List<CompanyModel> _companyOptions = [];
+  CompanyModel? _selectedCompany;
+  bool _isLoadingCompanies = false;
+  bool _didRequestCompanies = false;
+  String? _companyLoadError;
 
   @override
   void initState() {
@@ -45,6 +60,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
     authRemoteDataSource = AuthRemoteDataSourceImpl(dio: Dio());
     agentRepository = AgentRepositoryImpl(authRemoteDataSource);
     agentUseCase = AgentUseCase(agentRepository);
+    companyRemoteDataSource = CompanyRemoteDataSourceImpl(dio: Dio());
+    companyRepository = CompanyRepositoryImpl(companyRemoteDataSource);
+    getCompanyUseCase = GetCompanyUseCase(companyRepository);
   }
 
   @override
@@ -53,7 +71,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _middleNameController.dispose();
     _lastNameController.dispose();
     _insuranceCompanyController.dispose();
-    _branchAddressController.dispose();
+    _companyIdController.dispose();
     _commissionRateController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -85,21 +103,53 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return null;
   }
 
-  void _agentSubmit(BuildContext providerContext) async {
-    //This is only temporary as the insides of the mini-app are underway.
-    if (AppConstants.isUnderDevelopment) {
-      ScaffoldMessenger.of(providerContext).showSnackBar(
-          SnackBar(
-            content: Text("Additional Features are still underway. Please stay tuned for the full version."),
-            backgroundColor: AppColors.colorInfo,
-          )
-      );
-      return;
+  String _formatCommissionRate(double rate) {
+    return rate % 1 == 0 ? rate.toStringAsFixed(0) : rate.toStringAsFixed(2);
+  }
+
+  Future<void> _loadCompanies(BuildContext providerContext) async {
+    setState(() {
+      _isLoadingCompanies = true;
+      _companyLoadError = null;
+    });
+
+    try {
+      final companies = await providerContext
+          .read<CompanyProvider>()
+          .getAllCompanyNamesAndCommissionRates();
+
+      if (!mounted) return;
+
+      setState(() {
+        _companyOptions = companies;
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        _companyLoadError = 'Unable to load insurance companies.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingCompanies = false;
+        });
+      }
     }
+  }
+
+  void _agentSubmit(BuildContext providerContext) async {
     if (_birthDate == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Birth date is required')));
+      return;
+    }
+
+    if (_insuranceCompanyController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Insurance company is required')),
+      );
       return;
     }
 
@@ -118,9 +168,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       middleName: _middleNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
       birthDate: _birthDate!,
-      insuranceCompany: _insuranceCompanyController.text.trim(),
-      branchAddress: _branchAddressController.text.trim(),
-      commissionRate: commissionRate,
+      companyId: _companyIdController.text.trim(),
       email: _emailController.text.trim(),
       rawPassword: _passwordController.text,
     );
@@ -154,19 +202,58 @@ class _RegistrationPageState extends State<RegistrationPage> {
         ? 'Select birth date'
         : '${_birthDate!.year}-${_birthDate!.month.toString().padLeft(2, '0')}-${_birthDate!.day.toString().padLeft(2, '0')}';
 
-    return ChangeNotifierProvider(
-      create: (_) => AuthProvider(
-        AgentUseCase(AgentRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()))),
-        LoginUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
-        RefreshTokenUseCase(
-          AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl()),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(
+          create: (_) => AuthProvider(
+            AgentUseCase(
+              AgentRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio())),
+            ),
+            LoginUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio()),
+                AuthLocalDataSourceImpl(),
+              ),
+            ),
+            RefreshTokenUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio()),
+                AuthLocalDataSourceImpl(),
+              ),
+            ),
+            LogoutUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio()),
+                AuthLocalDataSourceImpl(),
+              ),
+            ),
+            IsLoggedInUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSourceImpl(dio: Dio()),
+                AuthLocalDataSourceImpl(),
+              ),
+            ),
+          ),
         ),
-        LogoutUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
-        IsLoggedInUseCase(AuthRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio()), AuthLocalDataSourceImpl())),
-      ),
+        ChangeNotifierProvider<CompanyProvider>(
+          create: (_) => CompanyProvider(
+            GetCompanyUseCase(
+              CompanyRepositoryImpl(CompanyRemoteDataSourceImpl(dio: Dio())),
+            ),
+          ),
+        ),
+      ],
       child: Builder(
         builder: (providerContext) {
           final provider = providerContext.watch<AuthProvider>();
+
+          if (!_didRequestCompanies) {
+            _didRequestCompanies = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!providerContext.mounted) return;
+              _loadCompanies(providerContext);
+            });
+          }
 
           return Scaffold(
             appBar: AppBar(title: const Text('Registration Form')),
@@ -195,14 +282,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                             labelText: 'First Name',
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppConstants.spaceMD),
                         Expanded(
                           child: _buildTextFormField(
                             textEditingController: _middleNameController,
                             labelText: 'Middle Name',
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: AppConstants.spaceMD),
                         Expanded(
                           child: _buildTextFormField(
                             textEditingController: _lastNameController,
@@ -211,7 +298,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppConstants.spaceMD),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('Birth Date'),
@@ -219,7 +306,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       trailing: const Icon(Icons.calendar_today),
                       onTap: _pickBirthDate,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppConstants.spaceMD),
                     _buildTextFormField(
                       textEditingController: _emailController,
                       labelText: 'Email',
@@ -238,7 +325,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppConstants.spaceMD),
                     _buildTextFormField(
                       textEditingController: _passwordController,
                       labelText: 'Password',
@@ -258,56 +345,101 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ),
                     ),
                     SizedBox(height: AppConstants.spaceLG),
-                    const SizedBox(height: 12),
-                    _buildTextFormField(
-                      textEditingController: _insuranceCompanyController,
-                      labelText: 'Insurance Company',
-                    ),
-                    const SizedBox(height: 12),
-                    _buildTextFormField(
-                      textEditingController: _branchAddressController,
-                      labelText: 'Branch Address',
-                    ),
-                    const SizedBox(height: 12),
-                    _buildTextFormField(
-                      textEditingController: _commissionRateController,
-                      labelText: 'Commission Rate',
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d+\.?\d{0,2}'),
-                        ),
-                      ],
-                      customValidator: (value) {
-                        final requiredError = _requiredValidator(
-                          value,
-                          'Commission rate',
-                        );
-                        if (requiredError != null) return requiredError;
+                    const SizedBox(height: AppConstants.spaceMD),
+                    DropdownMenu<CompanyModel>(
+                      expandedInsets: EdgeInsets.zero,
+                      hintText:
+                          '--Please Select or Search the Insurance Company you are currently working for--',
+                      initialSelection: _selectedCompany,
+                      enabled: !_isLoadingCompanies,
+                      onSelected: (selectedCompany) {
+                        if (selectedCompany == null) return;
 
-                        final parsed = double.tryParse(value!.trim());
-                        if (parsed == null) return 'Enter a valid number';
-                        if (parsed < AppConstants.minCommissionRate) {
-                          return 'Commission rate cannot be negative';
-                        } else if (parsed > AppConstants.maxCommissionRate) {
-                          return 'Commission Rate cannot exceed 100%';
-                        }
-                        return null;
+                        setState(() {
+                          _companyIdController.text =
+                            selectedCompany.id;
+                        });
                       },
+                      inputDecorationTheme: const InputDecorationTheme(
+                        contentPadding: EdgeInsets.all(12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                      ),
+                      dropdownMenuEntries: _companyOptions
+                          .map(
+                            (company) => DropdownMenuEntry<CompanyModel>(
+                              value: company,
+                              label: company.companyName,
+                            ),
+                          )
+                          .toList(),
                     ),
+                    if (_isLoadingCompanies)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: LinearProgressIndicator(),
+                      ),
+                    if (_companyLoadError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          _companyLoadError!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    const SizedBox(height: AppConstants.spaceMD),
+
+                    const SizedBox(height: 20),
+                    if (_selectedCompany != null)
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                             color: Colors.grey.withValues(alpha: 0.05),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Commission Rate',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '${_formatCommissionRate(_selectedCompany!.commissionRate)}%',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: provider.isLoading
                           ? null
                           : () async {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
+                            if (AppConstants.isUnderDevelopment) {
+                              ScaffoldMessenger.of(providerContext).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Additional Features are still underway. Please stay tuned for the full version."),
+                                    backgroundColor: AppColors.colorInfo,
+                                  )
+                              );
+                              return;
+                            }
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
 
-                                _agentSubmit(providerContext);
-                              }
-                            },
+                              _agentSubmit(providerContext);
+                            }
+                          },
                       child: const Text('Register'),
                     ),
                   ],
@@ -327,15 +459,19 @@ class _RegistrationPageState extends State<RegistrationPage> {
     int minLength = 1,
     String? validationErrorMessage,
     TextInputType? keyboardType,
+    bool readOnly = false,
+    String? suffixText,
     String? Function(String?)? customValidator,
     List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: textEditingController,
+      readOnly: readOnly,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
         labelText: labelText,
+        suffixText: suffixText,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       obscureText: obscureText,

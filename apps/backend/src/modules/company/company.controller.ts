@@ -12,6 +12,7 @@ import {
 import { CreateNewCompanyDto } from './dto/create-company.dto';
 import { UpdateExistingCompanyDto } from './dto/update-company-dto';
 import { CompanyService } from './company.service';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('company')
 export class CompanyController {
@@ -23,7 +24,9 @@ export class CompanyController {
     return this.companyService.create(createNewCompanyDto);
   }
 
-  @Get()
+  //This is to get all company names which for the insurance agent to be able to select.
+  @Public()
+  @Get('public')
   findAll() {
     return this.companyService.findAll();
   }

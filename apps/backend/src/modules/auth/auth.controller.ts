@@ -60,6 +60,7 @@ export class AuthController {
     );
   }
 
+  //TODO: Relocate this to agent module
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('agent-register')

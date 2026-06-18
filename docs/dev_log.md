@@ -49,3 +49,23 @@ Updating to latest Android Studio Version.
 
 **Reference:**
 * https://www.reddit.com/r/flutterhelp/comments/1t4ry8x/comredhatdevtoolslsp4ij_plugin_required_by_new/
+
+## [06-18-2026] - Executing the Die and Dump Version in NestJS to check the input from the frontend.
+**Context:**
+Updating the User Registration using the existing Insurance Company from the database.
+
+**The Challenge:**
+* I want to know if the data sent from the frontend is correct and accurate.
+
+**The Solution:**
+* If Laravel has a die and dump version to inspect data, in Node.js, it is called:
+
+<code>
+console.dir(registerDto, { depth: null, colors: true });
+throw new Error('This is a JSON Inspector');
+</code>
+
+What happens here is that when a user sends data from the frontend, it prints the data into the terminal where NestJS is running. I added a throw Error in order to force the app to stop running. This is important to prevent other code below it to run. 
+
+**Reference:**
+* https://dev.to/pcjmfranken/comment/1j4ad 

@@ -14,7 +14,13 @@ export class CompanyService {
   }
 
   async findAll() {
-    return await this.prisma.insuranceCompany.findMany();
+    return await this.prisma.insuranceCompany.findMany({
+      select: {
+        id: true,
+        companyName: true,
+        commissionRate: true,
+      },
+    });
   }
 
   async findOne(id: string) {
