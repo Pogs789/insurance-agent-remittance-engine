@@ -11,9 +11,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   // Mock State for the Prototype
   bool _isDarkMode = false;
-  bool _biometricEnabled = true;
   bool _pushNotifications = true;
-  bool _emailNotifications = false;
 
   @override
   Widget build(BuildContext context) {
