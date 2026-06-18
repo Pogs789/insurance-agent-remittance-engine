@@ -4,7 +4,7 @@ class ApiEndpoints {
   // or http://localhost:3000/api (iOS simulator / desktop).
   static final String _url = const String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://localhost:3000/api',
+    defaultValue: 'http://10.0.2.2:3000/api',
   );
 
   static final String loginApi = '$_url/auth/login';
@@ -12,6 +12,8 @@ class ApiEndpoints {
   static final String refreshApi = '$_url/auth/refresh';
   static final String registerApi = '$_url/auth/agent-register';
 
-  static final String calculateMonthlyRemittance =
-      '$_url/monthly-remittance';
+  static final String calculateMonthlyRemittance = '$_url/monthly-remittance';
+
+  //Company API
+  static final String getCompanyNamesAndCommissionRates = '$_url/company/public';
 }

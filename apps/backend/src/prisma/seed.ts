@@ -17,13 +17,11 @@ async function main() {
     data: [
       {
         companyName: 'St. Peter Life Plan Inc.',
-        branchAddress: 'Centro Guinobatan, Albay',
         productsOffered: 'Funeral Package',
         commissionRate: 40.0,
       },
       {
         companyName: 'Kaiser Insurance Co.',
-        branchAddress: 'Brgy. Oro Site, Legazpi City, Albay',
         productsOffered: 'Healthcare Insurance',
         commissionRate: 30.0,
       },
