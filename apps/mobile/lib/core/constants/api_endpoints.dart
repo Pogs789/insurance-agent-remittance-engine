@@ -4,7 +4,7 @@ class ApiEndpoints {
   // or http://localhost:3000/api (iOS simulator / desktop).
   static final String _url = const String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://10.0.2.2:3000/api',
+    defaultValue: 'http://localhost:3000/api',
   );
 
   static final String loginApi = '$_url/auth/login';
