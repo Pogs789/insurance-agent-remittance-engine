@@ -19,11 +19,13 @@ class AuthRepositoryImpl implements AuthRepository {
     final String? userId = await authLocal.getUserId();
     final String? refreshToken = await authLocal.getRefreshToken();
 
-    if(userId == null || refreshToken == null){
+    if (userId == null || refreshToken == null) {
       await authLocal.clearSession();
+      return;
     }
 
-    await authRemote.logout(userId!, refreshToken!);
+    await authRemote.logout(userId, refreshToken);
+    await authLocal.clearSession();
   }
 
   @override
@@ -31,11 +33,13 @@ class AuthRepositoryImpl implements AuthRepository {
     final String? userId = await authLocal.getUserId();
     final String? refreshToken = await authLocal.getRefreshToken();
 
-    if(userId == null || refreshToken == null){
+    if (userId == null || refreshToken == null) {
       await authLocal.clearSession();
+      return;
     }
 
-    await authRemote.refreshToken(userId!, refreshToken!);
+    final refreshedSession = await authRemote.refreshToken(userId, refreshToken);
+    await authLocal.saveSession(refreshedSession);
   }
 
   @override
@@ -45,7 +49,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     debugPrint("Is the user recently logged in? $session");
 
-    if(session != null && loggedInUser != null) {
+    if (session != null && loggedInUser != null) {
       return true;
     }
 

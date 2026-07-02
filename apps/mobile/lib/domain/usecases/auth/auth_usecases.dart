@@ -14,7 +14,7 @@ class RefreshTokenUseCase {
   RefreshTokenUseCase(this.authRepository);
 
   Future<void> call() async {
-    authRepository.refreshToken();
+    await authRepository.refreshToken();
   }
 }
 

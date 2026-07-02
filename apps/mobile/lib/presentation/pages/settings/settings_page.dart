@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/providers/auth/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -273,17 +274,18 @@ class _SettingsPageState extends State<SettingsPage> {
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               // Close dialog
               Navigator.pop(ctx);
 
+              final authProvider = context.read<AuthProvider>();
+              await authProvider.logout();
+
+              if (!mounted) return;
+
               // Navigate to Login Page and remove all previous routes from the stack
               // This prevents the user from pressing "Back" to get into the app again.
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false,
-              );
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
             child: const Text("Log Out", style: TextStyle(color: Colors.red)),
           ),

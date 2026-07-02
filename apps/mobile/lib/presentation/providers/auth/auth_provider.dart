@@ -5,6 +5,8 @@ import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_useca
 import '../../../domain/entities/user.dart';
 import '../../../domain/usecases/agent/agent_usecase.dart';
 
+enum AuthStatus { unknown, authenticated, unauthenticated }
+
 class AuthProvider extends ChangeNotifier {
   AuthProvider(
     this._submitAgentUseCase,
@@ -23,10 +25,37 @@ class AuthProvider extends ChangeNotifier {
   String? errorMessage;
   bool isSuccess = false;
   bool _isLoggedIn = false;
+  AuthStatus _authStatus = AuthStatus.unknown;
   bool get isLoggedInSync => _isLoggedIn;
+  AuthStatus get authStatus => _authStatus;
+
+  Future<void> initializeAuth() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await _isLoggedInUseCase();
+      _isLoggedIn = result;
+      _authStatus = result
+          ? AuthStatus.authenticated
+          : AuthStatus.unauthenticated;
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> newAgentSubmit(UserEntity user) async {
-    isLoading = false;
+    isLoading = true;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
@@ -45,7 +74,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> login(String email, String password) async {
-    isLoading = false;
+    isLoading = true;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
@@ -53,10 +82,16 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _loginUseCase(email, password);
       isSuccess = true;
+      _isLoggedIn = true;
+      _authStatus = AuthStatus.authenticated;
     } on AppException catch (e) {
       errorMessage = e.message;
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
     } catch (_) {
       errorMessage = 'Something went wrong. Please try again.';
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
     } finally {
       isLoading = false;
       notifyListeners();
@@ -64,7 +99,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> refreshToken() async {
-    isLoading = false;
+    isLoading = true;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
@@ -72,10 +107,16 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _refreshTokenUseCase();
       isSuccess = true;
+      _isLoggedIn = true;
+      _authStatus = AuthStatus.authenticated;
     } on AppException catch (e) {
       errorMessage = e.message;
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
     } catch (_) {
       errorMessage = 'Something went wrong. Please try again.';
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
     } finally {
       isLoading = false;
       notifyListeners();
@@ -83,20 +124,26 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> isLoggedIn() async {
-    isLoading = false;
+    isLoading = true;
+    errorMessage = null;
     notifyListeners();
 
     try {
       final result = await _isLoggedInUseCase();
       _isLoggedIn = result;
+      _authStatus = result
+          ? AuthStatus.authenticated
+          : AuthStatus.unauthenticated;
       return result;
     } on AppException catch (e) {
       errorMessage = e.message;
       _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
       return false;
     } catch (_) {
       errorMessage = 'Something went wrong. Please try again.';
       _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
       return false;
     } finally {
       isLoading = false;
@@ -105,7 +152,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    isLoading = false;
+    isLoading = true;
     errorMessage = null;
     isSuccess = false;
     notifyListeners();
@@ -113,6 +160,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _logoutUseCase();
       isSuccess = true;
+      _isLoggedIn = false;
+      _authStatus = AuthStatus.unauthenticated;
     } on AppException catch (e) {
       errorMessage = e.message;
     } catch (_) {

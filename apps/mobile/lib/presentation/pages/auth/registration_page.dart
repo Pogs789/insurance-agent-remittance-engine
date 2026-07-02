@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
-import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/company_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/agent_repository.dart';
@@ -16,8 +15,6 @@ import 'package:life_insurance_monitoring_mobile/presentation/providers/company/
 import 'package:life_insurance_monitoring_mobile/presentation/widgets/auth/auth_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
-import 'package:life_insurance_monitoring_mobile/data/repositories/auth_repository.dart';
-import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/auth/auth_provider.dart';
 import 'package:flutter/services.dart';
 
@@ -38,7 +35,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _commissionRateController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  late final AuthProvider authProvider;
   late final AgentUseCase agentUseCase;
   late final AgentRepository agentRepository;
   late final AuthRemoteDataSource authRemoteDataSource;
@@ -204,37 +200,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(
-            AgentUseCase(
-              AgentRepositoryImpl(AuthRemoteDataSourceImpl(dio: Dio())),
-            ),
-            LoginUseCase(
-              AuthRepositoryImpl(
-                AuthRemoteDataSourceImpl(dio: Dio()),
-                AuthLocalDataSourceImpl(),
-              ),
-            ),
-            RefreshTokenUseCase(
-              AuthRepositoryImpl(
-                AuthRemoteDataSourceImpl(dio: Dio()),
-                AuthLocalDataSourceImpl(),
-              ),
-            ),
-            LogoutUseCase(
-              AuthRepositoryImpl(
-                AuthRemoteDataSourceImpl(dio: Dio()),
-                AuthLocalDataSourceImpl(),
-              ),
-            ),
-            IsLoggedInUseCase(
-              AuthRepositoryImpl(
-                AuthRemoteDataSourceImpl(dio: Dio()),
-                AuthLocalDataSourceImpl(),
-              ),
-            ),
-          ),
-        ),
         ChangeNotifierProvider<CompanyProvider>(
           create: (_) => CompanyProvider(
             GetCompanyUseCase(
