@@ -106,7 +106,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
   if (error is DioException) {
     final statusCode = error.response?.statusCode;
 
-    debugPrint('Status Code Error: ${error.response?.data}');
+    debugPrint('Error: ${error.response}');
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

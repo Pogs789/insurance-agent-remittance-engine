@@ -14,6 +14,7 @@ import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/registr
 import 'package:life_insurance_monitoring_mobile/presentation/pages/auth/login_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/dashboard/dashboard_page.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/remittance_form_page.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 import 'core/themes/app_theme.dart';
 
@@ -21,10 +22,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   final authProvider = buildRealAuthProvider();
-
-  if (!kIsWeb) {
-    await dotenv.load(fileName: '.env');
-  }
 
   runApp(AppBootstrap(authProvider: authProvider));
 }
@@ -78,44 +75,73 @@ class MyAppShell extends StatefulWidget {
 }
 
 class _MyAppShellState extends State<MyAppShell> {
-  Future<bool>? _isLoggedInFuture;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _isLoggedInFuture = context.read<AuthProvider>().isLoggedIn();
-      });
+      context.read<AuthProvider>().initializeAuth();
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  bool _isProtectedRoute(String routeName) {
+    return routeName == '/dashboard' || routeName == '/remittance-history';
+  }
+
+  Route<dynamic> _generateRoute(RouteSettings settings, AuthProvider authProvider) {
+    final requestedRoute = settings.name ?? '/';
+    final isCheckingAuth =
+        authProvider.authStatus == AuthStatus.unknown || authProvider.isLoading;
+    final isAuthenticated = authProvider.isLoggedInSync;
+    String resolvedRoute = requestedRoute;
+
+    if (isCheckingAuth && requestedRoute != '/splash') {
+      resolvedRoute = '/splash';
+    } else if (isAuthenticated &&
+        (requestedRoute == '/' ||
+            requestedRoute == '/login' ||
+            requestedRoute == '/register' ||
+            requestedRoute == '/splash')) {
+      resolvedRoute = '/dashboard';
+    } else if (!isAuthenticated && requestedRoute == '/splash') {
+      resolvedRoute = '/';
+    } else if (!isAuthenticated && _isProtectedRoute(requestedRoute)) {
+      resolvedRoute = '/login';
+    }
+
+    return MaterialPageRoute(
+      settings: RouteSettings(name: resolvedRoute, arguments: settings.arguments),
+      builder: (_) {
+        switch (resolvedRoute) {
+          case '/splash':
+            return const SplashPage();
+          case '/':
+            return const RemittanceFormPage();
+          case '/register':
+            return const RegistrationPage();
+          case '/login':
+            return const LoginPage();
+          case '/dashboard':
+            return const DashboardPage();
+          case '/remittance-history':
+            return const Placeholder();
+          default:
+            return const RemittanceFormPage();
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool?>(
-      future: _isLoggedInFuture,
-      builder: (context, snapshot) {
-        final initialRoute =
-            snapshot.hasData && snapshot.data == true ? '/dashboard' : '/';
-
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
         return MaterialApp(
           title: AppConstants.appName,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: ThemeMode.system,
-          initialRoute: initialRoute,
-          routes: {
-            '/': (_) => const RemittanceFormPage(),
-            '/register': (_) => const RegistrationPage(),
-            '/login': (_) => const LoginPage(),
-            '/dashboard': (_) => const DashboardPage(),
-            '/remittance-history': (_) => const Placeholder(),
-          },
+          onGenerateRoute: (settings) => _generateRoute(settings, authProvider),
+          initialRoute: '/',
         );
       },
     );
