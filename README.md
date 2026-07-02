@@ -4,11 +4,7 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-Active MVP (Undergoing Maintenance)
-
-~~https://insurance-agent-remittance-engine-frontend.vercel.app~~
-
-The core end-to-end architecture is fully deployed. The project is currently undergoing a planned maintenance pause to optimize database queries and resolve edge-case API errors.
+https://insurance-agent-remittance-engine-frontend.vercel.app
 
 Documentation may not reflect the latest implementation yet.
 Major updates to architecture and features are ongoing.
