@@ -110,6 +110,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
+      case DioExceptionType.transformTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return RequestTimeoutException(
