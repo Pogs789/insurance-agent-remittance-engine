@@ -8,6 +8,7 @@ abstract class AuthLocalDataSource {
   Future<AuthSessionModel?> getSession();
   Future<String?> getAccessToken();
   Future<String?> getRefreshToken();
+  Future<List<String>> getFullNameAndCompany();
   Future<String?> getUserId();
   Future<bool> hasAccessToken();
   Future<bool> hasRefreshToken();
@@ -36,6 +37,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await _secureStorage.write(
       key: StorageConstants.refreshTokenKey,
       value: session.refreshToken,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.fullName,
+      value: session.fullName,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.insuranceCompany,
+      value: session.insuranceCompany,
     );
     await _secureStorage.write(
       key: StorageConstants.userIdKey,
@@ -91,6 +100,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> clearSession() async {
     await _secureStorage.delete(key: StorageConstants.sessionKey);
     await _secureStorage.delete(key: StorageConstants.accessTokenKey);
+    await _secureStorage.delete(key: StorageConstants.fullName);
+    await _secureStorage.delete(key: StorageConstants.insuranceCompany);
     await _secureStorage.delete(key: StorageConstants.refreshTokenKey);
     await _secureStorage.delete(key: StorageConstants.userIdKey);
   }
@@ -100,5 +111,18 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     final userId = await getUserId();
     final hasToken = await hasAccessToken();
     return userId != null && hasToken;
+  }
+
+  @override
+  Future<List<String>> getFullNameAndCompany() async {
+    final String? fullName = await _secureStorage.read(key: StorageConstants.fullName);
+    final String? insuranceCompany = await _secureStorage.read(key: StorageConstants.insuranceCompany);
+
+    if(fullName == null || insuranceCompany == null) {
+      await clearSession();
+      return [];
+    }
+
+    return [fullName, insuranceCompany];
   }
 }

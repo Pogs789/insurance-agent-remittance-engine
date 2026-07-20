@@ -38,6 +38,7 @@ model InsuranceAgent {
   insuranceCompanyId         String
   monthlyRemittanceHistories MonthlyRemittanceHistory[]
   user                       User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  insuranceCompany           InsuranceCompany           @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -104,6 +105,7 @@ model InsuranceCompany {
   updatedAt       DateTime? @updatedAt
 
   insuranceProduct InsuranceProduct[]
+  insuranceAgent   InsuranceAgent[]
 }
 
 model UserFeedback {

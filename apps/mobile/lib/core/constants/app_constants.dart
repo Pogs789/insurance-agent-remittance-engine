@@ -2,7 +2,11 @@ class AppConstants {
   AppConstants._();
 
   // ── Development Mode ──────────────────────────────────────
-  static const bool isUnderDevelopment = true;
+  static final String isUnderDevelopmentMode = const String.fromEnvironment(
+    'DEVELOPMENT',
+    defaultValue: 'Yes',
+  );
+  static bool isUnderDevelopment = isUnderDevelopmentMode == 'Yes' ? true : false;
 
   // ── App Identity ──────────────────────────────────────────
   static const String appName =

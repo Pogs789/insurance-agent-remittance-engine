@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
@@ -17,6 +15,8 @@ import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/r
 import 'package:life_insurance_monitoring_mobile/presentation/pages/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 import 'core/themes/app_theme.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:life_insurance_monitoring_mobile/core/network/interceptors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,14 @@ void main() async {
 }
 
 AuthProvider buildRealAuthProvider() {
+  // Single secure storage instance
+  final secureStorage = const FlutterSecureStorage();
+
+  // Single shared Dio instance
   final dio = Dio();
+
+  // Attach interceptor once so all requests can auto-add Bearer token
+  dio.interceptors.add(AuthInterceptor(secureStorage));
 
   // Data sources
   final authRemote = AuthRemoteDataSourceImpl(dio: dio);

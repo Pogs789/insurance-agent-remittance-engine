@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/auth/auth_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../core/constants/app_constants.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -131,16 +134,19 @@ class _SettingsPageState extends State<SettingsPage> {
             child: TextButton(
               onPressed: _showLogoutDialog,
               style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
+                foregroundColor: AppColors.colorOnInfo,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.red.withValues(),
+                backgroundColor: AppColors.colorError,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: const Text(
                 "Log Out",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: AppConstants.fontSizeMD
+                ),
               ),
             ),
           ),
@@ -196,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "The Software Engineer",
+              "Juan Dela Cruz",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -283,8 +289,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
               if (!mounted) return;
 
-              // Navigate to Login Page and remove all previous routes from the stack
-              // This prevents the user from pressing "Back" to get into the app again.
               Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
             child: const Text("Log Out", style: TextStyle(color: Colors.red)),
