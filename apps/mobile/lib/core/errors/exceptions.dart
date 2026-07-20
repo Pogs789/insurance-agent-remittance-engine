@@ -106,7 +106,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
   if (error is DioException) {
     final statusCode = error.response?.statusCode;
 
-    debugPrint('Error: ${error.response}');
+    debugPrint('Error: ${error}');
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -129,7 +129,7 @@ AppException mapToAppException(Object error, StackTrace stackTrace) {
         final backendMessage = _extractValidationMessage(error.response?.data);
 
         if (statusCode == 401 || statusCode == 403) {
-          debugPrint('This transaction is UnAuthorized');
+          debugPrint('This transaction is UnAuthorized. Error: $backendMessage');
           return AuthException(
             backendMessage ?? 'This request is Unauthorized.',
             statusCode: statusCode,

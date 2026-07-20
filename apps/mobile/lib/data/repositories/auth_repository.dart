@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
 import '../datasources/remote/auth_remote_datasource.dart';
@@ -19,10 +20,14 @@ class AuthRepositoryImpl implements AuthRepository {
     final String? userId = await authLocal.getUserId();
     final String? refreshToken = await authLocal.getRefreshToken();
 
+    debugPrint("Logging out user with ID: $userId and refresh token: $refreshToken");
+
     if (userId == null || refreshToken == null) {
       await authLocal.clearSession();
       return;
     }
+
+    debugPrint("Calling remote logout for user ID: $userId with refresh token: $refreshToken");
 
     await authRemote.logout(userId, refreshToken);
     await authLocal.clearSession();
@@ -47,13 +52,57 @@ class AuthRepositoryImpl implements AuthRepository {
     final session = await authLocal.getSession();
     final loggedInUser = await authLocal.getUserId();
 
-    debugPrint("Is the user recently logged in? $session");
-
-    if (session != null && loggedInUser != null) {
-      return true;
+    if (session == null || loggedInUser == null) {
+      await authLocal.clearSession();
+      return false;
     }
 
-    await authLocal.clearSession();
-    return false;
+    // Check if access token is expired
+    if (_isTokenExpired(session.accessToken)) {
+      debugPrint("Access token is expired. Attempting to refresh...");
+
+      try {
+        await refreshToken();
+        debugPrint("Token refresh successful");
+        return true;
+      } catch (e) {
+        debugPrint("Token refresh failed: $e. Clearing session.");
+        await authLocal.clearSession();
+        return false;
+      }
+    }
+
+    debugPrint("Access token is still valid");
+    return true;
+  }
+
+  /// Checks if a JWT token is expired by decoding and checking the expiry time.
+  /// Returns true if the token is expired, false if it's still valid.
+  bool _isTokenExpired(String token) {
+    try {
+      final decoded = JWT.decode(token);
+      final expiryTime = decoded.payload['exp'] as int?;
+
+      if (expiryTime == null) {
+        debugPrint("No expiry time found in token. Assuming token is valid.");
+        return false;
+      }
+
+      // exp is in seconds since epoch. Compare with current time.
+      final currentTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final isExpired = currentTime >= expiryTime;
+
+      if (isExpired) {
+        debugPrint("Token expired at: ${DateTime.fromMillisecondsSinceEpoch(expiryTime * 1000)}, Current time: ${DateTime.now()}");
+      }
+
+      return isExpired;
+    } on FormatException catch (e) {
+      debugPrint("Failed to decode token: $e. Assuming token is invalid.");
+      return true;
+    } catch (e) {
+      debugPrint("Error checking token expiry: $e. Assuming token is invalid.");
+      return true;
+    }
   }
 }

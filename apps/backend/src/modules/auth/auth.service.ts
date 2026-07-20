@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';
@@ -8,6 +12,7 @@ import { join } from 'path';
 import { existsSync } from 'fs';
 import { AppConstants } from '../../common/constants/app.constants';
 import { User } from '../../generated/client';
+import { Prisma } from '../../generated/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -108,12 +113,48 @@ export class AuthService {
   }) {
     const tokens = await this.issueTokens(user.id, user.email, user.role);
 
+    const agentProfileArgs =
+      Prisma.validator<Prisma.InsuranceAgentDefaultArgs>()({
+        include: {
+          user: true,
+          insuranceCompany: true,
+        },
+      });
+
+    type AgentProfile = Prisma.InsuranceAgentGetPayload<
+      typeof agentProfileArgs
+    >;
+
+    const userProfile: AgentProfile | null =
+      await this.prisma.insuranceAgent.findUnique({
+        where: { userId: user.id },
+        ...agentProfileArgs,
+      });
+
+    if (!userProfile) {
+      throw new NotFoundException(
+        'Your Profile Does not exist in our platform.',
+      );
+    }
+
+    const fullName = [
+      userProfile.user.firstName,
+      userProfile.user.middleName,
+      userProfile.user.lastName,
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const insuranceCompany = userProfile.insuranceCompany.companyName;
+
     await this.storeRefreshToken(user.id, tokens.refreshToken);
 
     return {
       ...tokens,
       user: {
         id: user.id,
+        fullName,
+        insuranceCompany,
         email: user.email,
         role: user.role,
         createdAt: user.createdAt,

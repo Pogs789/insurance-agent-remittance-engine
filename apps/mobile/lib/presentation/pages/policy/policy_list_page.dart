@@ -10,28 +10,7 @@ class PolicyListPage extends StatefulWidget {
 }
 
 class _PolicyListPageState extends State<PolicyListPage> {
-  final List<Map<String, String>> _draftPolicies = const [
-    {
-      'name': 'St. John',
-      'contractPrice': '300,000.00',
-      'packageContents': '1,250.00',
-    },
-    {
-      'name': 'St. Paul',
-      'contractPrice': '160,000.00',
-      'packageContents': '925.00',
-    },
-    {
-      'name': 'St. Ferdinand',
-      'contractPrice': '105,000.00',
-      'packageContents': '2,100.00',
-    },
-    {
-      'name': 'St. Francis',
-      'contractPrice': '100,000.00',
-      'packageContents': '2,100.00',
-    },
-  ];
+  final List<Map<String, String>> _draftPolicies = const [];
 
   @override
   Widget build(BuildContext context) {

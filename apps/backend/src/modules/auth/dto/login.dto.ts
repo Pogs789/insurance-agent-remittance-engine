@@ -1,5 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
-import { UUID } from 'crypto';
+import { IsEmail, IsString, IsUUID, MinLength } from 'class-validator';
 
 export class SignInDto {
   @IsEmail()
@@ -11,7 +10,8 @@ export class SignInDto {
 }
 
 export class LogOutDto {
-  userId!: UUID;
+  @IsUUID()
+  userId!: string;
 
   @IsString()
   @MinLength(64)

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
@@ -57,7 +56,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
-        return AuthSessionModel.fromJson(response.data);
+        return AuthSessionModel.fromJsonTokensOnly(response.data, userId);
       } else {
         throw Exception(
           "Your session has either expired, malformed, or something else must have gone wrong. Please login again.",
