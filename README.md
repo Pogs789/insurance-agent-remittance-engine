@@ -1,8 +1,10 @@
-# Insurance Agent's Remittance Management System
+# iRemitMo: The Insurance Agent's Remittance Management System
 
 This is a simple tool for insurance agents which automatically calculates the monthly collection needed to be remitted to the insurance company.
 
 ## 🚧 Project Status
+
+### Archived MVP / Proof of Concept
 
 https://insurance-agent-remittance-engine-frontend.vercel.app
 
@@ -452,9 +454,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] Project structure setup
 - [x] Blueprint and planning
 - [x] Clean architecture implementation
-- [ ] Authentication module
+- [x] Authentication module
 - [x] Remittance Calculation module
 - [ ] User Management module
 - [ ] Admin dashboard
 - [ ] Testing coverage (>80%)
-- [ ] Documentation completion
+- [x] Documentation completion
