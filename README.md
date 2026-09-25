@@ -4,8 +4,6 @@ This is a simple tool for insurance agents which automatically calculates the mo
 
 ## 🚧 Project Status
 
-### Archived MVP / Proof of Concept
-
 https://insurance-agent-remittance-engine-frontend.vercel.app
 
 Documentation may not reflect the latest implementation yet.
