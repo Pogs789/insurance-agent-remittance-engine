@@ -16,6 +16,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AgentRegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { Public } from '../../common/decorators/public.decorator';
+import { Throttle } from '@nestjs/throttler';
 
 type AuthenticatedUser = {
   id: string;
@@ -51,6 +52,8 @@ export class AuthController {
   }
 
   // POST auth/refresh-token
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // Max 5 refresh requests per 60 seconds
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
   refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
@@ -62,6 +65,7 @@ export class AuthController {
 
   //TODO: Relocate this to agent module
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // Max 5 refresh requests per 60 seconds
   @HttpCode(HttpStatus.OK)
   @Post('agent-register')
   register(@Body() registerDto: AgentRegisterDto) {

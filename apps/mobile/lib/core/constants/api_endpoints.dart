@@ -9,7 +9,7 @@ class ApiEndpoints {
 
   static final String loginApi = '$_url/auth/login';
   static final String logoutApi = '$_url/auth/logout';
-  static final String refreshApi = '$_url/auth/refresh';
+  static final String refreshApi = '$_url/auth/refresh-token';
   static final String registerApi = '$_url/auth/agent-register';
 
   static final String calculateMonthlyRemittance = '$_url/monthly-remittance';

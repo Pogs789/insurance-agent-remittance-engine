@@ -6,6 +6,7 @@ class AuthSessionModel {
     required this.insuranceCompany,
     required this.accessToken,
     required this.refreshToken,
+    required this.userRole
   });
 
   final String userId;
@@ -14,9 +15,11 @@ class AuthSessionModel {
   final String insuranceCompany;
   final String accessToken;
   final String refreshToken;
+  final String userRole;
 
   Map<String, dynamic> toJson() => {
     'userId': userId,
+    'role': userRole,
     'companyId': companyId,
     'fullName': fullName,
     'insuranceCompany': insuranceCompany,
@@ -29,6 +32,7 @@ class AuthSessionModel {
     final user = json['user'] as Map<String, dynamic>?;
     return AuthSessionModel(
       userId: (user?['id'] ?? '').toString(),
+      userRole: (user?['role'] ?? '').toString(),
       companyId: (user?['companyId'] ?? '').toString(),
       fullName: (user?['fullName'] ?? '').toString(),
       insuranceCompany: (user?['insuranceCompany'] ?? '').toString(),
@@ -44,6 +48,7 @@ class AuthSessionModel {
   ) {
     return AuthSessionModel(
       userId: userId,
+      userRole: (json['role'] ?? '').toString(),
       companyId: (json['companyId'] ?? '').toString(),
       fullName: (json['fullName'] ?? '').toString(),
       insuranceCompany: (json['insuranceCompany'] ?? '').toString(),

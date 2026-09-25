@@ -5,10 +5,14 @@ import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/company_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/company_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/company/company_usecase.dart';
+import 'package:life_insurance_monitoring_mobile/main.dart';
+import 'package:life_insurance_monitoring_mobile/presentation/pages/policy/policy_list_details.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/company/company_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:life_insurance_monitoring_mobile/core/network/interceptors.dart';
+
+import '../../providers/auth/auth_provider.dart';
 
 class PolicyListPage extends StatefulWidget {
   const PolicyListPage({super.key});
@@ -41,11 +45,8 @@ class _PolicyListPageState extends State<PolicyListPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CompanyProvider>(
-      create: (_) {
-        final secureStorage = const FlutterSecureStorage();
-        final dio = Dio();
-
-        dio.interceptors.add(AuthInterceptor(secureStorage));
+      create: (providerContext) {
+        final dio = getAppDio();
 
         final repository = CompanyRepositoryImpl(
           CompanyRemoteDataSourceImpl(dio: dio),
@@ -118,6 +119,7 @@ class _PolicyListPageState extends State<PolicyListPage> {
                   final policy = provider.companyProducts[index];
                   return Card(
                     elevation: 2,
+                    clipBehavior: Clip.hardEdge,
                     color: AppColors.colorInfoContainer.withValues(alpha: 0.18),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppConstants.cardBorderRadius),
@@ -125,44 +127,59 @@ class _PolicyListPageState extends State<PolicyListPage> {
                         color: AppColors.colorInfo.withValues(alpha: 0.12),
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppConstants.spaceLG),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            policy.insuranceProductName,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: AppConstants.fontSizeXXL,
-                                  color: AppColors.textPrimary,
-                                ),
-                          ),
-                          const SizedBox(height: AppConstants.spaceMD),
-                          _PolicyDetailRow(
-                            label: 'Contract Price',
-                            value: _formatAmount(policy.productAmount),
-                            isCurrency: true,
-                          ),
-                          const SizedBox(height: AppConstants.spaceSM),
-                          _PolicyDetailRow(
-                            label: 'Package Contents',
-                            value: policy.productContents,
-                          ),
-                          const SizedBox(height: AppConstants.spaceSM),
-                          _PolicyDetailRow(
-                            label: 'Payment Terms',
-                            value: policy.paymentTerms.isEmpty
-                                ? 'N/A'
-                                : policy.paymentTerms.join(', '),
-                          ),
-                        ],
+                    child: InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PolicyListDetails(
+                            companyProducts: policy,
+                          )
+                        )
                       ),
-                    ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppConstants.spaceLG),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: AppConstants.spaceSM,
+                              children: [
+                                Text(
+                                  policy.insuranceProductName,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: AppConstants.fontSizeXXL,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  '(Tap for more details)',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.textPrimary.withValues(alpha: 0.5),
+                                    fontSize: AppConstants.fontSizeXS,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppConstants.spaceMD),
+                            _PolicyDetailRow(
+                              label: 'Contract Price',
+                              value: _formatAmount(policy.productAmount),
+                              isCurrency: true,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   );
                 },
               ),
             ),
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: onPressed
+            // ),
           );
         },
       ),

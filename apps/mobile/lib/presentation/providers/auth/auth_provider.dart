@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
 
 import '../../../domain/entities/user.dart';
@@ -20,6 +21,7 @@ class AuthProvider extends ChangeNotifier {
   final RefreshTokenUseCase _refreshTokenUseCase;
   final LogoutUseCase _logoutUseCase;
   final IsLoggedInUseCase _isLoggedInUseCase;
+  VoidCallback? _onSessionExpired;
 
   bool isLoading = false;
   String? errorMessage;
@@ -29,13 +31,23 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoggedInSync => _isLoggedIn;
   AuthStatus get authStatus => _authStatus;
 
+  void setSessionExpiredCallback(VoidCallback callback) {
+    _onSessionExpired = callback;
+  }
+
   Future<void> initializeAuth() async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
     try {
-      final result = await _isLoggedInUseCase();
+      final result = await _isLoggedInUseCase().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          // If secure storage takes too long, assume user is not logged in
+          return false;
+        },
+      );
       _isLoggedIn = result;
       _authStatus = result
           ? AuthStatus.authenticated
@@ -129,7 +141,10 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await _isLoggedInUseCase();
+      final result = await _isLoggedInUseCase().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => false,
+      );
       _isLoggedIn = result;
       _authStatus = result
           ? AuthStatus.authenticated
@@ -170,5 +185,18 @@ class AuthProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Inside your AuthProvider class, add this method:
+  void handleForceLogout() async {
+    _isLoggedIn = false;
+    _authStatus = AuthStatus.unauthenticated;
+    errorMessage = "Session expired. Please log in again.";
+    notifyListeners();
+
+    _onSessionExpired?.call();
+  }
+  Future<String?> checkUserRole() async {
+    return await AuthLocalDataSourceImpl().getUserRole();
   }
 }

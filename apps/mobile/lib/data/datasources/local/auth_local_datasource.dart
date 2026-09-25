@@ -14,6 +14,7 @@ abstract class AuthLocalDataSource {
   Future<bool> hasRefreshToken();
   Future<void> clearSession();
   Future<bool> isLoggedIn();
+  Future<String?> getUserRole();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
@@ -53,6 +54,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await _secureStorage.write(
       key: StorageConstants.userIdKey,
       value: session.userId,
+    );
+    await _secureStorage.write(
+      key: StorageConstants.userRole,
+      value: session.userRole
     );
   }
 
@@ -129,5 +134,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     }
 
     return [fullName, insuranceCompany, companyId];
+  }
+
+  @override
+  Future<String?> getUserRole() async {
+    return await _secureStorage.read(key: StorageConstants.userRole);
   }
 }

@@ -69,3 +69,17 @@ What happens here is that when a user sends data from the frontend, it prints th
 
 **Reference:**
 * https://dev.to/pcjmfranken/comment/1j4ad 
+
+## [09-25-2026] - Fixing the Refresh Token problem in both Flutter and NestJS.
+**Context:**
+Updating the User Registration using the existing Insurance Company from the database.
+
+**The Challenge:**
+* When I tested the 
+
+**The Solution:**
+* Add @Public() Decorator to the AuthController.ts file.
+* It had a tradeoff, which is anyone can access and attempt to send too many requests to the backend, even without the mobile app. So I added @nestjs/throttler to limit the number of requests that can be handled in a certain time period. In which the tradeoff is some users receiving an error.
+
+**Reference:**
+* I Discover it while debugging refreshToken.

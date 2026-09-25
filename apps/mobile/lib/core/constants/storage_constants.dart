@@ -6,4 +6,5 @@ class StorageConstants {
   static const String fullName = "full_name";
   static const String insuranceCompany = "insurance_company";
   static const String companyId = "company_id";
+  static const String userRole = 'user_role';
 }
