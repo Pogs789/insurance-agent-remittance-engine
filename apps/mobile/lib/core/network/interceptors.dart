@@ -7,11 +7,12 @@ import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.da
 class AuthInterceptor extends QueuedInterceptor {
   final FlutterSecureStorage secureStorage;
   final Dio dio;
+  final VoidCallback onSessionExpired;
 
   // Shared future used to deduplicate concurrent refresh attempts
   Future<void>? _refreshFuture;
 
-  AuthInterceptor(this.secureStorage, this.dio);
+  AuthInterceptor(this.secureStorage, this.dio, {required this.onSessionExpired});
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
@@ -35,63 +36,52 @@ class AuthInterceptor extends QueuedInterceptor {
     final statusCode = err.response?.statusCode;
     final requestOptions = err.requestOptions;
 
-    // Only attempt refresh on 401 and avoid infinite retry loops using an extra flag
+    debugPrint("Processing Dio Error... Status Code: $statusCode");
+    debugPrint("Is Retried: ${requestOptions.extra['retried']}");
+
     if (statusCode == 401 && requestOptions.extra['retried'] != true) {
+      debugPrint("[AuthInterceptor] Attempting token refresh...");
       try {
-        // If a refresh is already in progress, wait for it; otherwise start one
         if (_refreshFuture != null) {
+          debugPrint("[AuthInterceptor] Waiting for ongoing refresh...");
           await _refreshFuture;
         } else {
+          debugPrint("[AuthInterceptor] Starting new refresh execution...");
           _refreshFuture = _refreshToken();
           await _refreshFuture;
         }
-      } catch (e) {
-        // Refresh failed: clear future and forward original error (user should re-login)
+        debugPrint("[AuthInterceptor] Refresh successful!");
+      } catch (e, stackTrace) {
+        debugPrint("[AuthInterceptor] Refresh failed with error: $e");
+        debugPrint(stackTrace.toString());
         _refreshFuture = null;
+        onSessionExpired();
         return handler.next(err);
+      } finally {
+        _refreshFuture = null;
       }
 
-      // Clear the shared future after refresh completes
-      _refreshFuture = null;
-
-      // Retry the original request with the new token
       try {
         final newToken = await secureStorage.read(key: StorageConstants.accessTokenKey);
+        debugPrint("[AuthInterceptor] Retrying original request with new token: ${newToken != null}");
 
-        final newHeaders = Map<String, dynamic>.from(requestOptions.headers);
-        if (newToken != null && newToken.isNotEmpty) {
-          newHeaders['Authorization'] = 'Bearer $newToken';
-        }
+        // Mark request as retried
+        requestOptions.extra['retried'] = true;
+        requestOptions.headers['Authorization'] = 'Bearer $newToken';
 
-        final opts = Options(
-          method: requestOptions.method,
-          headers: newHeaders,
-          responseType: requestOptions.responseType,
-          contentType: requestOptions.contentType,
-          followRedirects: requestOptions.followRedirects,
-          validateStatus: requestOptions.validateStatus,
-          receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
-          extra: Map<String, dynamic>.from(requestOptions.extra)..['retried'] = true,
-        );
-
-        final response = await dio.request(
-          requestOptions.path,
-          data: requestOptions.data,
-          queryParameters: requestOptions.queryParameters,
-          options: opts,
-          cancelToken: requestOptions.cancelToken,
-          onReceiveProgress: requestOptions.onReceiveProgress,
-          onSendProgress: requestOptions.onSendProgress,
-        );
-
+        // Re-fetch using dio instance
+        final response = await dio.fetch(requestOptions);
         return handler.resolve(response);
       } on DioException catch (e) {
+        debugPrint("[AuthInterceptor] Retried request failed with DioException");
         return handler.next(e);
       } catch (e) {
+        debugPrint("[AuthInterceptor] Retried request failed with generic error");
         return handler.next(err);
       }
     }
 
+    debugPrint("[AuthInterceptor] Skipping refresh logic. Forwarding error.");
     handler.next(err);
   }
 
@@ -99,15 +89,10 @@ class AuthInterceptor extends QueuedInterceptor {
     final userId = await secureStorage.read(key: StorageConstants.userIdKey);
     final refreshToken = await secureStorage.read(key: StorageConstants.refreshTokenKey);
 
-    if (userId == null || userId.isEmpty) {
-      throw Exception('User ID not available for token refresh');
+    if (userId == null || userId.isEmpty || refreshToken == null || refreshToken.isEmpty) {
+      throw Exception('Missing storage credentials for token refresh');
     }
 
-    if (refreshToken == null || refreshToken.isEmpty) {
-      throw Exception('No refresh token available');
-    }
-
-    // Use a fresh Dio instance so the refresh request does not go through the same interceptors
     final refreshDio = Dio();
 
     try {
@@ -127,10 +112,8 @@ class AuthInterceptor extends QueuedInterceptor {
         if (newRefresh != null) {
           await secureStorage.write(key: StorageConstants.refreshTokenKey, value: newRefresh.toString());
         }
-      } else {
-        throw Exception('Token refresh failed: ${response.statusCode}');
       }
-    } catch (e) {
+    } on DioException catch (_) {
       rethrow;
     }
   }

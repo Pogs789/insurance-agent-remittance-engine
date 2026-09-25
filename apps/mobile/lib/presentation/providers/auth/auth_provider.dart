@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
 
 import '../../../domain/entities/user.dart';
@@ -20,6 +21,7 @@ class AuthProvider extends ChangeNotifier {
   final RefreshTokenUseCase _refreshTokenUseCase;
   final LogoutUseCase _logoutUseCase;
   final IsLoggedInUseCase _isLoggedInUseCase;
+  VoidCallback? _onSessionExpired;
 
   bool isLoading = false;
   String? errorMessage;
@@ -28,6 +30,10 @@ class AuthProvider extends ChangeNotifier {
   AuthStatus _authStatus = AuthStatus.unknown;
   bool get isLoggedInSync => _isLoggedIn;
   AuthStatus get authStatus => _authStatus;
+
+  void setSessionExpiredCallback(VoidCallback callback) {
+    _onSessionExpired = callback;
+  }
 
   Future<void> initializeAuth() async {
     isLoading = true;
@@ -179,5 +185,18 @@ class AuthProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Inside your AuthProvider class, add this method:
+  void handleForceLogout() async {
+    _isLoggedIn = false;
+    _authStatus = AuthStatus.unauthenticated;
+    errorMessage = "Session expired. Please log in again.";
+    notifyListeners();
+
+    _onSessionExpired?.call();
+  }
+  Future<String?> checkUserRole() async {
+    return await AuthLocalDataSourceImpl().getUserRole();
   }
 }

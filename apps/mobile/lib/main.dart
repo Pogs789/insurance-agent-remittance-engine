@@ -18,6 +18,11 @@ import 'core/themes/app_theme.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:life_insurance_monitoring_mobile/core/network/interceptors.dart';
 
+late Dio _appDio;
+
+Dio getAppDio() => _appDio;
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -27,38 +32,44 @@ void main() async {
 }
 
 AuthProvider buildRealAuthProvider() {
-  // Single secure storage instance
   final secureStorage = const FlutterSecureStorage();
-
-  // Single shared Dio instance
   final dio = Dio();
+  _appDio = dio;
 
-  // Attach interceptor once so all requests can auto-add Bearer token
-  dio.interceptors.add(AuthInterceptor(secureStorage, dio));
+  // Create an uninitialized pointer for AuthProvider
+  late final AuthProvider authProvider;
 
-  // ...existing code...
+  // Pass a lazy callback to the interceptor that references our provider
+  dio.interceptors.add(
+    AuthInterceptor(
+      secureStorage,
+      dio,
+      onSessionExpired: () => authProvider.handleForceLogout(),
+    ),
+  );
+
   final authRemote = AuthRemoteDataSourceImpl(dio: dio);
   final authLocal = AuthLocalDataSourceImpl();
 
-  // Repositories
   final authRepository = AuthRepositoryImpl(authRemote, authLocal);
   final agentRepository = AgentRepositoryImpl(authRemote);
 
-  // Use cases
   final submitAgentUseCase = AgentUseCase(agentRepository);
   final loginUseCase = LoginUseCase(authRepository);
   final refreshTokenUseCase = RefreshTokenUseCase(authRepository);
   final logoutUseCase = LogoutUseCase(authRepository);
   final isLoggedInUseCase = IsLoggedInUseCase(authRepository);
 
-  // Provider
-  return AuthProvider(
+  // Initialize the late variable here
+  authProvider = AuthProvider(
     submitAgentUseCase,
     loginUseCase,
     refreshTokenUseCase,
     logoutUseCase,
     isLoggedInUseCase,
   );
+
+  return authProvider;
 }
 
 class AppBootstrap extends StatelessWidget {
@@ -86,7 +97,16 @@ class _MyAppShellState extends State<MyAppShell> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AuthProvider>().initializeAuth();
+      final authProvider = context.read<AuthProvider>();
+
+      authProvider.setSessionExpiredCallback(() {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/login',
+              (route) => false,
+        );
+      });
+
+      authProvider.initializeAuth();
     });
   }
 

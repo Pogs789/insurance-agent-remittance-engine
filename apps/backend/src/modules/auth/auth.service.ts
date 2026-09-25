@@ -166,25 +166,42 @@ export class AuthService {
   }
 
   async refresh(userId: string, refreshToken: string) {
+    console.log('[NestJS Refresh] Input userId:', userId);
+    console.log(
+      '[NestJS Refresh] Input raw refreshToken length:',
+      refreshToken?.length,
+    );
+
     const activeTokens = await this.prisma.refreshToken.findMany({
       where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
       orderBy: { createdAt: 'desc' },
       take: 5,
     });
 
+    console.log(
+      '[NestJS Refresh] Active non-expired tokens found:',
+      activeTokens.length,
+    );
+
     let matchedTokenId: string | null = null;
 
     for (const rt of activeTokens) {
-      if (await bcrypt.compare(refreshToken, rt.tokenHash)) {
+      const isMatch = await bcrypt.compare(refreshToken, rt.tokenHash);
+      console.log(
+        `[NestJS Refresh] Comparing against DB token ID ${rt.id}: match=${isMatch}`,
+      );
+      if (isMatch) {
         matchedTokenId = rt.id;
         break;
       }
     }
 
-    if (!matchedTokenId)
+    if (!matchedTokenId) {
+      console.log('[NestJS Refresh] FAILED: No active token matched hash.');
       throw new UnauthorizedException(
         'This refresh token is invalid. Please login again.',
       );
+    }
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user)
