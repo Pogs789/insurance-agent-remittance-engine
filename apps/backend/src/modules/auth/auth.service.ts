@@ -146,6 +146,7 @@ export class AuthService {
       .join(' ');
 
     const insuranceCompany = userProfile.insuranceCompany.companyName;
+    const commissionRate = userProfile.insuranceCompany.commissionRate;
     const companyId = userProfile.insuranceCompany.id;
 
     await this.storeRefreshToken(user.id, tokens.refreshToken);
@@ -157,6 +158,7 @@ export class AuthService {
         companyId,
         fullName,
         insuranceCompany,
+        commissionRate,
         email: user.email,
         role: user.role,
         createdAt: user.createdAt,

@@ -36,8 +36,9 @@ class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
   @override
   Future<List<CompanyProductsResponseModel>> getCompanyInsuranceProducts() async {
     try {
-      final AuthLocalDataSourceImpl dataSourceImpl = AuthLocalDataSourceImpl();
-      final user = await dataSourceImpl.getFullNameAndCompany();
+      final authLocalDataSource = AuthLocalDataSourceImpl();
+      final user = await authLocalDataSource.getFullNameAndCompany();
+      debugPrint(user.toString());
 
       if(user.isNotEmpty) {
         final companyId = user[2];
@@ -47,8 +48,6 @@ class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
               'companyId': companyId,
             }
         );
-
-        debugPrint("Backend Data: ${result.data}");
 
         if (result.statusCode == 200) {
           return CompanyProductsResponseModel.fromJsonList(result.data as List<dynamic>);

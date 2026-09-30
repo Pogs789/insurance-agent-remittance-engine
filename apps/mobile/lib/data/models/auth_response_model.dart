@@ -6,7 +6,8 @@ class AuthSessionModel {
     required this.insuranceCompany,
     required this.accessToken,
     required this.refreshToken,
-    required this.userRole
+    required this.userRole,
+    required this.commissionRate,
   });
 
   final String userId;
@@ -16,6 +17,7 @@ class AuthSessionModel {
   final String accessToken;
   final String refreshToken;
   final String userRole;
+  final double commissionRate;
 
   Map<String, dynamic> toJson() => {
     'userId': userId,
@@ -25,6 +27,7 @@ class AuthSessionModel {
     'insuranceCompany': insuranceCompany,
     'accessToken': accessToken,
     'refreshToken': refreshToken,
+    'commissionRate': commissionRate,
   };
 
   /// Parses a login response where [userId] is nested under `user.id`.
@@ -38,6 +41,7 @@ class AuthSessionModel {
       insuranceCompany: (user?['insuranceCompany'] ?? '').toString(),
       accessToken: (json['accessToken'] ?? '').toString(),
       refreshToken: (json['refreshToken'] ?? '').toString(),
+      commissionRate: double.parse((user?['commissionRate'] ?? '0.0').toString()),
     );
   }
 
@@ -54,6 +58,7 @@ class AuthSessionModel {
       insuranceCompany: (json['insuranceCompany'] ?? '').toString(),
       accessToken: (json['accessToken'] ?? '').toString(),
       refreshToken: (json['refreshToken'] ?? '').toString(),
+      commissionRate: double.parse((json['commissionRate'] ?? '0.0').toString()),
     );
   }
 

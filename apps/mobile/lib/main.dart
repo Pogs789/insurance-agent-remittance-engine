@@ -15,26 +15,22 @@ import 'package:life_insurance_monitoring_mobile/presentation/pages/remittance/r
 import 'package:life_insurance_monitoring_mobile/presentation/pages/splash/splash_page.dart';
 import 'package:provider/provider.dart';
 import 'core/themes/app_theme.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:life_insurance_monitoring_mobile/core/network/interceptors.dart';
 
-late Dio _appDio;
-
-Dio getAppDio() => _appDio;
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+import 'package:life_insurance_monitoring_mobile/core/app_globals.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final authProvider = buildRealAuthProvider();
 
   runApp(AppBootstrap(authProvider: authProvider));
 }
 
 AuthProvider buildRealAuthProvider() {
-  final secureStorage = const FlutterSecureStorage();
+  final session = AuthLocalDataSourceImpl();
   final dio = Dio();
-  _appDio = dio;
+  setAppDio(dio);
 
   // Create an uninitialized pointer for AuthProvider
   late final AuthProvider authProvider;
@@ -42,7 +38,7 @@ AuthProvider buildRealAuthProvider() {
   // Pass a lazy callback to the interceptor that references our provider
   dio.interceptors.add(
     AuthInterceptor(
-      secureStorage,
+      session,
       dio,
       onSessionExpired: () => authProvider.handleForceLogout(),
     ),
@@ -116,25 +112,33 @@ class _MyAppShellState extends State<MyAppShell> {
 
   Route<dynamic> _generateRoute(RouteSettings settings, AuthProvider authProvider) {
     final requestedRoute = settings.name ?? '/';
-    final isCheckingAuth =
-        authProvider.authStatus == AuthStatus.unknown || authProvider.isLoading;
+
+    // 1. If we are actively checking credentials, force everyone to the splash screen
+    final isCheckingAuth = authProvider.authStatus == AuthStatus.unknown || authProvider.isLoading;
+    if (isCheckingAuth) {
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: '/splash'),
+        builder: (_) => const SplashPage(),
+      );
+    }
+
     final isAuthenticated = authProvider.isLoggedInSync;
     String resolvedRoute = requestedRoute;
 
-    if (isCheckingAuth && requestedRoute != '/splash') {
-      resolvedRoute = '/splash';
-    } else if (isAuthenticated &&
-        (requestedRoute == '/' ||
-            requestedRoute == '/login' ||
-            requestedRoute == '/register' ||
-            requestedRoute == '/splash')) {
-      resolvedRoute = '/dashboard';
-    } else if (!isAuthenticated && requestedRoute == '/splash') {
-      resolvedRoute = '/';
-    } else if (!isAuthenticated && _isProtectedRoute(requestedRoute)) {
-      resolvedRoute = '/login';
+    // 2. Route redirection based on actual auth states
+    if (isAuthenticated) {
+      // If logged in, block them from landing/auth pages and send to dashboard
+      if (requestedRoute == '/' || requestedRoute == '/login' || requestedRoute == '/register' || requestedRoute == '/splash') {
+        resolvedRoute = '/dashboard';
+      }
+    } else {
+      // If NOT logged in, block them from protected routes or getting stuck on splash
+      if (requestedRoute == '/splash' || _isProtectedRoute(requestedRoute)) {
+        resolvedRoute = '/login'; // Or '/' depending on your default guest landing page
+      }
     }
 
+    // 3. Render the page based on the final resolved route
     return MaterialPageRoute(
       settings: RouteSettings(name: resolvedRoute, arguments: settings.arguments),
       builder: (_) {
@@ -157,6 +161,7 @@ class _MyAppShellState extends State<MyAppShell> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

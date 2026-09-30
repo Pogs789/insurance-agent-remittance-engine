@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/errors/exceptions.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
@@ -26,6 +27,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: {'email': email, 'password': password},
         options: Options(contentType: Headers.jsonContentType),
       );
+
+      debugPrint("Login Backend Response: ${response.data}");
 
       return AuthSessionModel.fromJson(response.data);
     } catch (e, stackTrace) {
