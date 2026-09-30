@@ -1,23 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:life_insurance_monitoring_mobile/core/constants/storage_constants.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/api_endpoints.dart';
+import 'package:life_insurance_monitoring_mobile/data/datasources/local/auth_local_datasource.dart';
+import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
 
 class AuthInterceptor extends QueuedInterceptor {
-  final FlutterSecureStorage secureStorage;
+  final AuthLocalDataSource authLocalDataSource;
   final Dio dio;
   final VoidCallback onSessionExpired;
 
   // Shared future used to deduplicate concurrent refresh attempts
   Future<void>? _refreshFuture;
 
-  AuthInterceptor(this.secureStorage, this.dio, {required this.onSessionExpired});
+  AuthInterceptor(this.authLocalDataSource, this.dio, {required this.onSessionExpired});
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     debugPrint('Interceptor path: ${options.path}');
-    final token = await secureStorage.read(key: StorageConstants.accessTokenKey);
+    final token = await authLocalDataSource.getAccessToken();
     debugPrint('Token found by interceptor: ${token != null && token.isNotEmpty}');
     debugPrint('Token found by interceptor: $token');
 
@@ -62,7 +62,7 @@ class AuthInterceptor extends QueuedInterceptor {
       }
 
       try {
-        final newToken = await secureStorage.read(key: StorageConstants.accessTokenKey);
+        final newToken = await authLocalDataSource.getAccessToken();
         debugPrint("[AuthInterceptor] Retrying original request with new token: ${newToken != null}");
 
         // Mark request as retried
@@ -86,11 +86,10 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   Future<void> _refreshToken() async {
-    final userId = await secureStorage.read(key: StorageConstants.userIdKey);
-    final refreshToken = await secureStorage.read(key: StorageConstants.refreshTokenKey);
-
-    if (userId == null || userId.isEmpty || refreshToken == null || refreshToken.isEmpty) {
-      throw Exception('Missing storage credentials for token refresh');
+    final session = await authLocalDataSource.getSession();
+    
+    if (session == null || session.userId.isEmpty || session.refreshToken.isEmpty) {
+      throw Exception('Missing session credentials for token refresh');
     }
 
     final refreshDio = Dio();
@@ -98,7 +97,7 @@ class AuthInterceptor extends QueuedInterceptor {
     try {
       final response = await refreshDio.post(
         ApiEndpoints.refreshApi,
-        data: {'userId': userId, 'refreshToken': refreshToken},
+        data: {'userId': session.userId, 'refreshToken': session.refreshToken},
       );
 
       if (response.statusCode == 200) {
@@ -106,11 +105,18 @@ class AuthInterceptor extends QueuedInterceptor {
         final newAccess = data['access_token'] ?? data['accessToken'] ?? data['access'];
         final newRefresh = data['refresh_token'] ?? data['refreshToken'] ?? data['refresh'];
 
-        if (newAccess != null) {
-          await secureStorage.write(key: StorageConstants.accessTokenKey, value: newAccess.toString());
-        }
-        if (newRefresh != null) {
-          await secureStorage.write(key: StorageConstants.refreshTokenKey, value: newRefresh.toString());
+        if (newAccess != null || newRefresh != null) {
+          final updatedSession = AuthSessionModel(
+            userId: session.userId,
+            companyId: session.companyId,
+            fullName: session.fullName,
+            insuranceCompany: session.insuranceCompany,
+            accessToken: newAccess?.toString() ?? session.accessToken,
+            refreshToken: newRefresh?.toString() ?? session.refreshToken,
+            userRole: session.userRole,
+            commissionRate: session.commissionRate,
+          );
+          await authLocalDataSource.saveSession(updatedSession);
         }
       }
     } on DioException catch (_) {

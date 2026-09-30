@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/storage_constants.dart';
 import 'package:life_insurance_monitoring_mobile/data/models/auth_response_model.dart';
@@ -27,37 +28,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> saveSession(AuthSessionModel session) async {
     final sessionJson = jsonEncode(session.toJson());
 
+
     await _secureStorage.write(
       key: StorageConstants.sessionKey,
       value: sessionJson,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.accessTokenKey,
-      value: session.accessToken,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.refreshTokenKey,
-      value: session.refreshToken,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.fullName,
-      value: session.fullName,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.companyId,
-      value: session.companyId,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.insuranceCompany,
-      value: session.insuranceCompany,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.userIdKey,
-      value: session.userId,
-    );
-    await _secureStorage.write(
-      key: StorageConstants.userRole,
-      value: session.userRole
     );
   }
 
@@ -70,23 +44,29 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
     try {
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      return AuthSessionModel.fromJson(decoded);
+      final userId = decoded['userId'] as String;
+      return AuthSessionModel.fromJsonTokensOnly(decoded, userId);
     } catch (_) {
       return null;
     }
   }
 
   @override
-  Future<String?> getAccessToken() =>
-      _secureStorage.read(key: StorageConstants.accessTokenKey);
+  Future<String?> getAccessToken() async {
+    final session = await getSession();
+    return session?.accessToken;
+  }
 
   @override
-  Future<String?> getRefreshToken() =>
-      _secureStorage.read(key: StorageConstants.refreshTokenKey);
+  Future<String?> getRefreshToken() async {
+    final session = await getSession();
+    return session?.refreshToken;
+  }
 
   @override
   Future<String?> getUserId() async {
-    final userId = await _secureStorage.read(key: StorageConstants.userIdKey);
+    final session = await getSession();
+    final userId = session?.userId;
     if (userId == null) return null;
 
     final trimmed = userId.trim();
@@ -108,11 +88,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> clearSession() async {
     await _secureStorage.delete(key: StorageConstants.sessionKey);
-    await _secureStorage.delete(key: StorageConstants.accessTokenKey);
-    await _secureStorage.delete(key: StorageConstants.fullName);
-    await _secureStorage.delete(key: StorageConstants.insuranceCompany);
-    await _secureStorage.delete(key: StorageConstants.refreshTokenKey);
-    await _secureStorage.delete(key: StorageConstants.userIdKey);
   }
 
   @override
@@ -122,11 +97,13 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     return userId != null && hasToken;
   }
 
+  //TODO: Needs Bug Fox on Insurance Information.
   @override
   Future<List<String>> getFullNameAndCompany() async {
-    final String? fullName = await _secureStorage.read(key: StorageConstants.fullName);
-    final String? insuranceCompany = await _secureStorage.read(key: StorageConstants.insuranceCompany);
-    final String? companyId = await _secureStorage.read(key: StorageConstants.companyId);
+    final companyInformation = await getSession();
+    final String? fullName = companyInformation?.fullName;
+    final String? insuranceCompany = companyInformation?.insuranceCompany;
+    final String? companyId = companyInformation?.companyId;
 
     if(fullName == null || insuranceCompany == null || companyId == null) {
       await clearSession();
@@ -138,6 +115,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<String?> getUserRole() async {
-    return await _secureStorage.read(key: StorageConstants.userRole);
+    final userSession = await getSession();
+    return userSession?.userRole;
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:dio/dio.dart';
 import 'package:life_insurance_monitoring_mobile/domain/entities/user.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/agent_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/repositories/auth_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/agent/agent_usecase.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/auth/auth_usecases.dart';
+import 'package:life_insurance_monitoring_mobile/core/app_globals.dart';
 import 'package:life_insurance_monitoring_mobile/main.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/auth/auth_provider.dart';
 
@@ -35,6 +37,11 @@ class FakeAgentRepository implements AgentRepository {
   }
 }
 
+void initializeTestDio() {
+  // Initialize _appDio for testing with a basic Dio instance
+  setAppDio(Dio());
+}
+
 AuthProvider buildFakeAuthProvider({bool loggedIn = false}) {
   final authRepository = FakeAuthRepository(initialLoggedIn: loggedIn);
   final agentRepository = FakeAgentRepository();
@@ -49,6 +56,8 @@ AuthProvider buildFakeAuthProvider({bool loggedIn = false}) {
 }
 
 Future<void> _pumpTestApp(WidgetTester tester, {bool loggedIn = false}) async {
+  // Initialize _appDio for testing before rendering any widgets
+  initializeTestDio();
   await tester.pumpWidget(AppBootstrap(authProvider: buildFakeAuthProvider(loggedIn: loggedIn),));
   await tester.pumpAndSettle();
 }

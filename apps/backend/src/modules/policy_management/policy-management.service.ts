@@ -31,6 +31,7 @@ export class PolicyManagementService {
   }
 
   async findAll(insuranceCompanyId: string) {
+    console.log('Insurance Company ID:', insuranceCompanyId);
     const insuranceProducts = await this.prisma.insuranceProduct.findMany({
       where: {
         insuranceCompanyId: insuranceCompanyId,

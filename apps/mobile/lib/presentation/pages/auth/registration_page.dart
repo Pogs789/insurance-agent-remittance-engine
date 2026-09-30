@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/core/app_globals.dart';
 import 'package:flutter/material.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/auth_remote_datasource.dart';
@@ -53,10 +53,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   void initState() {
     super.initState();
-    authRemoteDataSource = AuthRemoteDataSourceImpl(dio: Dio());
+    authRemoteDataSource = AuthRemoteDataSourceImpl(dio: getAppDio());
     agentRepository = AgentRepositoryImpl(authRemoteDataSource);
     agentUseCase = AgentUseCase(agentRepository);
-    companyRemoteDataSource = CompanyRemoteDataSourceImpl(dio: Dio());
+    companyRemoteDataSource = CompanyRemoteDataSourceImpl(dio: getAppDio());
     companyRepository = CompanyRepositoryImpl(companyRemoteDataSource);
     getCompanyUseCase = GetCompanyUseCase(companyRepository);
   }
@@ -203,7 +203,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         ChangeNotifierProvider<CompanyProvider>(
           create: (_) {
             final repository = CompanyRepositoryImpl(
-              CompanyRemoteDataSourceImpl(dio: Dio()),
+              CompanyRemoteDataSourceImpl(dio: getAppDio()),
             );
             return CompanyProvider(
               GetCompanyUseCase(repository),

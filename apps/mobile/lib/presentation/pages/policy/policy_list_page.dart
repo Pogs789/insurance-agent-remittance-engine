@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:life_insurance_monitoring_mobile/core/app_globals.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
 import 'package:life_insurance_monitoring_mobile/core/themes/app_colors.dart';
 import 'package:life_insurance_monitoring_mobile/data/datasources/remote/company_remote_datasource.dart';
 import 'package:life_insurance_monitoring_mobile/data/repositories/company_repository.dart';
 import 'package:life_insurance_monitoring_mobile/domain/usecases/company/company_usecase.dart';
-import 'package:life_insurance_monitoring_mobile/main.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/pages/policy/policy_list_details.dart';
 import 'package:life_insurance_monitoring_mobile/presentation/providers/company/company_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:life_insurance_monitoring_mobile/core/network/interceptors.dart';
 
 import '../../providers/auth/auth_provider.dart';
 
