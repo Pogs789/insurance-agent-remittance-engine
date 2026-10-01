@@ -21,8 +21,14 @@ export class PolicyManagementController {
   ) {}
 
   @Post()
-  create(@Body() createPolicyManagementDto: CreatePolicyManagementDto) {
-    return this.policyManagementService.create(createPolicyManagementDto);
+  create(
+    @Body() createPolicyManagementDto: CreatePolicyManagementDto,
+    @Query('insuranceCompanyId') insuranceCompanyId: string,
+  ) {
+    return this.policyManagementService.create(
+      createPolicyManagementDto,
+      insuranceCompanyId,
+    );
   }
 
   @Get()

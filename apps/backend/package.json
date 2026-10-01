@@ -17,7 +17,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "postinstall": "pnpm exec prisma generate --schema=prisma/schema.prisma"
+    "postinstall": "pnpm exec prisma generate --schema=prisma/schema.prisma",
+    "migrate": "pnpm exec prisma migrate dev"
   },
   "dependencies": {
     "@my-app/shared": "workspace:*",

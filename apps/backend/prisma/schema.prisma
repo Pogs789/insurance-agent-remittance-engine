@@ -83,17 +83,27 @@ model PlanholderData {
 }
 
 model InsuranceProduct {
-  id                   String           @id @default(uuid())
+  id                   String                 @id @default(uuid())
   insuranceCompanyId   String
   insuranceProductName String
   productContents      String
-  productAmount        Decimal          @db.Decimal(10, 2)
-  paymentTerms         String[]
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime?        @updatedAt
+  productAmount        Decimal                @db.Decimal(10, 2)
+  paymentTerms         InsurancePaymentTerm[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime?              @updatedAt
   planholderData       PlanholderData[]
 
   insuranceCompany InsuranceCompany @relation(fields: [insuranceCompanyId], references: [id], onDelete: Cascade)
+}
+
+model InsurancePaymentTerm {
+  id                 String           @id @default(uuid())
+  insuranceProductId String
+  period             PaymentPeriod
+  amount             Decimal          @db.Decimal(10, 2)
+  insuranceProduct   InsuranceProduct @relation(fields: [insuranceProductId], references: [id], onDelete: Cascade)
+
+  @@unique([insuranceProductId, period])
 }
 
 model InsuranceCompany {
@@ -128,4 +138,11 @@ enum Role {
 enum PlanholderStatus {
   ACTIVE
   INACTIVE
+}
+
+enum PaymentPeriod {
+  ANNUALLY
+  SEMI_ANNUALLY
+  QUARTERLY
+  MONTH
 }

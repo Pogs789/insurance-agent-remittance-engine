@@ -1,101 +1,65 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePolicyManagementDto } from './dto/create-policy-management.dto';
 import { UpdatePolicyManagementDto } from './dto/update-policy-management.dto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AppConstants } from '../../common/constants/app.constants';
 
 @Injectable()
 export class PolicyManagementService {
-  constructor(
-    private prisma: PrismaService,
-    private appConstants: AppConstants,
-  ) {}
-  //TODO: If we are done with the "Happy Path", proceed to writing unit tests to identify possible edge cases.
-  async create(createPolicyManagementDto: CreatePolicyManagementDto) {
-    const {
-      insuranceProductName,
-      productContents,
-      productAmount,
-      paymentTerms,
-    } = createPolicyManagementDto;
+  constructor(private readonly prisma: PrismaService) {}
 
-    await this.prisma.insuranceProduct.create({
+  async create(dto: CreatePolicyManagementDto, insuranceCompanyId: string) {
+    const { paymentTerms, ...productData } = dto;
+
+    return this.prisma.insuranceProduct.create({
       data: {
-        insuranceCompanyId: 'dedsadeffsdea',
-        insuranceProductName: insuranceProductName,
-        productContents: productContents,
-        productAmount: productAmount,
-        paymentTerms: paymentTerms,
+        ...productData,
+        insuranceCompanyId,
+        paymentTerms: {
+          create: paymentTerms.map((term) => ({
+            period: term.period,
+            amount: term.amount,
+          })),
+        },
       },
+      include: { paymentTerms: true },
     });
   }
 
   async findAll(insuranceCompanyId: string) {
-    console.log('Insurance Company ID:', insuranceCompanyId);
-    const insuranceProducts = await this.prisma.insuranceProduct.findMany({
-      where: {
-        insuranceCompanyId: insuranceCompanyId,
-      },
+    return this.prisma.insuranceProduct.findMany({
+      where: { insuranceCompanyId },
+      include: { paymentTerms: true },
     });
-
-    if (!insuranceProducts) return null;
-
-    return insuranceProducts;
   }
 
   async findOne(id: string) {
-    const insuranceProduct =
-      await this.prisma.insuranceProduct.findFirstOrThrow({
-        where: {
-          id: id,
-        },
-      });
-
-    if (!insuranceProduct)
-      throw new NotFoundException(
-        'Insurance details cannot be retrieved. Please Try Again.',
-      );
-
-    return insuranceProduct;
+    return this.prisma.insuranceProduct.findUniqueOrThrow({
+      where: { id },
+      include: { paymentTerms: true },
+    });
   }
 
-  async update(
-    id: string,
-    updatePolicyManagementDto: UpdatePolicyManagementDto,
-  ) {
-    const {
-      insuranceProductName,
-      productContents,
-      productAmount,
-      paymentTerms,
-    } = updatePolicyManagementDto;
+  async update(id: string, dto: UpdatePolicyManagementDto) {
+    const { paymentTerms, ...productData } = dto;
 
-    await this.prisma.insuranceProduct.update({
+    return this.prisma.insuranceProduct.update({
+      where: { id },
       data: {
-        insuranceProductName: insuranceProductName,
-        productContents: productContents,
-        productAmount: productAmount,
-        paymentTerms: paymentTerms,
+        ...productData,
+        paymentTerms: {
+          deleteMany: {},
+          create: paymentTerms.map((term) => ({
+            period: term.period,
+            amount: term.amount,
+          })),
+        },
       },
-      where: {
-        id: id,
-        insuranceCompanyId: 'cedjschcbseydbseydb',
-      },
+      include: { paymentTerms: true },
     });
   }
 
   async remove(id: string) {
-    const insuranceProduct = await this.prisma.insuranceProduct.delete({
-      where: {
-        id: id,
-      },
-    });
-
-    if (!insuranceProduct)
-      throw new NotFoundException(
-        'Unable to Delete Insurance Product. Maybe it was deleted already.',
-      );
-
+    await this.prisma.insuranceProduct.delete({ where: { id } });
     return 'Insurance Product Successfully deleted.';
   }
 }
