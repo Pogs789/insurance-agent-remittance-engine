@@ -2,6 +2,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsUUID,
   Max,
   Min,
@@ -12,6 +13,7 @@ import { Type } from 'class-transformer';
 
 export class CreateMonthlyRemittanceDto {
   @IsUUID()
+  @IsOptional()
   userId!: string;
 
   @IsArray()
