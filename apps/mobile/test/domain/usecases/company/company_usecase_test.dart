@@ -19,7 +19,8 @@ class _FakeCompanyRepository implements CompanyRepository {
   }
 
   @override
-  Future<List<CompanyProductsResponseModel>> getCompanyInsuranceProducts() async {
+  Future<List<CompanyProductsResponseModel>>
+  getCompanyInsuranceProducts() async {
     getProductsCalls++;
     return onGetProducts?.call() ?? <CompanyProductsResponseModel>[];
   }
@@ -29,14 +30,13 @@ void main() {
   group('GetCompanyUseCase', () {
     test('returns companies from repository', () async {
       final fakeRepository = _FakeCompanyRepository()
-        ..onGetCompanies =
-            () async => [
-              CompanyResponseModel(
-                id: 'company-1',
-                companyName: 'Acme Life',
-                commissionRate: 12.5,
-              ),
-            ];
+        ..onGetCompanies = () async => [
+          CompanyResponseModel(
+            id: 'company-1',
+            companyName: 'Acme Life',
+            commissionRate: 12.5,
+          ),
+        ];
 
       final useCase = GetCompanyUseCase(fakeRepository);
 
@@ -50,10 +50,9 @@ void main() {
 
     test('rethrows repository exception', () async {
       final fakeRepository = _FakeCompanyRepository()
-        ..onGetCompanies =
-            () => Future<List<CompanyResponseModel>>.error(
-              const ValidationException('Invalid payload'),
-            );
+        ..onGetCompanies = () => Future<List<CompanyResponseModel>>.error(
+          const ValidationException('Invalid payload'),
+        );
 
       final useCase = GetCompanyUseCase(fakeRepository);
 
@@ -65,16 +64,15 @@ void main() {
   group('GetCompanyProductsUseCase', () {
     test('returns products from repository', () async {
       final fakeRepository = _FakeCompanyRepository()
-        ..onGetProducts =
-            () async => [
-              CompanyProductsResponseModel(
-                id: 'product-1',
-                insuranceProductName: 'Term Protect',
-                productContents: 'Base coverage',
-                productAmount: 1500,
-                paymentTerms: const ['Monthly', 'Quarterly'],
-              ),
-            ];
+        ..onGetProducts = () async => [
+          CompanyProductsResponseModel(
+            id: 'product-1',
+            insuranceProductName: 'Term Protect',
+            productContents: 'Base coverage',
+            productAmount: 1500,
+            paymentTerms: [PaymentTerms(period: "MONTHLY", amount: 7000)],
+          ),
+        ];
 
       final useCase = GetCompanyProductsUseCase(fakeRepository);
 
@@ -83,13 +81,15 @@ void main() {
       expect(fakeRepository.getProductsCalls, 1);
       expect(result, hasLength(1));
       expect(result.first.insuranceProductName, 'Term Protect');
-      expect(result.first.paymentTerms, contains('Monthly'));
+      expect(result.first.paymentTerms, hasLength(1));
+      expect(result.first.paymentTerms.single.period, 'MONTHLY');
+      expect(result.first.paymentTerms.single.amount, 7000);
     });
 
     test('rethrows repository exception', () async {
       final fakeRepository = _FakeCompanyRepository()
-        ..onGetProducts =
-            () => Future<List<CompanyProductsResponseModel>>.error(
+        ..onGetProducts = () =>
+            Future<List<CompanyProductsResponseModel>>.error(
               const ServerException('Server unavailable'),
             );
 
@@ -100,4 +100,3 @@ void main() {
     });
   });
 }
-

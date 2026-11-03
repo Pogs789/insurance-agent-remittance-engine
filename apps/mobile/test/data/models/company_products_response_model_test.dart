@@ -3,55 +3,60 @@ import 'package:life_insurance_monitoring_mobile/data/models/company_prroducts_r
 
 void main() {
   group('CompanyProductsResponseModel.fromJson', () {
-    test('parses valid payload with string amount', () {
+    test('parses string amount and payment term objects', () {
       final model = CompanyProductsResponseModel.fromJson({
         'id': 'product-1',
         'insuranceProductName': 'Starter Plan',
         'productContents': 'Life cover',
         'productAmount': '1250.50',
-        'paymentTerms': ['Monthly', 'Annual'],
+        'paymentTerms': [
+          {'period': 'MONTHLY', 'amount': 7000},
+          {'period': 'ANNUAL', 'amount': '12000.50'},
+        ],
       });
 
       expect(model.id, 'product-1');
       expect(model.insuranceProductName, 'Starter Plan');
       expect(model.productAmount, 1250.50);
-      expect(model.paymentTerms, containsAll(<String>['Monthly', 'Annual']));
+      expect(model.paymentTerms, hasLength(2));
+      expect(model.paymentTerms[0].period, 'MONTHLY');
+      expect(model.paymentTerms[0].amount, 7000.0);
+      expect(model.paymentTerms[1].period, 'ANNUAL');
+      expect(model.paymentTerms[1].amount, 12000.50);
     });
 
-    test('throws FormatException for invalid amount string', () {
-      expect(
-        () => CompanyProductsResponseModel.fromJson({
-          'id': 'product-1',
-          'insuranceProductName': 'Starter Plan',
-          'productContents': 'Life cover',
-          'productAmount': 'invalid-number',
-          'paymentTerms': ['Monthly'],
-        }),
-        throwsA(isA<FormatException>()),
-      );
+    test('uses zero when amount string is invalid', () {
+      final model = CompanyProductsResponseModel.fromJson({
+        'id': 'product-1',
+        'insuranceProductName': 'Starter Plan',
+        'productContents': 'Life cover',
+        'productAmount': 'invalid-number',
+        'paymentTerms': [],
+      });
+
+      expect(model.productAmount, 0.0);
     });
 
-    test('throws when amount is non-string numeric type', () {
-      expect(
-        () => CompanyProductsResponseModel.fromJson({
-          'id': 'product-1',
-          'insuranceProductName': 'Starter Plan',
-          'productContents': 'Life cover',
-          'productAmount': 500,
-          'paymentTerms': ['Monthly'],
-        }),
-        throwsA(anyOf(isA<TypeError>(), isA<ArgumentError>())),
-      );
+    test('accepts a numeric amount', () {
+      final model = CompanyProductsResponseModel.fromJson({
+        'id': 'product-1',
+        'insuranceProductName': 'Starter Plan',
+        'productContents': 'Life cover',
+        'productAmount': 500,
+        'paymentTerms': [],
+      });
+
+      expect(model.productAmount, 500.0);
     });
 
-    test('throws when paymentTerms cannot be cast to List<String>', () {
+    test('throws when a payment term is not a map', () {
       expect(
         () => CompanyProductsResponseModel.fromJson({
           'id': 'product-1',
           'insuranceProductName': 'Starter Plan',
           'productContents': 'Life cover',
           'productAmount': '500',
-          'paymentTerms': [1, 2, 3],
+          'paymentTerms': ['MONTHLY'],
         }),
         throwsA(isA<TypeError>()),
       );
@@ -66,34 +71,43 @@ void main() {
           'insuranceProductName': 'Starter Plan',
           'productContents': 'Life cover',
           'productAmount': '1000',
-          'paymentTerms': ['Monthly'],
+          'paymentTerms': [
+            {'period': 'MONTHLY', 'amount': 7000},
+          ],
         },
         {
           'id': 'product-2',
           'insuranceProductName': 'Premium Plan',
           'productContents': 'Life + accident',
           'productAmount': '2000',
-          'paymentTerms': ['Monthly', 'Quarterly'],
+          'paymentTerms': [
+            {'period': 'MONTHLY', 'amount': 1000},
+            {'period': 'QUARTERLY', 'amount': 2800},
+          ],
         },
       ]);
 
       expect(result, hasLength(2));
-      expect(result[0].productAmount, 1000);
-      expect(result[1].paymentTerms, contains('Quarterly'));
+      expect(result[0].productAmount, 1000.0);
+      expect(result[1].paymentTerms.last.period, 'QUARTERLY');
+      expect(result[1].paymentTerms.last.amount, 2800.0);
     });
 
     test('returns empty list when source list is empty', () {
-      final result = CompanyProductsResponseModel.fromJsonList(const <dynamic>[]);
+      final result = CompanyProductsResponseModel.fromJsonList(
+        const <dynamic>[],
+      );
 
       expect(result, isEmpty);
     });
 
     test('throws when list item is not a map', () {
       expect(
-        () => CompanyProductsResponseModel.fromJsonList(const <dynamic>['bad-item']),
+        () => CompanyProductsResponseModel.fromJsonList(const <dynamic>[
+          'bad-item',
+        ]),
         throwsA(isA<TypeError>()),
       );
     });
   });
 }
-

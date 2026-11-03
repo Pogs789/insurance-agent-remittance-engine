@@ -123,7 +123,12 @@ void main() {
                 insuranceProductName: 'Starter Plan',
                 productContents: 'Life cover',
                 productAmount: 1100,
-                paymentTerms: const ['Monthly'],
+                paymentTerms: [
+                  PaymentTerms(
+                      period: "MONTHLY",
+                      amount: 7000
+                  )
+                ],
               ),
             ];
       final provider = _buildProvider(fakeRepository);
@@ -155,7 +160,12 @@ void main() {
           insuranceProductName: 'Starter Plan',
           productContents: 'Life cover',
           productAmount: 500,
-          paymentTerms: const ['Monthly'],
+          paymentTerms: [
+            PaymentTerms(
+                period: "MONTHLY",
+                amount: 7000
+            )
+          ],
         ),
       ]);
       await future;

@@ -29,8 +29,9 @@ class MonthlyRemittanceRemoteDataSourceImpl
       ...monthlyRemittance.toJson(),
     };
     try {
+      final url = userId != null ? ApiEndpoints.calculateMonthlyRemittanceForAuthenticatedAgent : ApiEndpoints.calculateMonthlyRemittance;
       final result = await dio.post(
-        ApiEndpoints.calculateMonthlyRemittance,
+        url,
         data: payload,
         options: Options(contentType: Headers.jsonContentType),
       );

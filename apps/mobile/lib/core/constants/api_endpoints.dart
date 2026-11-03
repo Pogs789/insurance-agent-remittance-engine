@@ -13,6 +13,7 @@ class ApiEndpoints {
   static final String registerApi = '$_url/auth/agent-register';
 
   static final String calculateMonthlyRemittance = '$_url/monthly-remittance';
+  static final String calculateMonthlyRemittanceForAuthenticatedAgent = '$_url/monthly-remittance/calculate';
 
   //Company API
   static final String getCompanyNamesAndCommissionRates = '$_url/company/public';

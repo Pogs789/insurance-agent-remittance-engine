@@ -38,8 +38,21 @@ class FakeAgentRepository implements AgentRepository {
 }
 
 void initializeTestDio() {
-  // Initialize _appDio for testing with a basic Dio instance
-  setAppDio(Dio());
+  final dio = Dio()
+    ..interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          handler.resolve(
+            Response(
+              requestOptions: options,
+              statusCode: 200,
+              data: <dynamic>[],
+            ),
+          );
+        },
+      ),
+    );
+  setAppDio(dio);
 }
 
 AuthProvider buildFakeAuthProvider({bool loggedIn = false}) {
@@ -58,7 +71,9 @@ AuthProvider buildFakeAuthProvider({bool loggedIn = false}) {
 Future<void> _pumpTestApp(WidgetTester tester, {bool loggedIn = false}) async {
   // Initialize _appDio for testing before rendering any widgets
   initializeTestDio();
-  await tester.pumpWidget(AppBootstrap(authProvider: buildFakeAuthProvider(loggedIn: loggedIn),));
+  await tester.pumpWidget(
+    AppBootstrap(authProvider: buildFakeAuthProvider(loggedIn: loggedIn)),
+  );
   await tester.pumpAndSettle();
 }
 

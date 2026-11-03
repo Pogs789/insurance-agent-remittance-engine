@@ -10,8 +10,12 @@ export class MonthlyRemittanceService {
     private prisma: PrismaService,
     private appConstants: AppConstants,
   ) {}
+
   /**
-   * Calculate the total remittance needed based on the percentage set by the insurance company to an agent.
+   * This is for the GUEST user who wanted to try the application, before registering their account to the system.
+   * @param planholders
+   * @param commissionRate
+   * @returns amountToBeRemitted
    */
   publicCalculation(
     planholders: PlanholderDataDto[],
@@ -25,6 +29,13 @@ export class MonthlyRemittanceService {
     return { amountToBeRemitted: amountToBeRemitted };
   }
 
+  /**
+   * Only AUTHENTICATED users can access this
+   * @param planholders
+   * @param commissionRate
+   * @param userId
+   * @returns
+   */
   async authenticatedCalculation(
     planholders: PlanholderDataDto[],
     commissionRate: number,
