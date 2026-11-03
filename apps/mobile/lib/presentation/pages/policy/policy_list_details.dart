@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:life_insurance_monitoring_mobile/core/constants/app_constants.dart';
@@ -55,7 +56,32 @@ class _PolicyListDetailsState extends State<PolicyListDetails> {
             ///Monthly: 5,700
             ///The Goal is that, the Insurance Agent can simply select payment terms and the insurance product so that,
             ///the input from the backend is easily printed and calculated.
+            SizedBox(height: AppConstants.mobilePadding),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: insuranceProduct.paymentTerms.map((term) {
+                  final pesoFormat = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 2);
 
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    child: Text(
+                      '${term.period}: ${pesoFormat.format(term.amount)}',
+                      style: const TextStyle(
+                        fontSize: AppConstants.fontSizeMD,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ],
         ),
       ),

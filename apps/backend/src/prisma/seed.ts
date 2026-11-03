@@ -78,6 +78,7 @@ async function main() {
   }
 
   const paymentTerms = [
+    //ST. JOHN
     {
       insuranceProductId: '9471dbfd-b7de-4910-8523-b3d924f43149',
       terms: [
@@ -87,6 +88,7 @@ async function main() {
         { period: PaymentPeriod.MONTH, amount: 5700 },
       ],
     },
+    //ST. PAUL
     {
       insuranceProductId: '93c7b84c-93f6-4fe1-baf7-23671cc799bf',
       terms: [
@@ -94,6 +96,26 @@ async function main() {
         { period: PaymentPeriod.SEMI_ANNUALLY, amount: 16960 },
         { period: PaymentPeriod.QUARTERLY, amount: 8800 },
         { period: PaymentPeriod.MONTH, amount: 3040 },
+      ],
+    },
+    //St. Ferdinand
+    {
+      insuranceProductId: '7a3d5962-c067-4d3a-82bc-5001c4c8d756',
+      terms: [
+        { period: PaymentPeriod.ANNUALLY, amount: 21000 },
+        { period: PaymentPeriod.SEMI_ANNUALLY, amount: 11130 },
+        { period: PaymentPeriod.QUARTERLY, amount: 5775 },
+        { period: PaymentPeriod.MONTH, amount: 1995 },
+      ],
+    },
+    //St. Francis
+    {
+      insuranceProductId: '47da9ca5-d4f1-408a-9850-345a9ece2fef',
+      terms: [
+        { period: PaymentPeriod.ANNUALLY, amount: 20000 },
+        { period: PaymentPeriod.SEMI_ANNUALLY, amount: 10600 },
+        { period: PaymentPeriod.QUARTERLY, amount: 5500 },
+        { period: PaymentPeriod.MONTH, amount: 1900 },
       ],
     },
   ];

@@ -55,7 +55,12 @@ void main() {
                 insuranceProductName: 'Family Shield',
                 productContents: 'Accident and life',
                 productAmount: 2000,
-                paymentTerms: const ['Monthly'],
+                paymentTerms: [
+                  PaymentTerms(
+                      period: "MONTHLY",
+                      amount: 7000
+                  )
+                ],
               ),
             ];
 

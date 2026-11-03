@@ -26,10 +26,19 @@ export class PolicyManagementService {
   }
 
   async findAll(insuranceCompanyId: string) {
-    return this.prisma.insuranceProduct.findMany({
+    const insuranceProducts = await this.prisma.insuranceProduct.findMany({
       where: { insuranceCompanyId },
-      include: { paymentTerms: true },
+      include: {
+        paymentTerms: {
+          select: {
+            period: true,
+            amount: true,
+          },
+        },
+      },
     });
+
+    return insuranceProducts;
   }
 
   async findOne(id: string) {

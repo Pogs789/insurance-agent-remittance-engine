@@ -2,6 +2,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsNumber,
+  IsUUID,
   Max,
   Min,
   ValidateNested,
@@ -10,6 +11,9 @@ import { PlanholderDataDto } from './planholder_data.dto';
 import { Type } from 'class-transformer';
 
 export class CreateMonthlyRemittanceDto {
+  @IsUUID()
+  userId!: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PlanholderDataDto)

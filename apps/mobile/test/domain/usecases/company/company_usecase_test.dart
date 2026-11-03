@@ -72,7 +72,12 @@ void main() {
                 insuranceProductName: 'Term Protect',
                 productContents: 'Base coverage',
                 productAmount: 1500,
-                paymentTerms: const ['Monthly', 'Quarterly'],
+                paymentTerms: [
+                  PaymentTerms(
+                      period: "MONTHLY",
+                      amount: 7000
+                  )
+                ],
               ),
             ];
 

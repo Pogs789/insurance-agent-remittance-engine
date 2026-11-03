@@ -11,6 +11,7 @@
     "dev:backend": "pnpm --filter backend start:dev",
     "dev:mobile": "cd apps/mobile && flutter run",
     "dev:migrate": "pnpm --filter backend migrate",
+    "dev:seed": "pnpm --filter backend seed",
     "build": "pnpm --filter shared build && pnpm --filter backend build",
     "build:mobile": "cd apps/mobile && flutter build",
     "test": "pnpm --filter backend test",

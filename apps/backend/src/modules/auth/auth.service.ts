@@ -228,7 +228,57 @@ export class AuthService {
       }),
     ]);
 
-    return tokens;
+    //TODO: Make this one single backend function.
+    const agentProfileArgs =
+      Prisma.validator<Prisma.InsuranceAgentDefaultArgs>()({
+        include: {
+          user: true,
+          insuranceCompany: true,
+        },
+      });
+
+    type AgentProfile = Prisma.InsuranceAgentGetPayload<
+      typeof agentProfileArgs
+    >;
+
+    const userProfile: AgentProfile | null =
+      await this.prisma.insuranceAgent.findUnique({
+        where: { userId: user.id },
+        ...agentProfileArgs,
+      });
+
+    if (!userProfile) {
+      throw new NotFoundException(
+        'Your Profile Does not exist in our platform.',
+      );
+    }
+
+    const fullName = [
+      userProfile.user.firstName,
+      userProfile.user.middleName,
+      userProfile.user.lastName,
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const insuranceCompany = userProfile.insuranceCompany.companyName;
+    const commissionRate = userProfile.insuranceCompany.commissionRate;
+    const companyId = userProfile.insuranceCompany.id;
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        companyId,
+        fullName,
+        insuranceCompany,
+        commissionRate,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 
   async logout(userId: string, refreshToken: string) {

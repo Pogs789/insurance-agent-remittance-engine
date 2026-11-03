@@ -49,6 +49,8 @@ class CompanyRemoteDataSourceImpl implements CompanyRemoteDataSource {
             }
         );
 
+        debugPrint("Company Products Data: ${result.data.toString()}}");
+
         if (result.statusCode == 200) {
           return CompanyProductsResponseModel.fromJsonList(result.data as List<dynamic>);
         }

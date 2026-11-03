@@ -35,8 +35,8 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   final List<PlanholderData> _planholders = <PlanholderData>[];
   double _commissionRate = 0.0;
   late final MonthlyRemittanceUseCase submitMonthlyRemittanceUseCase;
-  late final MonthlyRemittanceRepository repository;
-  late final MonthlyRemittanceRemoteDataSource remote;
+  late final MonthlyRemittanceRepository monthlyRemittanceRepository;
+  late final MonthlyRemittanceRemoteDataSource monthlyRemittanceRemoteDataSource;
   late final AuthLocalDataSource auth;
   bool _isUserLoggedIn = false;
 
@@ -44,9 +44,9 @@ class _RemittanceFormPageState extends State<RemittanceFormPage> {
   void initState() {
     super.initState();
     auth = AuthLocalDataSourceImpl();
-    remote = MonthlyRemittanceRemoteDataSourceImpl(dio: getAppDio());
-    repository = MonthlyRemittanceRepositoryImpl(remote);
-    submitMonthlyRemittanceUseCase = MonthlyRemittanceUseCase(repository);
+    monthlyRemittanceRemoteDataSource = MonthlyRemittanceRemoteDataSourceImpl(dio: getAppDio());
+    monthlyRemittanceRepository = MonthlyRemittanceRepositoryImpl(monthlyRemittanceRemoteDataSource);
+    submitMonthlyRemittanceUseCase = MonthlyRemittanceUseCase(monthlyRemittanceRepository);
     _loadUserId();
   }
 
@@ -458,28 +458,34 @@ class _PlanholderRowState extends State<PlanholderRow> {
     }
   }
 
-  void _updatePaymentAmount() {
-    double divisor = 1.0;
-    switch (widget.data.paymentPeriod) {
+  String _backendPeriodFromLocal(PaymentPeriod p) {
+    switch (p) {
       case PaymentPeriod.monthly:
-        divisor = 60.0;
-        break;
+        return 'MONTH';
       case PaymentPeriod.quarterly:
-        divisor = 30.0;
-        break;
+        return 'QUARTERLY';
       case PaymentPeriod.semiannually:
-        divisor = 10.0;
-        break;
+        return 'SEMI_ANNUALLY';
       case PaymentPeriod.annually:
-        divisor = 5.0;
-        break;
-      case PaymentPeriod.spotOn:
-        break;
+        return 'ANNUALLY';
+      default:
+        return 'SPOT-ON';
     }
+  }
 
-    final calculatedAmount = widget.data.insuranceAmount / divisor;
-    widget.data.paymentPeriodAmount = calculatedAmount;
-    _paymentAmountController.text = calculatedAmount.toStringAsFixed(2);
+  //This automatically computes the payment amount based on a JSON File provided by the backend.
+  void _updatePaymentAmount() {
+    final product = _selectedProduct;
+    if (product == null) return;
+
+    final targetPeriod = _backendPeriodFromLocal(widget.data.paymentPeriod);
+    final term = product.paymentTerms.firstWhere(
+      (t) => t.period.trim().toUpperCase() == targetPeriod,
+      orElse: () => product.paymentTerms.first,
+    );
+
+    widget.data.paymentPeriodAmount = term.amount;
+    _paymentAmountController.text = term.amount.toStringAsFixed(2);
   }
 
   @override
